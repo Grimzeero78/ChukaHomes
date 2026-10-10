@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChukaHomes — Student Housing & Hostel Finder, Chuka</title>
+<meta name="description" content="Find bedsitters, hostels and houses near Chuka University. Verified landlords, honest prices, no door-to-door.">
+<meta name="theme-color" content="#0E5A33">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href='data:application/manifest+json,{"name":"ChukaHomes","short_name":"ChukaHomes","start_url":".","display":"standalone","background_color":"%23F6F3EA","theme_color":"%230E5A33"}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --bg:#F6F3EA; --card:#FFFFFF; --ink:#17251D; --ink2:#5D685E; --ink3:#8B9188;
+  --line:#E4DFD0; --line2:#D3CDBB;
+  --green:#0E5A33; --green2:#1B7A47; --green-soft:#E5EFE2; --green-ink:#0A3D24;
+  --orange:#E0620F; --orange-d:#C25208; --orange-soft:#FBEADB;
+  --amber:#9A5B0B; --amber-soft:#FBF0D8;
+  --red:#B3372B; --red-soft:#F8E6E2;
+  --blue:#4E86AE;
+  --r:16px; --sh:0 1px 2px rgba(23,37,29,.06),0 6px 18px -8px rgba(23,37,29,.14);
+  --disp:"Bricolage Grotesque",Georgia,serif; --ui:"Instrument Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+img{display:block;max-width:100%}
+button{font-family:var(--ui);border:0;background:none;color:inherit;cursor:pointer;font-size:14px}
+input,select,textarea{font-family:var(--ui);font-size:16px;color:var(--ink)}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+.wrap{max-width:640px;margin:0 auto;min-height:100dvh}
+main#view{max-width:640px;margin:0 auto;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+body.sub main#view{padding-bottom:0}
+h1,h2,h3,.disp{font-family:var(--disp);letter-spacing:-.01em}
+::selection{background:var(--green);color:#fff}
+
+/* ---------- splash ---------- */
+#splash{position:fixed;inset:0;z-index:200;background:var(--green);display:grid;place-items:center;transition:opacity .5s,visibility .5s}
+#splash.off{opacity:0;visibility:hidden}
+.s-in{text-align:center;color:#F6F3EA}
+.s-in .mark{width:64px;height:64px;margin:0 auto 14px;animation:pop .6s cubic-bezier(.2,.9,.3,1.3) backwards}
+.s-word{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:-.02em;animation:up .55s .12s backwards}
+.s-sub{font-size:11px;letter-spacing:.22em;margin-top:6px;color:#BCD8C4;animation:up .55s .22s backwards}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes up{from{transform:translateY(14px);opacity:0}}
+
+/* ---------- generic ---------- */
+.icbtn{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;position:relative;flex:none}
+.icbtn:hover{background:rgba(14,90,51,.08)}
+.icbtn svg{width:21px;height:21px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;font-weight:700;font-size:15px;transition:transform .08s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:19px;height:19px}
+.btn-p{background:var(--orange);color:#fff}
+.btn-p:hover{background:var(--orange-d)}
+.btn-g{background:var(--green);color:#fff}
+.btn-o{border:1.5px solid var(--line2);background:var(--card)}
+.btn-wa{background:#1FA855;color:#fff}
+.btn-danger{background:var(--red-soft);color:var(--red)}
+.grow{flex:1}
+.sq{width:48px;padding:0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border:1.5px solid var(--line2);border-radius:999px;font-weight:600;font-size:13.5px;background:var(--card);white-space:nowrap;transition:all .12s}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.chip svg{width:15px;height:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.seclabel{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink3);text-transform:uppercase;margin:22px 2px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.seclabel a{font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--green);font-weight:700}
+.muted{color:var(--ink2)}.tiny{font-size:12.5px}
+.hr{height:1px;background:var(--line);border:0;margin:14px 0}
+.vbadge{display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:700;font-size:12.5px}
+.vbadge svg{width:15px;height:15px}
+.uvbadge{display:inline-flex;align-items:center;gap:4px;color:var(--amber);font-weight:700;font-size:12.5px}
+.uvbadge svg{width:15px;height:15px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.pill-g{background:var(--green-soft);color:var(--green-ink)}
+.pill-o{background:var(--orange-soft);color:var(--orange-d)}
+.pill-a{background:var(--amber-soft);color:var(--amber)}
+.pill-r{background:var(--red-soft);color:var(--red)}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;font-family:var(--disp);flex:none}
+
+/* ---------- tabbar ---------- */
+#tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,640px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom)}
+body.sub #tabbar{display:none}
+.tbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;color:var(--ink3);font-size:10.5px;font-weight:700;position:relative}
+.tbtn svg{width:22px;height:22px}
+.tbtn.on{color:var(--green)}
+.tbtn.on::before{content:"";position:absolute;top:0;width:26px;height:3px;border-radius:0 0 4px 4px;background:var(--green)}
+.nbadge{position:absolute;top:5px;right:calc(50% - 20px);background:var(--orange);color:#fff;font-size:10px;min-width:17px;height:17px;border-radius:9px;display:grid;place-items:center;padding:0 4px}
+
+/* ---------- toasts / sheets ---------- */
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px);pointer-events:none}
+body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
+.toast{background:var(--green-ink);color:#fff;padding:13px 16px;border-radius:14px;font-size:13.5px;font-weight:600;display:flex;gap:10px;align-items:center;box-shadow:var(--sh);animation:up .3s}
+.toast svg{width:17px;height:17px;flex:none;color:#9BD4AE}
+.toast.warn{background:#5C3A10}
+.ovl{position:fixed;inset:0;background:rgba(13,26,19,.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .22s}
+.ovl.show{opacity:1}
+.sheet{background:var(--bg);width:min(100%,640px);max-height:88dvh;overflow:auto;border-radius:22px 22px 0 0;padding:8px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(40px);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.ovl.show .sheet{transform:none}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line2);margin:8px auto 14px}
+
+/* ---------- skeleton ---------- */
+.skel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;gap:12px;margin-bottom:10px}
+.skel .b{background:#EAE5D6;border-radius:8px;animation:shim 1.1s infinite}
+@keyframes shim{50%{opacity:.45}}
+
+/* ---------- home ---------- */
+.hhero{background:var(--green);color:#F2F6EE;padding:18px 18px 20px;border-radius:0 0 24px 24px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mark{width:42px;height:42px}
+.brand b{font-family:var(--disp);font-weight:800;font-size:22px;display:block;line-height:1;letter-spacing:-.02em}
+.brand small{font-size:9.5px;letter-spacing:.2em;color:#9CC3A8;font-weight:700}
+.hhero .icbtn{color:#DCEADF}
+.hhero .icbtn:hover{background:rgba(255,255,255,.12)}
+.htag{font-family:var(--disp);font-size:19px;font-weight:600;line-height:1.25;margin:16px 0 14px;color:#fff}
+.hsearch{width:100%;display:flex;align-items:center;gap:10px;background:#fff;color:var(--ink3);border-radius:14px;padding:15px 15px;font-size:14.5px;font-weight:600;text-align:left;box-shadow:var(--sh)}
+.hsearch svg{width:19px;height:19px;color:var(--green)}
+.trustrow{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#C4DCC9;margin-top:13px;font-weight:600}
+.trustrow svg{width:16px;height:16px;flex:none;color:#8FD1A4}
+.chiprow{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none}
+.chiprow::-webkit-scrollbar{display:none}
+.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.fcard{flex:none;width:225px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.fcard .ph{position:relative;height:120px}
+.fcard img{width:100%;height:100%;object-fit:cover}
+.fcard .in{padding:10px 12px 12px}
+.ribbon{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;padding:4px 8px;border-radius:7px}
+.list{padding:0 18px}
+.lcard{display:grid;grid-template-columns:98px 1fr;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px;margin-bottom:10px;transition:box-shadow .15s;cursor:pointer}
+.lcard:hover{box-shadow:var(--sh)}
+.lph{position:relative;width:98px;height:98px;border-radius:12px;overflow:hidden;background:#E8E3D4}
+.lph img{width:100%;height:100%;object-fit:cover}
+.takentag{position:absolute;inset:0;background:rgba(23,37,29,.55);color:#fff;display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.12em}
+.lprice{font-family:var(--disp);font-weight:800;font-size:18px;color:var(--green)}
+.lprice span{font-size:12px;color:var(--ink3);font-weight:600}
+.lcard h3{font-size:14.5px;font-weight:700;margin:2px 0;line-height:1.25;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.lmeta{font-size:12.5px;color:var(--ink2)}
+.lam{display:flex;gap:9px;align-items:center;margin:7px 0 5px;color:var(--ink2)}
+.lam svg{width:15px;height:15px;color:var(--green2)}
+.lam .walk{margin-left:auto;display:flex;gap:4px;align-items:center;font-size:12px;font-weight:700;color:var(--ink);background:var(--green-soft);padding:3px 8px;border-radius:999px}
+.lam .walk svg{width:13px;height:13px;color:var(--green)}
+.lfoot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--ink3)}
+.areapills{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 6px;scrollbar-width:none}
+.areapills::-webkit-scrollbar{display:none}
+.apill{flex:none;display:flex;flex-direction:column;padding:10px 14px;border:1.5px solid var(--line2);border-radius:14px;background:var(--card);min-width:104px;text-align:left}
+.apill b{font-family:var(--disp);font-size:14px}
+.apill span{font-size:11px;color:var(--ink3);font-weight:600}
+.hfoot{padding:20px 18px 26px;text-align:center;color:var(--ink3);font-size:12px}
+.hfoot b{color:var(--ink2)}
+
+/* ---------- headers on sub screens ---------- */
+.shead{position:sticky;top:0;z-index:30;background:rgba(246,243,234,.94);backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.shead h2{font-size:18px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shead .icbtn:hover{background:var(--green-soft)}
+
+/* ---------- search ---------- */
+.sbar{display:flex;gap:8px;padding:12px 18px;position:sticky;top:0;background:rgba(246,243,234,.95);backdrop-filter:blur(8px);z-index:25;border-bottom:1px solid var(--line)}
+.sbar .inp{flex:1;display:flex;align-items:center;gap:9px;background:var(--card);border:1.5px solid var(--line2);border-radius:14px;padding:0 12px}
+.sbar input{border:0;outline:0;background:none;flex:1;height:46px}
+.sbar svg{width:18px;height:18px;color:var(--ink3)}
+.fbtn{position:relative;width:46px;height:46px;border-radius:14px;border:1.5px solid var(--line2);background:var(--card);display:grid;place-items:center}
+.fbtn svg{width:20px;height:20px}
+.fbtn .cnt{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#fff;font-size:10.5px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center}
+.sortrow{display:flex;gap:8px;padding:12px 18px 4px;overflow-x:auto;scrollbar-width:none}
+.sortrow::-webkit-scrollbar{display:none}
+.srchd{padding:10px 18px 0;font-size:12.5px;color:var(--ink3);font-weight:600}
+.empty{padding:44px 30px;text-align:center}
+.empty .eic{width:62px;height:62px;border-radius:20px;background:var(--green-soft);display:grid;place-items:center;margin:0 auto 14px}
+.empty .eic svg{width:28px;height:28px;color:var(--green)}
+.empty h3{font-size:18px;margin-bottom:6px}
+.empty p{color:var(--ink2);font-size:13.5px;margin-bottom:16px}
+
+/* ---------- map ---------- */
+.mapcard{margin:14px 14px 0;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#EFEAD9;position:relative}
+#mapSvg{width:100%;height:auto;display:block;touch-action:none;cursor:grab}
+#mapSvg:active{cursor:grabbing}
+.maphud{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px}
+.maphud button{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.95);border:1px solid var(--line2);display:grid;place-items:center;box-shadow:var(--sh)}
+.maphud svg{width:18px;height:18px}
+.maplegend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 20px 4px;font-size:12px;color:var(--ink2);font-weight:600}
+.maplegend i{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:-1px}
+.pin{cursor:pointer}
+.pini{transform-box:fill-box;transform-origin:50% 100%;animation:pindrop .45s cubic-bezier(.2,.8,.3,1.25) backwards;transition:transform .15s}
+@keyframes pindrop{from{opacity:0;transform:translateY(-16px) scale(.5)}}
+.pin.sel .pini{transform:scale(1.18) translateY(-3px)}
+.pinb{stroke:#fff;stroke-width:2}
+.pin.av .pinb{fill:var(--green)}
+.pin.uv .pinb{fill:#fff;stroke:var(--green)}
+.pin.tk .pinb{fill:#A79F8B}
+.pin text{font-family:var(--ui);font-weight:800;font-size:10.5px}
+.pin.av text,.pin.tk text{fill:#fff}
+.pin.uv text{fill:var(--green)}
+.bsring{fill:none;stroke:var(--orange);stroke-width:2;stroke-dasharray:3 4}
+.ring{fill:none;stroke:var(--green);stroke-opacity:.35;stroke-width:1.5;stroke-dasharray:5 7}
+.ringlab{font-family:var(--ui);font-weight:800;font-size:8.5px;letter-spacing:.14em;fill:#4E7B5C}
+.mlab{font-family:var(--ui);font-weight:800;font-size:9.5px;letter-spacing:.16em;fill:#7C7660}
+.mlab2{font-family:var(--ui);font-weight:700;font-size:7.5px;letter-spacing:.1em;fill:#97917C}
+.campuslab{font-family:var(--disp);font-weight:800;font-size:11px;letter-spacing:.12em;fill:#5E8A6C}
+#mPrev{position:fixed;left:50%;transform:translateX(-50%) translateY(110%);bottom:calc(10px + env(safe-area-inset-bottom));width:min(94vw,600px);background:var(--card);border-radius:20px;border:1px solid var(--line);box-shadow:0 18px 44px -12px rgba(23,37,29,.35);z-index:45;transition:transform .28s cubic-bezier(.2,.8,.2,1);padding:12px;display:flex;gap:12px}
+#mPrev.show{transform:translateX(-50%) translateY(0)}
+#mPrev img{width:86px;height:86px;border-radius:14px;object-fit:cover}
+
+/* ---------- listing detail ---------- */
+.gal{position:relative;background:#DDD8C8}
+.galrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.galrow::-webkit-scrollbar{display:none}
+.galrow>div{flex:none;width:100%;scroll-snap-align:start;position:relative}
+.galrow img{width:100%;height:300px;object-fit:cover}
+.wm::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='170'%20height='130'%3E%3Ctext%20x='12'%20y='96'%20font-family='Arial,sans-serif'%20font-size='14'%20font-weight='700'%20fill='rgba(255,255,255,0.32)'%20transform='rotate(-18%2085%2065)'%3ECHUKAHOMES%3C/text%3E%3C/svg%3E");background-size:170px 130px}
+.gal .fl{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:5}
+.gal .fl .icbtn{background:rgba(255,255,255,.94);box-shadow:var(--sh)}
+.gal .cnt{position:absolute;bottom:12px;right:14px;background:rgba(13,26,19,.6);color:#fff;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;z-index:5}
+.gdots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:5}
+.gdots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.55);transition:all .2s}
+.gdots i.on{width:18px;background:#fff}
+.dbody{padding:16px 18px 8px}
+.dprice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dprice b{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--green);letter-spacing:-.02em}
+.dprice span{color:var(--ink3);font-weight:600}
+.dbody h2{font-size:21px;margin:6px 0 4px;line-height:1.2}
+.ban{display:flex;gap:10px;padding:12px 14px;border-radius:14px;font-size:13px;font-weight:600;margin:14px 0;line-height:1.4}
+.ban svg{width:18px;height:18px;flex:none;margin-top:1px}
+.ban-a{background:var(--amber-soft);color:var(--amber)}
+.ban-g{background:var(--green-soft);color:var(--green-ink)}
+.ban-r{background:var(--red-soft);color:var(--red)}
+.lcard2{display:flex;gap:12px;align-items:center;padding:13px 14px;margin:14px 0}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+.fact svg{width:16px;height:16px;color:var(--green);margin-bottom:5px}
+.fact b{display:block;font-family:var(--disp);font-size:15px}
+.fact span{font-size:11.5px;color:var(--ink3);font-weight:600}
+.urow{display:flex;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);align-items:flex-start}
+.urow:last-child{border:0}
+.urow svg{width:19px;height:19px;color:var(--green);flex:none;margin-top:2px}
+.urow b{font-size:13.5px}
+.urow span{display:block;font-size:13px;color:var(--ink2)}
+.ok svg{color:var(--green2)}.no svg{color:#B9B29E}
+.rulechips{display:flex;gap:8px;flex-wrap:wrap;padding:4px 0}
+.abar{position:sticky;bottom:0;background:rgba(246,243,234,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:9px;z-index:30}
+
+/* ---------- chats ---------- */
+.conv{display:flex;gap:12px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);cursor:pointer}
+.conv:hover{background:rgba(14,90,51,.04)}
+.conv .mid{flex:1;min-width:0}
+.conv .top{display:flex;justify-content:space-between;gap:8px}
+.conv .top b{font-size:14.5px}
+.conv .top span{font-size:11.5px;color:var(--ink3)}
+.conv .prev{font-size:13px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.conv .lthumb{width:40px;height:40px;border-radius:10px;object-fit:cover;flex:none}
+.unread{background:var(--orange);color:#fff;font-size:11px;font-weight:800;min-width:19px;height:19px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+.msgs{padding:16px 16px 8px;overflow-y:auto;flex:1}
+.msgs{display:flex;flex-direction:column;gap:6px;min-height:0}
+.daysep{text-align:center;font-size:11px;font-weight:700;color:var(--ink3);margin:10px 0 6px;letter-spacing:.06em}
+.bub{max-width:78%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.4}
+.bub.me{align-self:flex-end;background:var(--green);color:#fff;border-bottom-right-radius:5px}
+.bub.them{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}
+.bub time{display:block;font-size:10px;opacity:.65;margin-top:3px}
+.typing{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;border-bottom-left-radius:5px;padding:13px 15px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:3px;background:var(--ink3);animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{40%{transform:translateY(-4px);opacity:.6}}
+.qrow{display:flex;gap:8px;overflow-x:auto;padding:10px 14px 2px;scrollbar-width:none}
+.qrow::-webkit-scrollbar{display:none}
+.qrow .chip{font-size:12.5px;padding:8px 12px}
+.cinput{display:flex;gap:9px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
+.cinput input{flex:1;height:48px;border:1.5px solid var(--line2);border-radius:14px;padding:0 15px;outline:0;background:var(--card)}
+.cinput input:focus{border-color:var(--green)}
+.snd{width:48px;height:48px;border-radius:14px;background:var(--green);color:#fff;display:grid;place-items:center;flex:none}
+.snd svg{width:19px;height:19px}
+.threadwrap{display:flex;flex-direction:column;height:100dvh}
+.thhead{flex:1;display:flex;gap:10px;align-items:center;min-width:0;cursor:pointer}
+.thhead img{width:38px;height:38px;border-radius:10px;object-fit:cover}
+.thhead b{font-size:14.5px;display:flex;align-items:center;gap:4px}
+.thhead b svg{width:14px;height:14px;color:var(--green)}
+.thhead small{display:block;font-size:11.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+
+/* ---------- forms ---------- */
+.fstep{padding:14px 18px 8px}
+.fld{display:block;margin-bottom:15px}
+.fld>span{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+.fld em{display:block;font-size:12px;color:var(--ink3);font-style:normal;margin-top:6px}
+.fld input[type=text],.fld input[type=tel],.fld input[type=number],.fld input[type=date],.fld input[type=email],.fld input[type=time],.fld textarea,.fld select{width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px;background:var(--card);outline:0}
+.fld textarea{height:auto;min-height:76px;padding:12px 14px}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--green)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{padding:11px 15px;border:1.5px solid var(--line2);border-radius:12px;font-weight:600;font-size:13.5px;background:var(--card)}
+.seg button.on{background:var(--green);border-color:var(--green);color:#fff}
+.wbar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin:2px 18px 4px}
+.wbar i{display:block;height:100%;background:var(--green);transition:width .3s}
+.wsteps{display:flex;justify-content:space-between;align-items:center;padding:12px 18px}
+.wsteps span{font-size:12.5px;font-weight:700;color:var(--ink2)}
+.wnav{display:flex;gap:10px;padding:14px 18px calc(18px + env(safe-area-inset-bottom))}
+.phgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.phgrid .p{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;background:#E8E3D4}
+.phgrid img{width:100%;height:100%;object-fit:cover}
+.phgrid .rm{position:absolute;top:5px;right:5px;width:24px;height:24px;border-radius:8px;background:rgba(13,26,19,.65);color:#fff;display:grid;place-items:center}
+.phgrid .rm svg{width:13px;height:13px}
+.phadd{border:1.5px dashed var(--line2);border-radius:12px;display:grid;place-items:center;color:var(--ink3);font-size:12px;font-weight:700;gap:4px;cursor:pointer;min-height:86px}
+.phadd svg{width:20px;height:20px}
+.miniMap{border-radius:14px;overflow:hidden;border:1.5px solid var(--line2);touch-action:none}
+.miniMap svg{width:100%;height:auto;display:block}
+.chkrow{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line2);border-radius:14px;padding:13px;margin:12px 0;font-size:13.5px;font-weight:600;cursor:pointer}
+.chkrow input{width:20px;height:20px;accent-color:var(--green);margin-top:1px;flex:none}
+.revrow{display:flex;justify-content:space-between;gap:14px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:13px}
+.revrow b{color:var(--ink2);font-weight:600;flex:none}
+.revrow span{text-align:right}
+
+/* ---------- my listings / profile / admin ---------- */
+.myl{padding:14px 18px}
+.mrow{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:12px}
+.mrow .t{display:flex;gap:11px}
+.mrow img{width:64px;height:64px;border-radius:11px;object-fit:cover}
+.mrow .stats{display:flex;gap:16px;margin:9px 0;font-size:12.5px;color:var(--ink2);font-weight:600}
+.mrow .stats b{color:var(--ink);font-family:var(--disp)}
+.mrow .acts{display:flex;gap:8px;flex-wrap:wrap}
+.sbtn{padding:8px 12px;border-radius:10px;border:1.5px solid var(--line2);font-weight:700;font-size:12.5px;display:inline-flex;align-items:center;gap:5px;background:var(--card)}
+.sbtn svg{width:14px;height:14px}
+.sbtn.fill{background:var(--green);border-color:var(--green);color:#fff}
+.sbtn.danger{color:var(--red);border-color:#E5C7C1}
+.prow{display:flex;align-items:center;gap:13px;padding:15px 18px;border-bottom:1px solid var(--line);cursor:pointer;background:var(--card)}
+.prow:last-child{border:0}
+.prow:hover{background:rgba(14,90,51,.04)}
+.prow .mid{flex:1}
+.prow b{font-size:14.5px;display:block}
+.prow small{font-size:12.5px;color:var(--ink3)}
+.prow svg{width:19px;height:19px;color:var(--ink3)}
+.phead{background:var(--green);color:#F2F6EE;padding:22px 18px 20px;border-radius:0 0 24px 24px}
+.phead .av{width:58px;height:58px;font-size:21px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.statline{display:flex;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600}
+.statline b{font-family:var(--disp);font-size:16px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:11px}
+.docchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line2);border-radius:9px;padding:6px 10px;font-size:12px;font-weight:600;margin:6px 6px 0 0}
+.docchip svg{width:14px;height:14px;color:var(--green)}
+.hbars{padding:6px 2px}
+.hbar{display:grid;grid-template-columns:110px 1fr 28px;gap:10px;align-items:center;margin-bottom:9px;font-size:12.5px;font-weight:600}
+.hbar .tr{height:14px;background:var(--green-soft);border-radius:7px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;background:var(--green);border-radius:7px}
+.hbar span{text-align:right;font-family:var(--disp);font-weight:800}
+
+/* ---------- auth ---------- */
+.auth{min-height:100dvh;background:var(--green);color:#F2F6EE;display:flex;flex-direction:column;padding:34px 22px 30px}
+.auth .mark{width:58px;height:58px;margin-bottom:14px}
+.auth h1{font-size:31px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.auth .sub{color:#A9CBB3;font-weight:600;margin:8px 0 24px;font-size:14px}
+.acard{background:var(--bg);color:var(--ink);border-radius:22px;padding:20px 18px;box-shadow:0 24px 60px -20px rgba(0,0,0,.45)}
+.roletabs{display:flex;gap:8px;margin-bottom:18px}
+.roletabs button{flex:1;padding:12px 6px;border-radius:13px;border:1.5px solid var(--line2);font-weight:700;font-size:13.5px;color:var(--ink2)}
+.roletabs button.on{background:var(--green);border-color:var(--green);color:#fff}
+.otps{display:flex;gap:9px;justify-content:center;margin:18px 0}
+.otps input{width:52px;height:58px;text-align:center;font-size:23px;font-weight:800;font-family:var(--disp);border:1.5px solid var(--line2);border-radius:13px;background:var(--card);outline:0}
+.otps input:focus{border-color:var(--green)}
+.demogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.demogrid button{padding:11px 8px;border:1.5px solid var(--line2);border-radius:12px;font-weight:700;font-size:12.5px;background:var(--card);display:flex;gap:7px;align-items:center;justify-content:center}
+.demogrid svg{width:15px;height:15px;color:var(--green)}
+.otpbanner{background:var(--orange-soft);border:1.5px dashed var(--orange);color:var(--orange-d);border-radius:13px;padding:11px 14px;font-size:13px;font-weight:700;text-align:center;margin-bottom:4px}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="splash">
+  <div class="s-in">
+    <div class="mark" id="sMark"></div>
+    <div class="s-word">ChukaHomes</div>
+    <div class="s-sub">THE COMRADES' HOUSING MARKET · CHUKA</div>
+  </div>
+</div>
+<div class="wrap"><main id="view"></main></div>
+<nav id="tabbar"></nav>
+<div id="toasts"></div>
+<div id="sheetRoot"></div>
+
+<script>
+/* =====================================================================
+   ChukaHomes — Phase 1 prototype. Single file, runs fully offline.
+   OTP, chat replies, document review and maps are simulated locally.
+===================================================================== */
+'use strict';
+
+/* ---------- tiny helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const kes=n=>'KES '+Number(n||0).toLocaleString('en-KE');
+const shortK=n=>{const v=n/1000;return (v>=10?Math.round(v):v.toFixed(1).replace('.0',''))+'k';};
+const icons=()=>{window.lucide&&lucide.createIcons();};
+const timeAgo=t=>{const s=(Date.now()-t)/1e3;if(s<60)return 'just now';const m=s/60;if(m<60)return Math.floor(m)+'h'.replace('h','m ago').replace('0m','just now'),Math.floor(m)+'m ago';const h=m/60;if(h<24)return Math.floor(h)+'h ago';const d=h/24;if(d<7)return Math.floor(d)+'d ago';const w=d/7;if(w<5)return Math.floor(w)+'w ago';return new Date(t).toLocaleDateString('en-KE',{day:'numeric',month:'short'});};
+const dayLab=t=>new Date(t).toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short'});
+const fdate=t=>new Date(t).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+const ph=(seed,n)=>Array.from({length:n},(_,i)=>`https://picsum.photos/seed/${seed}${i}/640/440.jpg`);
+const initials=n=>n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const AVC=['#0E5A33','#B4531B','#4E86AE','#7A4BA8','#A83B6A'];
+const avCol=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
+const fmtPhone=p=>{const l=p.replace(/^254/,'0');return l.slice(0,4)+' '+l.slice(4,7)+' '+l.slice(7);};
+
+/* ---------- constants ---------- */
+const TYPES=['Bedsitter','Single Room','1 Bedroom','2 Bedroom','Shared Hostel Room','Double Room'];
+const AREAS=['Chuka Town','Ndagani','Karingani','Magumoni Road','University Gate Area'];
+const FURN=['Furnished','Semi-furnished','Unfurnished'];
+const PERIODS=['Per Month','Per Semester (4 months)','Per Year'];
+const WATER=['Included in rent','Pay separately','Rationed'];
+const ELEC=['Included in rent','Own token meter','Shared meter','Prepaid'];
+const WIFI=['Included in rent','Available but paid separately','Not available'];
+const GARB=['Included','Not included','Paid separately'];
+const BACKUP=['None','Solar','Generator'];
+const BATH=['Ensuite (own)','Shared','Communal'];
+const KITCH=['Own','Shared','None — meals only'];
+const GENDER=['Male only','Female only','Mixed'];
+const VISIT=['Yes','Daytime only','No'];
+const ROADS=['Tarmac','Murram','Footpath only'];
+const SEC=['Guard','Gate lock','CCTV','None'];
+const FLOORS=['Ground','1st','2nd','3rd','4th'];
+const perShort=p=>p.startsWith('Per Month')?'mo':p.startsWith('Per Semester')?'sem':'yr';
+const REPORTS=['Fake or scam listing','Unit is already taken','Wrong price or info','Poster is not the landlord','Misleading photos','Other'];
+const MARK=`<svg viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="13" fill="#0E5A33"/><path d="M11 26 L24 13.5 L37 26" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="16.6" y="24" width="14.8" height="12.5" rx="2.4" stroke="#fff" stroke-width="3"/><rect x="21.4" y="28.2" width="5.2" height="8.3" rx="1" fill="#E0620F"/></svg>`;
+
+/* ---------- geo (illustrated map of the Chuka area) ---------- */
+const GATE={lat:-0.3410,lng:37.6420};
+const PR={x0:250,y0:292,k:27000};
+const pj=(lat,lng)=>[PR.x0+(lng-GATE.lng)*PR.k, PR.y0-(lat-GATE.lat)*PR.k];
+const unpj=(x,y)=>({lat:GATE.lat-(y-PR.y0)/PR.k, lng:GATE.lng+(x-PR.x0)/PR.k});
+function distM(a,b){const R=6371e3,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180,s=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+
+/* ---------- seed data ---------- */
+const KEY='chukahomes_v3'; let DB=null;
+function seed(){
+  const now=Date.now(),H=36e5,D=864e5;
+  const U=(id,role,name,phone,o={})=>Object.assign({id,role,name,phone,verified:false,verifyStatus:'none',docs:null,email:null,regNo:null,suspended:false,joined:now-90*D},o);
+  DB={v:3,session:null,nextIds:{l:13,c:1,u:6,r:2,w:1},
+    users:[
+      U('uA','admin','ChukaHomes Admin','254700000001',{verified:true,verifyStatus:'approved'}),
+      U('uS1','student','Brian Kiprotich','254712345678',{verified:true,verifyStatus:'approved',regNo:'CS22/5317/21',email:'b.kiprotich@student.chuka.ac.ke'}),
+      U('uS2','student','Faith Achieng','254733111222'),
+      U('uL1','landlord','Grace Njeri','254722000111',{verified:true,verifyStatus:'approved',docs:{id:'national-id-grace.jpg',own:'title-deed-ndagani.pdf'},email:'gracenjeri@gmail.com'}),
+      U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-greenview.pdf'},email:'stay@greenviewhostels.ke'}),
+      U('uL3','landlord','Peter Mwangi','254701444555',{verifyStatus:'pending',docs:{id:'mwangi-id.jpg',own:'karingani-plot-agreement.pdf'}}),
+      U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-kaimuri.pdf'}}),
+      U('uL5','landlord','Joseph Mutua','254745666777')
+    ],
+    listings:[
+      {id:'l1',ownerId:'uL1',title:'Sunlit Bedsitter near Main Gate',type:'Bedsitter',units:2,furnishing:'Semi-furnished',floor:'1st',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3362,lng:37.6408,walkGate:7,walkStage:4,road:'Tarmac',rent:5500,period:'Per Month',terms:'Monthly. Deposit = 1 month, refundable on exit.',deposit:5500,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 500 – 900 / month',wifi:'Available but paid separately',wifiCost:'KES 1,500 / month',wifiProvider:'Unlimited Net (shared fibre)',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Guard','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk1',6),video:false,status:'available',boosted:false,flagged:false,views:132,listedAt:now-3*D,updatedAt:now-2*H,ip:'41.90.34.12',device:'Chrome · Android'},
+      {id:'l2',ownerId:'uL3',title:'Affordable Single Room – Karingani',type:'Single Room',units:3,furnishing:'Unfurnished',floor:'Ground',area:'Karingani',landmark:'Behind Karingani Academy',lat:-0.3378,lng:37.6355,walkGate:12,walkStage:6,road:'Murram',rent:2800,period:'Per Month',terms:'Monthly, no deposit. Rent due by the 5th.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Mon & Thu, 6:00 – 9:00 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 300 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Paid separately (KES 100 / month)',backup:'None',bath:'Shared',kitchen:'Shared',cooking:'Yes',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',alcohol:'No',photos:ph('chk2',5),video:false,status:'available',boosted:false,flagged:false,views:64,listedAt:now-14*D,updatedAt:now-9*D,ip:'41.90.78.40',device:'Chrome · Android'},
+      {id:'l3',ownerId:'uL4',title:'Modern 1-Bedroom in Chuka Town',type:'1 Bedroom',units:1,furnishing:'Furnished',floor:'2nd',area:'Chuka Town',landmark:'Above Co-op Bank, Kenyatta Rd',lat:-0.3335,lng:37.6465,walkGate:18,walkStage:2,road:'Tarmac',rent:9500,period:'Per Month',terms:'Monthly. Deposit = 1 month + refundable gate card.',deposit:9500,fees:'KES 500 refundable gate card',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 800 – 1,200 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Zuku Fibre 10 Mbps',garbage:'Included',backup:'Solar (lights & router)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'Yes',photos:ph('chk3',6),video:true,status:'available',boosted:false,flagged:false,views:208,listedAt:now-6*D,updatedAt:now-1*D,ip:'197.232.60.11',device:'Safari · iPhone'},
+      {id:'l4',ownerId:'uL1',title:"Comrade's Choice Bedsitter at the Gate",type:'Bedsitter',units:1,furnishing:'Furnished',floor:'Ground',area:'University Gate Area',landmark:'Past the boda stage, 2nd plot from gate',lat:-0.3395,lng:37.6435,walkGate:3,walkStage:4,road:'Tarmac',rent:6000,period:'Per Month',terms:'Monthly or per semester. Deposit = 1 month.',deposit:6000,fees:'Agency fee KES 500 (once)',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 600 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Building fibre 10 Mbps',garbage:'Included',backup:'Generator (evenings)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk4',6),video:false,status:'available',boosted:true,flagged:false,views:341,listedAt:now-5*D,updatedAt:now-5*H,ip:'41.90.34.12',device:'Chrome · Android'},
+      {id:'l5',ownerId:'uL2',title:'Shared Hostel Room (2 pax) – Ndagani',type:'Shared Hostel Room',units:4,furnishing:'Furnished',floor:'1st',area:'Ndagani',landmark:'Greenview Hostels, 200 m from Ndagani stage',lat:-0.3352,lng:37.6398,walkGate:9,walkStage:3,road:'Murram',rent:3200,period:'Per Month',terms:'KES 12,800 per semester (4 months). No deposit.',deposit:0,fees:'None',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Included in rent',elecCost:'',wifi:'Included in rent',wifiCost:'',wifiProvider:'Campus-link WiFi',garbage:'Included',backup:'None',bath:'Communal',kitchen:'Shared',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'23:00',visitors:'Daytime only',alcohol:'No',photos:ph('chk5',6),video:true,status:'available',boosted:false,flagged:false,views:187,listedAt:now-2*D,updatedAt:now-26*H,ip:'41.90.10.77',device:'Chrome · Windows'},
+      {id:'l6',ownerId:'uL5',title:'Spacious Double Room – Magumoni Road',type:'Double Room',units:2,furnishing:'Semi-furnished',floor:'Ground',area:'Magumoni Road',landmark:'Next to Magumoni SDA Church',lat:-0.3446,lng:37.6470,walkGate:15,walkStage:9,road:'Murram',rent:4500,period:'Per Month',terms:'Monthly. Pay 2 months upfront.',deposit:4500,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 6 – 8 am & 7 – 9 pm',waterTank:'No',elec:'Shared meter',elecCost:'Approx. KES 350 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Shared',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'No',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'Yes',photos:ph('chk6',5),video:false,status:'available',boosted:false,flagged:false,views:58,listedAt:now-10*D,updatedAt:now-6*D,ip:'105.160.20.9',device:'Opera · Android'},
+      {id:'l7',ownerId:'uL4',title:'Quiet 2-Bedroom House – Karingani',type:'2 Bedroom',units:1,furnishing:'Unfurnished',floor:'Ground',area:'Karingani',landmark:'200 m past Karingani Dispensary',lat:-0.3390,lng:37.6340,walkGate:14,walkStage:8,road:'Murram',rent:13000,period:'Per Month',terms:'Monthly. Deposit = 1 month. Water bill shared.',deposit:13000,fees:'None',negotiable:'Yes',water:'Pay separately',waterCost:'KES 300 / month per household',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 1,500 / month',wifi:'Available but paid separately',wifiCost:'KES 2,500 / month',wifiProvider:'Zuku',garbage:'Paid separately (KES 150 / month)',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'Yes',photos:ph('chk7',5),video:false,status:'available',boosted:false,flagged:false,views:41,listedAt:now-20*D,updatedAt:now-12*D,ip:'197.232.60.11',device:'Safari · iPhone'},
+      {id:'l8',ownerId:'uL4',title:'Bedsitter with Balcony – Town Edge',type:'Bedsitter',units:1,furnishing:'Semi-furnished',floor:'1st',area:'Chuka Town',landmark:'Kianjai Building, behind the market',lat:-0.3345,lng:37.6465,walkGate:16,walkStage:3,road:'Tarmac',rent:5800,period:'Per Month',terms:'Monthly. Deposit = 1 month.',deposit:5800,fees:'None',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 500 / month',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'No',photos:ph('chk8',5),video:false,status:'available',boosted:false,flagged:false,views:96,listedAt:now-8*D,updatedAt:now-3*D,ip:'197.232.60.11',device:'Safari · iPhone'},
+      {id:'l9',ownerId:'uL3',title:'Single Room near Ndagani Stage',type:'Single Room',units:2,furnishing:'Unfurnished',floor:'Ground',area:'Ndagani',landmark:'50 m from Ndagani matatu stage',lat:-0.3368,lng:37.6420,walkGate:9,walkStage:1,road:'Tarmac',rent:2500,period:'Per Month',terms:'Monthly, no deposit.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Tue & Fri, 7 – 10 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 250 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Paid separately (KES 80 / month)',backup:'None',bath:'Shared',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk9',5),video:false,status:'available',boosted:false,flagged:false,views:88,listedAt:now-4*D,updatedAt:now-30*H,ip:'41.90.78.40',device:'Chrome · Android'},
+      {id:'l10',ownerId:'uL2',title:'New Bedsitters – University Gate Area',type:'Bedsitter',units:3,furnishing:'Furnished',floor:'Ground',area:'University Gate Area',landmark:'Greenview Annex, next to Main Gate',lat:-0.3404,lng:37.6445,walkGate:5,walkStage:4,road:'Tarmac',rent:6200,period:'Per Month',terms:'Semester (4 months) = KES 24,800, or monthly. Deposit = 1 month.',deposit:6200,fees:'None',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 500 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Greenview Fibre',garbage:'Included',backup:'Solar (lights)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk10',6),video:true,status:'available',boosted:true,flagged:false,views:276,listedAt:now-1*D,updatedAt:now-7*H,ip:'41.90.10.77',device:'Chrome · Windows'},
+      {id:'l11',ownerId:'uL1',title:'Cozy 1-Bedroom – Ndagani',type:'1 Bedroom',units:1,furnishing:'Semi-furnished',floor:'1st',area:'Ndagani',landmark:'Above Ndagani Pharmacy',lat:-0.3372,lng:37.6390,walkGate:8,walkStage:5,road:'Murram',rent:8000,period:'Per Month',terms:'Monthly. Deposit = 1 month.',deposit:8000,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 700 / month',wifi:'Available but paid separately',wifiCost:'KES 1,500 / month',wifiProvider:'Unlimited Net',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'No',photos:ph('chk11',5),video:false,status:'available',boosted:false,flagged:false,views:74,listedAt:now-7*D,updatedAt:now-4*D,ip:'41.90.34.12',device:'Chrome · Android'},
+      {id:'l12',ownerId:'uL3',title:'Budget Single – Magumoni',type:'Single Room',units:1,furnishing:'Unfurnished',floor:'Ground',area:'Magumoni Road',landmark:'Magumoni market, past the stage',lat:-0.3455,lng:37.6445,walkGate:17,walkStage:7,road:'Footpath only',rent:2200,period:'Per Month',terms:'Monthly, no deposit.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 6 – 8 am',waterTank:'No',elec:'Shared meter',elecCost:'Approx. KES 200 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Communal',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'No',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk12',5),video:false,status:'taken',boosted:false,flagged:false,views:120,listedAt:now-25*D,updatedAt:now-16*D,ip:'41.90.78.40',device:'Chrome · Android'}
+    ],
+    convs:[
+      {id:'c_l5_uS1',listingId:'l5',studentId:'uS1',landlordId:'uL2',blocked:false,autoDone:false,msgs:[
+        {from:'uS1',text:'Hi! Is the shared room still available for this semester?',ts:now-30*H,read:true},
+        {from:'uL2',text:'Yes, one bed is left. We host comrades only — carry your student ID when you come.',ts:now-29*H,read:true},
+        {from:'uL2',text:'Viewing day is Saturday at 10 am. Karibu!',ts:now-20*H,read:false}]},
+      {id:'c_l1_uS2',listingId:'l1',studentId:'uS2',landlordId:'uL1',blocked:false,autoDone:false,msgs:[
+        {from:'uS2',text:'Hi, is the bedsitter on the 1st floor still vacant?',ts:now-6*H,read:false},
+        {from:'uS2',text:'Can I pass by tomorrow morning to view it?',ts:now-6*H+9e5,read:false}]},
+      {id:'c_l4_uS1',listingId:'l4',studentId:'uS1',landlordId:'uL1',blocked:false,autoDone:false,msgs:[
+        {from:'uS1',text:'Is the price negotiable for a comrade?',ts:now-2*D,read:true},
+        {from:'uL1',text:'Come view it first, then we talk.',ts:now-2*D+36e5,read:true}]}
+    ],
+    reports:[{id:'r1',listingId:'l6',by:'uS2',reason:'Wrong price or info',note:'The caretaker is asking KES 5,500, not 4,500 as listed.',ts:now-1*D,status:'open'}],
+    favorites:[{userId:'uS1',listingId:'l4'},{userId:'uS1',listingId:'l10'}],
+    watches:[]
+  };
+  save();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===3){DB=d;return;}}}catch(e){}seed();}
+loadDB();
+const user=id=>DB.users.find(u=>u.id===id)||null;
+const listing=id=>DB.listings.find(l=>l.id===id)||null;
+const me=()=>DB.session?user(DB.session):null;
+const isLive=l=>l.status==='available'||l.status==='taken';
+const visibleListings=()=>DB.listings.filter(l=>isLive(l)&&!(user(l.ownerId)||{}).suspended);
+const hasWifi=l=>l.wifi==='Included in rent', hasWater=l=>l.water==='Included in rent', hasElec=l=>l.elec==='Included in rent';
+const ensuite=l=>l.bath==='Ensuite (own)', ownKit=l=>l.kitchen==='Own', guardOK=l=>(l.security||[]).includes('Guard'), backupOK=l=>l.backup&&l.backup!=='None';
+
+/* ---------- toast / modal ---------- */
+function toast(msg,icon='check',warn){const t=document.createElement('div');t.className='toast'+(warn?' warn':'');t.innerHTML=`<i data-lucide="${icon}"></i><span>${msg}</span>`;$('#toasts').appendChild(t);icons();setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3200);}
+function modal(html){$('#sheetRoot').innerHTML=`<div class="ovl" onclick="App.closeM(event)"><div class="sheet" onclick="event.stopPropagation()"><div class="grab"></div>${html}</div></div>`;icons();requestAnimationFrame(()=>$('.ovl').classList.add('show'));}
+function closeM(){$('.ovl')&&$('.ovl').classList.remove('show');setTimeout(()=>$('#sheetRoot').innerHTML='',240);}
+
+/* ---------- filters ---------- */
+let F=emptyF(),FT=null,MAPSEL=null,MAPAVAIL=false;
+function emptyF(){return {q:'',types:[],areas:[],min:'',max:'',maxWalk:'',gender:[],furn:[],amen:{},hideTaken:true,sort:'new'};}
+function match(l,f){
+  if(f.hideTaken&&l.status==='taken')return false;
+  if(f.q){const q=f.q.toLowerCase();if(!(l.title+' '+l.area+' '+l.landmark+' '+l.type).toLowerCase().includes(q))return false;}
+  if(f.types.length&&!f.types.includes(l.type))return false;
+  if(f.areas.length&&!f.areas.includes(l.area))return false;
+  if(f.min&&l.rent<+f.min)return false;
+  if(f.max&&l.rent>+f.max)return false;
+  if(f.maxWalk&&l.walkGate>+f.maxWalk)return false;
+  if(f.gender.length&&!f.gender.includes(l.gender))return false;
+  if(f.furn.length&&!f.furn.includes(l.furnishing))return false;
+  const a=f.amen||{};
+  if(a.wifi&&!hasWifi(l))return false; if(a.water&&!hasWater(l))return false; if(a.elec&&!hasElec(l))return false;
+  if(a.ensuite&&!ensuite(l))return false; if(a.kitchen&&!ownKit(l))return false; if(a.guard&&!guardOK(l))return false; if(a.backup&&!backupOK(l))return false;
+  return true;
+}
+const applyF=(ls,f)=>ls.filter(l=>match(l,f)).sort((a,b)=>f.sort==='priceAsc'?a.rent-b.rent:f.sort==='priceDesc'?b.rent-a.rent:f.sort==='walk'?a.walkGate-b.walkGate:b.listedAt-a.listedAt);
+const activeChips=f=>{const c=[];f.types.forEach(t=>c.push({k:'types',v:t,label:t}));f.areas.forEach(a=>c.push({k:'areas',v:a,label:a}));f.gender.forEach(g=>c.push({k:'gender',v:g,label:g}));f.furn.forEach(x=>c.push({k:'furn',v:x,label:x}));if(f.min||f.max)c.push({k:'price',label:kes(f.min||0)+(f.max?' – '+kes(f.max):'+')});if(f.maxWalk)c.push({k:'maxWalk',label:'≤ '+f.maxWalk+' min to gate'});Object.entries(f.amen||{}).filter(([,v])=>v).forEach(([k])=>c.push({k:'amen:'+k,label:{wifi:'WiFi included',water:'Water included',elec:'Electricity incl.',ensuite:'Ensuite',kitchen:'Own kitchen',guard:'Security guard',backup:'Backup power'}[k]}));if(!f.hideTaken)c.push({k:'hideTaken',label:'Includes taken'});return c;};
+
+/* ---------- replies (simulated landlord) ---------- */
+function autoReply(text,l){
+  const t=text.toLowerCase();
+  if(/avail|vacant|free|still/.test(t))return `Yes, it is still available. You can come view it any day between 9 am and 5 pm.`;
+  if(/price|rent|reduce|bargain|nego|lower|less|deposit|pay|mpesa/.test(t))return `Please do not send any money before viewing the unit in person. The deposit is ${l.deposit?kes(l.deposit):'none'} — we sort payment at the office after you have seen the place.`;
+  if(/water/.test(t))return l.water==='Rationed'?`Water flows ${l.waterSched.toLowerCase()}, but there is ${l.waterTank==='Yes'?'a storage tank, so you never fully run out':'no tank, so plan with a bucket'}.`:`Water is ${l.water.toLowerCase()} and there is ${l.waterTank==='Yes'?'a storage tank on the compound':'no storage tank'}.`;
+  if(/wifi|internet|data/.test(t))return l.wifi==='Included in rent'?`Yes, WiFi is included in the rent (${l.wifiProvider}).`:`WiFi is ${l.wifi.toLowerCase()}${l.wifiCost?` at ${l.wifiCost}`:''}.`;
+  if(/view|visit|see|today|tomorrow|pass/.test(t))return `Karibu! Come view between 9 am and 5 pm. Ask for me where you see the ChukaHomes sign.`;
+  if(/room|house|bedsit|unit|size|furnish/.test(t))return `It is a ${l.type.toLowerCase()}, ${l.furnishing.toLowerCase()}, on the ${l.floor==='Ground'?'ground':l.floor+' floor'}. ${l.units>1?l.units+' units are vacant.':'One unit is vacant.'}`;
+  return ['Noted, comrade. Anything else you would like to know?','You are welcome to pass by and see it yourself first.','Let me confirm and get back to you shortly.'][Math.floor(Math.random()*3)];
+}
+const QUICK=['Yes, it is available — come view between 9 am and 5 pm.','The rent is fixed, sorry.','Water is included and there is a storage tank.','Deposit is one month, refundable when you leave.'];
+
+/* =====================================================================
+   RENDERERS
+===================================================================== */
+const stack=[];
+function go(n,p={}){stack.push({name:n,params:p});render();}
+function tab(n){stack.length=0;stack.push({name:n,params:{}});render();}
+function back(){stack.length>1?stack.pop():tab('home');}
+let HOMESEEN=false;
+
+function render(){
+  const r=stack[stack.length-1];
+  document.body.classList.toggle('sub',['listing','thread','create','mylistings','admin','privacy','vstudent','vlandlord'].includes(r.name));
+  const R={home:renderHome,search:renderSearch,map:renderMap,chats:renderChats,profile:renderProfile,auth:renderAuth,listing:renderListing,thread:renderThread,create:renderCreate,mylistings:renderMyListings,favorites:renderFavorites,admin:renderAdmin,privacy:renderPrivacy,vstudent:renderVStudent,vlandlord:renderVLandlord};
+  $('#view').innerHTML=(R[r.name]||renderHome)(r.params);
+  renderTabs(r.name);icons();
+  if(r.name==='home'&&!HOMESEEN){HOMESEEN=true;setTimeout(()=>{if(stack[stack.length-1].name==='home')render();},750);}
+  if(r.name==='map')mapInit(r.params);
+  if(r.name==='thread'){const m=$('#msgs');m&&(m.scrollTop=m.scrollHeight);mmNone();}
+  if(r.name==='create'&&r.params.step===2)mmBind();
+  if(MAPSEL&&r.name!=='map')MAPSEL=null;
+  window.scrollTo(0,0);
+}
+function mmNone(){}
+
+function renderTabs(active){
+  const n=DB.convs.filter(c=>(c.studentId===DB.session||c.landlordId===DB.session)).reduce((a,c)=>a+c.msgs.filter(m=>m.from!==DB.session&&!m.read).length,0);
+  const T=[['home','home','Home'],['search','search','Search'],['map','map','Map'],['chats','message-circle','Chats'],['profile','user','Profile']];
+  $('#tabbar').innerHTML=T.map(([id,ic,lb])=>`<button class="tbtn ${active===id?'on':''}" onclick="App.tab('${id}')"><i data-lucide="${ic}"></i><span>${lb}</span>${id==='chats'&&n?`<b class="nbadge">${n}</b>`:''}</button>`).join('');
+}
+
+/* ---------- components ---------- */
+function amIcons(l){const a=[];hasWifi(l)&&a.push('wifi');hasWater(l)&&a.push('droplets');hasElec(l)&&a.push('zap');ensuite(l)&&a.push('bath');ownKit(l)&&a.push('chef-hat');guardOK(l)&&a.push('shield-check');return a.slice(0,4).map(i=>`<i data-lucide="${i}"></i>`).join('');}
+function listRow(l){
+  const o=user(l.ownerId);
+  return `<article class="lcard" onclick="App.openL('${l.id}')">
+    <div class="lph"><img loading="lazy" src="${l.photos[0]}" alt="">${l.status==='taken'?'<span class="takentag">TAKEN</span>':''}</div>
+    <div>
+      <div class="lprice">${kes(l.rent)}<span>/${perShort(l.period)}</span>${l.negotiable==='Yes'?' <small style="font-size:10px;color:var(--green2);font-weight:800"> O.N.O</small>':''}</div>
+      <h3>${esc(l.title)}</h3>
+      <p class="lmeta">${esc(l.area)} · ${l.type} · ${l.floor==='Ground'?'Ground':esc(l.floor)+' floor'}</p>
+      <div class="lam">${amIcons(l)}<span class="walk"><i data-lucide="footprints"></i>${l.walkGate} min</span></div>
+      <div class="lfoot">${o&&o.verified?'<span class="vbadge"><i data-lucide="badge-check"></i>Verified landlord</span>':'<span class="uvbadge"><i data-lucide="shield-alert"></i>Unverified</span>'}<span>Updated ${timeAgo(l.updatedAt)}</span></div>
+    </div></article>`;
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  if(!HOMESEEN){return `<div style="padding:18px">
+    <div class="hhero" style="height:180px"></div>
+    <div class="skel"><div class="b" style="width:98px;height:98px;flex:none"></div><div style="flex:1"><div class="b" style="width:60%;height:18px;margin-bottom:9px"></div><div class="b" style="width:90%;height:13px;margin-bottom:7px"></div><div class="b" style="width:45%;height:13px"></div></div></div>
+    <div class="skel"><div class="b" style="width:98px;height:98px;flex:none"></div><div style="flex:1"><div class="b" style="width:70%;height:18px;margin-bottom:9px"></div><div class="b" style="width:80%;height:13px;margin-bottom:7px"></div><div class="b" style="width:40%;height:13px"></div></div></div>
+    <div class="skel"><div class="b" style="width:98px;height:98px;flex:none"></div><div style="flex:1"><div class="b" style="width:55%;height:18px;margin-bottom:9px"></div><div class="b" style="width:85%;height:13px;margin-bottom:7px"></div><div class="b" style="width:50%;height:13px"></div></div></div>
+  </div>`;}
+  const live=visibleListings().filter(l=>l.status==='available');
+  const feat=live.filter(l=>l.boosted);
+  const recent=[...live].sort((a,b)=>b.listedAt-a.listedAt).slice(0,6);
+  const areaCounts=AREAS.map(a=>({a,n:live.filter(l=>l.area===a).length})).filter(x=>x.n);
+  const chips=[['All',{}],['Bedsitter',{types:['Bedsitter']}],['Single Room',{types:['Single Room']}],['Under KES 4,000',{max:4000}],['WiFi included',{amen:{wifi:true}}],['Ensuite',{amen:{ensuite:true}}],['≤ 7 min to gate',{maxWalk:7}]];
+  return `<div>
+  <div class="hhero">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="brand">${MARK}<div><b>ChukaHomes</b><small>NDAGANI · TOWN · GATE · CHUKA</small></div></div>
+      <button class="icbtn" onclick="App.tab('chats')"><i data-lucide="message-circle"></i></button>
+    </div>
+    <p class="htag">Skip the door-to-door.<br>Find your crib from your phone.</p>
+    <button class="hsearch" onclick="App.tab('search')"><i data-lucide="search"></i>Area, landmark, “bedsitter near gate”…</button>
+    <div class="trustrow"><i data-lucide="shield-check"></i>No payments happen here — view the unit first, then pay the landlord directly.</div>
+  </div>
+  <div class="chiprow">${chips.map(([lb,f],i)=>`<button class="chip" onclick="App.quick(${i})">${lb}</button>`).join('')}</div>
+  ${feat.length?`<div class="seclabel" style="padding:0 18px">Boosted near you <a>Phase-2 M-Pesa boosts</a></div>
+  <div class="rail">${feat.map(l=>`<div class="fcard" onclick="App.openL('${l.id}')">
+    <div class="ph wm"><img loading="lazy" src="${l.photos[0]}" alt=""><span class="ribbon">BOOSTED</span></div>
+    <div class="in"><div class="lprice">${kes(l.rent)}<span>/${perShort(l.period)}</span></div><h3 style="font-size:13.5px;font-family:var(--ui);font-weight:700;margin:2px 0">${esc(l.title)}</h3><p class="lmeta">${esc(l.area)} · ${l.walkGate} min to gate</p></div>
+  </div>`).join('')}</div>`:''}
+  <div class="seclabel" style="padding:0 18px">Browse by area</div>
+  <div class="areapills">${areaCounts.map(({a,n})=>`<button class="apill" onclick="App.areaQ('${esc(a)}')"><b>${esc(a)}</b><span>${n} live ${n===1?'unit':'units'}</span></button>`).join('')||'<p class="muted" style="padding:0 4px">No live units yet.</p>'}</div>
+  <div class="seclabel" style="padding:0 18px">Recently added <a onclick="App.tab('search')">See all</a></div>
+  <div class="list">${recent.map(listRow).join('')||`<div class="empty card"><div class="eic"><i data-lucide="door-open"></i></div><h3>No listings yet</h3><p>Landlords are still moving in. Check back this evening.</p></div>`}</div>
+  <div class="hfoot"><b>ChukaHomes</b> never handles your rent.<br>View first · agree in person · pay after. Phase 1 demo build.</div>
+  </div>`;
+}
+
+/* ---------- SEARCH ---------- */
+function renderSearch(){
+  const res=applyF(visibleListings(),F);
+  const ch=activeChips(F);
+  const sorts=[['new','Newest'],['priceAsc','Price ↑'],['priceDesc','Price ↓'],['walk','Closest to campus']];
+  const fcount=['types','areas','gender','furn'].reduce((a,k)=>a+F[k].length,0)+(F.min||F.max?1:0)+(F.maxWalk?1:0)+Object.values(F.amen).filter(Boolean).length+(!F.hideTaken?1:0);
+  return `<div>
+  <div class="sbar">
+    <div class="inp"><i data-lucide="search"></i><input id="sq" placeholder="Area, landmark, type…" value="${esc(F.q)}" oninput="App.qset(this.value)"></div>
+    <button class="fbtn" onclick="App.openFilters()"><i data-lucide="sliders-horizontal"></i>${fcount?`<b class="cnt">${fcount}</b>`:''}</button>
+  </div>
+  <div class="sortrow">${sorts.map(([k,lb])=>`<button class="chip ${F.sort===k?'on':''}" onclick="App.setSort('${k}')">${lb}</button>`).join('')}</div>
+  ${ch.length?`<div class="chiprow">${ch.map(c=>`<button class="chip on" onclick="App.rmChip('${c.k}','${esc(c.v||'')}')">${esc(c.label)} <i data-lucide="x"></i></button>`).join('')}</div>`:''}
+  <div class="srchd">${res.length} ${res.length===1?'unit':'units'} ${F.q?`for “${esc(F.q)}”`:'matching your filters'}</div>
+  <div class="list" id="res">${res.length?res.map(listRow).join(''):`
+    <div class="empty card" style="margin-top:14px">
+      <div class="eic"><i data-lucide="search"></i></div>
+      <h3>No listings match your filters</h3>
+      <p>Try widening your price range, or removing a filter or two — good units go fast around here.</p>
+      <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-o" onclick="App.resetF()">Reset filters</button>
+        <button class="btn btn-g" onclick="App.saveSearchF()"><i data-lucide="bell"></i>Notify me on new matches</button>
+      </div>
+    </div>`}</div></div>`;
+}
+
+/* ---------- filter sheet ---------- */
+function openFilters(){FT=JSON.parse(JSON.stringify(F));modal(filterSheetHTML());}
+function filterSheetHTML(){
+  const chipM=(k,v)=>`<button class="chip ${FT[k].includes(v)?'on':''}" onclick="App.tchip(this,'${k}','${esc(v)}')">${esc(v)}</button>`;
+  const chipA=k=>`<button class="chip ${FT.amen[k]?'on':''}" onclick="App.achip(this,'${k}')">${{wifi:'WiFi included',water:'Water included',elec:'Electricity included',ensuite:'Ensuite bathroom',kitchen:'Own kitchen',guard:'Security guard',backup:'Backup power'}[k]}</button>`;
+  return `<h2 style="font-size:20px;margin:4px 0 16px">Filters</h2>
+  <label class="fld"><span>Price range (KES)</span><div style="display:flex;gap:9px;align-items:center"><input type="number" inputmode="numeric" placeholder="Min" value="${FT.min}" style="flex:1;height:46px;border:1.5px solid var(--line2);border-radius:12px;padding:0 12px" oninput="App.fmin(this.value)"><span class="muted">–</span><input type="number" inputmode="numeric" placeholder="Max" value="${FT.max}" style="flex:1;height:46px;border:1.5px solid var(--line2);border-radius:12px;padding:0 12px" oninput="App.fmax(this.value)"></div></label>
+  <label class="fld"><span>Property type</span><div class="seg">${TYPES.map(t=>chipM('types',t)).join('')}</div></label>
+  <label class="fld"><span>Walk to Main Gate</span><div class="seg">${[['','Any'],['5','≤ 5 min'],['10','≤ 10 min'],['15','≤ 15 min']].map(([v,lb])=>`<button class="chip ${String(FT.maxWalk)===v?'on':''}" onclick="App.schip(this,'maxWalk','${v}')">${lb}</button>`).join('')}</div></label>
+  <label class="fld"><span>Gender restriction</span><div class="seg">${GENDER.map(g=>chipM('gender',g)).join('')}</div></label>
+  <label class="fld"><span>Furnishing</span><div class="seg">${FURN.map(f=>chipM('furn',f)).join('')}</div></label>
+  <label class="fld"><span>Amenities</span><div class="seg">${['wifi','water','elec','ensuite','kitchen','guard','backup'].map(chipA).join('')}</div></label>
+  <label class="fld"><span>Area / estate</span><div class="seg">${AREAS.map(a=>chipM('areas',a)).join('')}</div></label>
+  <label class="chkrow" style="margin-bottom:16px"><input type="checkbox" ${!FT.hideTaken?'checked':''} onchange="App.ftaken(this.checked)"><span>Include units already marked <b>Taken</b></span></label>
+  <div style="display:flex;gap:9px;align-items:center">
+    <button class="btn btn-o" onclick="App.resetFT()">Reset</button>
+    <button class="btn btn-o sq" title="Save this search" onclick="App.saveSearch()"><i data-lucide="bell"></i></button>
+    <button class="btn btn-p grow" onclick="App.applyF()">Show <span id="fc">${applyF(visibleListings(),FT).length}</span> listings</button>
+  </div>`;
+}
+
+/* ---------- MAP ---------- */
+function baseLayers(mini){
+  return `
+  <rect x="-200" y="-200" width="800" height="960" fill="#EFEAD9"/>
+  <path d="M34,-10 C58,80 28,150 52,230 C76,310 38,400 58,470 C68,520 48,555 50,575" stroke="#A9CDE0" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M34,-10 C58,80 28,150 52,230 C76,310 38,400 58,470 C68,520 48,555 50,575" stroke="#C6E1F1" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <text x="26" y="330" font-size="9.5" fill="#7FA6C4" font-weight="700" transform="rotate(-76 26 330)" font-family="var(--ui)" letter-spacing="1">Nithi River</text>
+  <path d="M204,302 L238,286 L286,292 L310,326 L294,364 L244,376 L212,348 Z" fill="#D7E7D0" stroke="#BAD5B2" stroke-width="1.5"/>
+  <rect x="238" y="300" width="17" height="11" rx="2" fill="#C1D9B8"/><rect x="262" y="310" width="15" height="10" rx="2" fill="#C1D9B8"/><rect x="244" y="322" width="13" height="9" rx="2" fill="#C1D9B8"/>
+  <text x="252" y="392" text-anchor="middle" class="campuslab">CHUKA UNIVERSITY</text>
+  <path d="M262,-8 C258,40 252,64 250,92 C248,120 238,146 234,168 C230,204 246,252 250,290 C254,336 258,430 262,478 C264,516 266,544 268,568" stroke="#CFC7B2" stroke-width="13" fill="none"/>
+  <path d="M262,-8 C258,40 252,64 250,92 C248,120 238,146 234,168 C230,204 246,252 250,290 C254,336 258,430 262,478 C264,516 266,544 268,568" stroke="#FFFFFF" stroke-width="9" fill="none"/>
+  <path d="M246,96 C190,112 130,150 92,190 C80,204 68,222 60,242" stroke="#E6D4AC" stroke-width="7" fill="none"/>
+  <path d="M246,96 C190,112 130,150 92,190 C80,204 68,222 60,242" stroke="#C9AC74" stroke-width="1.6" stroke-dasharray="7 7" fill="none"/>
+  <path d="M252,330 C300,360 340,378 386,392" stroke="#E6D4AC" stroke-width="7" fill="none"/>
+  <path d="M252,330 C300,360 340,378 386,392" stroke="#C9AC74" stroke-width="1.6" stroke-dasharray="7 7" fill="none"/>
+  <path d="M340,380 C332,396 326,406 320,414" stroke="#E6D4AC" stroke-width="6" fill="none"/>
+  <path d="M262,88 C290,84 312,88 332,98" stroke="#E6D4AC" stroke-width="6" fill="none"/>
+  <path d="M108,214 C140,248 176,272 208,290" stroke="#CFC7B2" stroke-width="2.6" stroke-dasharray="2.5 5" fill="none"/>
+  <circle cx="90" cy="170" r="0"/>
+  ${[90,170,250].map((r,i)=>`<circle class="ring" cx="250" cy="292" r="${r}"/>`).join('')}
+  <text class="ringlab" x="160" y="283" text-anchor="middle">5 MIN</text>
+  <text class="ringlab" x="84" y="286" text-anchor="middle">10 MIN</text>
+  <text class="ringlab" x="8" y="286">15 MIN WALK</text>
+  <circle cx="258" cy="100" r="4.5" fill="#E0620F"/><text class="mlab2" x="266" y="104">MATATU STAGE</text>
+  <text class="mlab" x="244" y="60" text-anchor="middle">CHUKA TOWN</text>
+  <text class="mlab" x="198" y="146" text-anchor="middle">NDAGANI</text>
+  <text class="mlab" x="88" y="192" text-anchor="middle">KARINGANI</text>
+  <text class="mlab" x="344" y="428" text-anchor="middle">MAGUMONI</text>
+  <text class="mlab2" x="272" y="128" transform="rotate(80 272 128)">B6 · MERU–EMBU RD</text>
+  <g transform="translate(374,30)"><line x1="0" y1="8" x2="0" y2="-6" stroke="#7C7660" stroke-width="1.6"/><path d="M0,-8 L3.4,-1.4 L0,-3.6 L-3.4,-1.4 Z" fill="#7C7660"/><text x="0" y="19" text-anchor="middle" font-size="9" font-weight="800" fill="#7C7660" font-family="var(--ui)">N</text></g>
+  <g transform="translate(20,542)"><line x1="0" y1="0" x2="25" y2="0" stroke="#7C7660" stroke-width="2"/><line x1="0" y1="-3" x2="0" y2="3" stroke="#7C7660" stroke-width="2"/><line x1="25" y1="-3" x2="25" y2="3" stroke="#7C7660" stroke-width="2"/><text x="31" y="4" font-size="8.5" font-weight="700" fill="#7C7660" font-family="var(--ui)">100 m</text></g>
+  <circle cx="250" cy="292" r="7" fill="#fff" stroke="#0E5A33" stroke-width="3"/>
+  <text class="mlab2" x="250" y="312" text-anchor="middle">MAIN GATE</text>`;
+}
+function pinHTML(l,i,sel){
+  const [x,y]=pj(l.lat,l.lng);
+  const cls=l.status==='taken'?'tk':(user(l.ownerId)||{}).verified?'av':'uv';
+  return `<g class="pin ${cls} ${sel?'sel':''}" data-id="${l.id}" transform="translate(${x},${y})" onpointerdown="event.stopPropagation();App.selPin('${l.id}')">
+    <g class="pini" style="animation-delay:${60+i*45}ms">
+      ${l.boosted?`<circle class="bsring" cy="-19" r="18"/>`:''}
+      <ellipse cy="2" rx="7" ry="2.6" fill="rgba(23,37,29,.2)"/>
+      <path class="pinb" d="M0,1 C-1.8,-4 -13,-9 -13,-19 A13,13 0 1 1 13,-19 C13,-9 1.8,-4 0,1 Z"/>
+      <text y="-15" text-anchor="middle">${shortK(l.rent)}</text>
+    </g></g>`;
+}
+function mapSVG(listings,mini){
+  const sel=mini?'':listings.map((l,i)=>pinHTML(l,i,l.id===MAPSEL)).join('');
+  return `<svg id="${mini?'mmSvg':'mapSvg'}" viewBox="${mini?'75 130 290 300':'-10 -10 420 580'}" xmlns="http://www.w3.org/2000/svg">
+    <g id="${mini?'':'pan'}">${mini?baseLayers(true):baseLayers(false)}${mini?`<g id="mmPin" transform="translate(${(pj(draft.lat||GATE.lat,draft.lng||GATE.lng)).join(',')} )"><circle r="8" fill="#E0620F" stroke="#fff" stroke-width="3"/><circle r="13" fill="none" stroke="#E0620F" stroke-width="1.6" opacity=".5"/></g>`:sel}</g>
+  </svg>`;
+}
+let MP={s:1,x:0,y:0};
+function mapInit(params){
+  const svg=$('#mapSvg'),pan=$('#pan');if(!svg)return;
+  if(MAPSEL&&params.sel){const l=listing(MAPSEL);if(l){const[x,y]=pj(l.lat,l.lng);MP={s:1.5,x:200-x*1.5,y:270-y*1.5};showPrev(l);}else MAPSEL=null;}
+  const apply=()=>pan.setAttribute('transform',`translate(${MP.x},${MP.y}) scale(${MP.s})`);
+  apply();
+  let drag=null,moved=false;
+  svg.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,ox:MP.x,oy:MP.y};moved=false;svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>7)moved=true;MP.x=drag.ox+dx;MP.y=drag.oy+dy;apply();});
+  svg.addEventListener('pointerup',()=>{if(!moved){MAPSEL=null;hidePrev();$$('.pin.sel').forEach(p=>p.classList.remove('sel'));}drag=null;});
+  svg.addEventListener('pointercancel',()=>drag=null);
+}
+function renderMap(){
+  const ls=visibleListings().filter(l=>MAPAVAIL?l.status==='available':true);
+  return `<div>
+  <header class="shead" style="border-bottom:0"><h2 style="font-family:var(--disp)">Comrade's map</h2>
+    <button class="chip ${MAPAVAIL?'on':''}" onclick="App.tglAvail()"><i data-lucide="check"></i>Available only</button>
+  </header>
+  <div class="mapcard">
+    ${mapSVG(ls,false)}
+    <div class="maphud">
+      <button onclick="App.zoom(1.3)"><i data-lucide="plus"></i></button>
+      <button onclick="App.zoom(0.77)"><i data-lucide="minus"></i></button>
+      <button onclick="App.resetMap()"><i data-lucide="locate-fixed"></i></button>
+    </div>
+  </div>
+  <div class="maplegend">
+    <span><i style="background:var(--green)"></i>Verified · available</span>
+    <span><i style="background:#fff;border:2px solid var(--green)"></i>Unverified landlord</span>
+    <span><i style="background:#A79F8B"></i>Taken</span>
+    <span><i style="background:#fff;border:2px dashed var(--orange)"></i>Boosted</span>
+  </div>
+  <p class="tiny muted" style="padding:4px 20px 10px">Dashed rings = walking time from the Main Gate (≈ 80 m per minute). Tap a pin to preview a unit. Map is an illustrated sketch — production build swaps in Google Maps.</p>
+  <div id="mPrev"></div>
+  </div>`;
+}
+function showPrev(l){
+  const o=user(l.ownerId);
+  const el=$('#mPrev');if(!el)return;
+  el.innerHTML=`<img src="${l.photos[0]}" alt="">
+    <div style="flex:1;min-width:0">
+      <div class="lprice" style="font-size:17px">${kes(l.rent)}<span>/${perShort(l.period)}</span></div>
+      <h3 style="font-size:14px;margin:2px 0">${esc(l.title)}</h3>
+      <p class="lmeta tiny">${esc(l.area)} · ${l.walkGate} min to gate ${o&&o.verified?' · <span style="color:var(--green);font-weight:700">Verified</span>':''}</p>
+      <div style="display:flex;gap:8px;margin-top:9px">
+        <button class="btn btn-p" style="min-height:40px;font-size:13.5px;flex:1" onclick="App.openL('${l.id}')">View listing</button>
+        <button class="btn btn-o sq" style="width:40px;height:40px" onclick="App.chatL('${l.id}')"><i data-lucide="message-circle"></i></button>
+      </div>
+    </div>
+    <button class="icbtn" style="align-self:flex-start;width:32px;height:32px" onclick="App.closePrev()"><i data-lucide="x"></i></button>`;
+  el.classList.add('show');icons();
+}
+function hidePrev(){const el=$('#mPrev');el&&el.classList.remove('show');}
+
+/* ---------- LISTING DETAIL ---------- */
+function renderListing(p){
+  const l=listing(p.id);if(!l)return renderHome();
+  const o=user(l.ownerId),meU=me();
+  if(meU&&meU.id!==l.ownerId){l.views=(l.views||0)+1;save();}
+  const verified=o&&o.verified;
+  const availNow=!l.availFrom||l.availFrom<=Date.now();
+  const facts=[['footprints',l.walkGate+' min','Walk to Main Gate'],['bus',l.walkStage+' min','To matatu stage'],['navigation',l.road,'Road access'],['layers',l.floor==='Ground'?'Ground':l.floor+' floor','Floor level'],['door-open',(l.units||1)+' vacant','Units available'],['calendar',availNow?'Now':fdate(l.availFrom),'Available from']];
+  const feat=[['bath',l.bath],['chef-hat',l.kitchen],['utensils','Cooking in room: '+l.cooking],['sun',l.balcony==='Yes'?'Balcony':'No balcony'],['layout-template' in {}?'':'ruler','Floor: '+l.tile],['panel-top','Ceiling: '+l.ceiling],['lamp-desk','Study table: '+l.desk],['bed-double','Bed provided: '+l.bed],['shirt','Wardrobe: '+l.wardrobe]];
+  const OK=v=>v==='Yes'||v==='Yes'||v==='Tiled'||v==='Ensuite (own)'||v==='Own';
+  const curIdx=[0];
+  return `<div>
+  <div class="gal">
+    <div class="fl">
+      <button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button>
+      <div style="display:flex;gap:8px">
+        <button class="icbtn" onclick="App.fav('${l.id}',this)"><i data-lucide="heart" style="${(DB.favorites||[]).some(f=>f.userId===DB.session&&f.listingId===l.id)?'fill:var(--red);color:var(--red)':''}"></i></button>
+        <button class="icbtn" onclick="App.lMenu('${l.id}')"><i data-lucide="ellipsis-vertical"></i></button>
+      </div>
+    </div>
+    <div class="galrow" id="galrow" onscroll="App.galScroll(this)">${l.photos.map((s,i)=>`<div class="wm"><img loading="lazy" src="${s}" alt="photo ${i+1}"></div>`).join('')}</div>
+    <div class="gdots" id="gdots">${l.photos.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>
+    <span class="cnt">1 / ${l.photos.length}</span>
+  </div>
+  <div class="dbody">
+    <div class="dprice"><b>${kes(l.rent)}</b><span>per ${perShort(l.period)==='mo'?'month':perShort(l.period)==='sem'?'semester (4 months)':'year'}</span>${l.negotiable==='Yes'?'<span class="pill pill-g">Negotiable</span>':'<span class="pill pill-a">Fixed price</span>'}${l.status==='taken'?'<span class="pill pill-r">TAKEN</span>':''}${l.boosted?'<span class="pill pill-o">BOOSTED</span>':''}</div>
+    <h2>${esc(l.title)}</h2>
+    <p class="muted">${esc(l.area)} · ${l.type} · Listed ${timeAgo(l.listedAt)} · Updated ${timeAgo(l.updatedAt)} · ${(l.views||0)} views</p>
+    ${verified?`<div class="ban ban-g"><i data-lucide="badge-check"></i><span>Verified landlord — ID and ownership documents checked by ChukaHomes.</span></div>`
+      :`<div class="ban ban-a"><i data-lucide="triangle-alert"></i><span><b>Unverified landlord.</b> ChukaHomes has not checked their ID or ownership papers. Meet in a public place, bring a friend, and never send money before viewing.</span></div>`}
+    <div class="card lcard2">
+      <span class="av" style="background:${avCol(o?o.name:'X')}">${o?initials(o.name):'?'}</span>
+      <div style="flex:1;min-width:0"><b>${esc(o?o.name:'Unknown')}</b><div class="tiny muted">Landlord / caretaker · Joined ${fdate(o?o.joined:Date.now())} · Replies fast</div></div>
+      ${verified?'<span class="vbadge"><i data-lucide="badge-check"></i>Verified</span>':'<span class="uvbadge"><i data-lucide="shield-alert"></i>Pending</span>'}
+    </div>
+    <div class="facts">${facts.map(([ic,b,s])=>`<div class="fact"><i data-lucide="${ic}"></i><b>${b}</b><span>${s}</span></div>`).join('')}</div>
+    <div class="seclabel" style="margin-top:6px">Utilities — the honest details</div>
+    <div class="card" style="padding:6px 14px">
+      ${uRow('droplets','Water',l.water==='Rationed'?`Rationed — ${l.waterSched}`:l.water+(l.waterCost?` · ${l.waterCost}`:''),l.waterTank==='Yes'?'storage tank on compound':'no storage tank')}
+      ${uRow('zap','Electricity',l.elec+(l.elecCost?` · ${l.elecCost}`:''))}
+      ${uRow('wifi','Internet',l.wifi+(l.wifiCost?` · ${l.wifiCost}`:'')+(l.wifiProvider?` · ${l.wifiProvider}`:''))}
+      ${uRow('trash-2','Garbage',l.garbage)}
+      ${uRow('plug-zap','Backup power',l.backup)}
+    </div>
+    <div class="seclabel">Room & building</div>
+    <div class="card" style="padding:6px 14px">
+      ${uRow('shower-head','Bathroom',l.bath)}
+      ${uRow('chef-hat','Kitchen',l.kitchen)}
+      ${uRow('utensils','Cooking allowed in room',l.cooking)}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;padding:8px 0">
+        ${feat.map(([ic,lab])=>{const on=!/No$/.test(lab)&&!/None/.test(lab);return `<div class="${on?'ok':'no'}" style="display:flex;gap:8px;align-items:center;font-size:13px;padding:6px 0"><i data-lucide="${on?'check':'minus'}"></i>${esc(lab)}</div>`;}).join('')}
+      </div>
+    </div>
+    <div class="seclabel">Security & house rules</div>
+    <div class="rulechips">
+      ${(l.security&&l.security.length?l.security:['No security noted']).map(s=>`<span class="chip" style="pointer-events:none"><i data-lucide="shield-check"></i>${esc(s)}</span>`).join('')}
+      <span class="chip" style="pointer-events:none"><i data-lucide="users"></i>${esc(l.gender)}</span>
+      <span class="chip" style="pointer-events:none"><i data-lucide="clock"></i>${l.curfewOn==='Yes'?`Curfew ${l.curfewTime||'—'}`:'No curfew'}</span>
+      <span class="chip" style="pointer-events:none"><i data-lucide="user"></i>Visitors: ${esc(l.visitors)}</span>
+      <span class="chip" style="pointer-events:none"><i data-lucide="ban"></i>Alcohol: ${esc(l.alcohol)}</span>
+    </div>
+    <div class="seclabel">Payment terms</div>
+    <div class="card" style="padding:14px;font-size:13.5px;line-height:1.6">
+      <b>${esc(l.terms||'Agree terms with the landlord directly.')}</b><br>
+      <span class="muted">Deposit: ${l.deposit?kes(l.deposit):'None'}${l.fees&&l.fees!=='None'?` · One-off fees: ${esc(l.fees)}`:''}</span>
+      <div class="ban ban-g" style="margin:12px 0 0"><i data-lucide="wallet"></i><span>Never pay before viewing. ChukaHomes holds no payments — you pay the landlord directly after viewing, ideally by M-Pesa with a record.</span></div>
+    </div>
+    <div class="seclabel">Where exactly</div>
+    <div class="card" style="padding:14px;font-size:13.5px">
+      <b>${esc(l.area)}</b> — near ${esc(l.landmark||'—')}<br>
+      <span class="muted tiny">Pin: ${l.lat?l.lat.toFixed(4)+', '+l.lng.toFixed(4):'—'} · ${l.road} access</span>
+      <div style="margin-top:10px"><button class="sbtn" onclick="App.viewOnMap('${l.id}')"><i data-lucide="map-pin"></i>Show on the map</button></div>
+    </div>
+    ${l.video?`<div class="ban ban-g" style="margin-top:14px"><i data-lucide="video"></i><span>30-second video walkthrough available — ask for it in the chat.</span></div>`:''}
+    <div style="height:8px"></div>
+  </div>
+  <div class="abar">
+    <button class="btn btn-p grow" onclick="App.chatL('${l.id}')"><i data-lucide="message-circle"></i>Chat with landlord</button>
+    <a class="btn btn-o sq" href="tel:+${l.contactPhone||(o?o.phone:'')}" onclick="event.stopPropagation()"><i data-lucide="phone"></i></a>
+    <a class="btn btn-wa sq" target="_blank" rel="noopener" href="https://wa.me/${l.contactPhone||(o?o.phone:'')}?text=${encodeURIComponent(`Hi! I saw your listing "${l.title}" on ChukaHomes. Is it still available?`)}"><i data-lucide="message-square"></i></a>
+  </div>
+  </div>`;
+}
+function uRow(ic,label,val,sub){return `<div class="urow"><i data-lucide="${ic}"></i><div><b>${label}</b><span>${esc(val)}${sub?` · ${esc(sub)}`:''}</span></div></div>`;}
+
+/* ---------- CHATS ---------- */
+function myConvs(){return DB.convs.filter(c=>c.studentId===DB.session||c.landlordId===DB.session).sort((a,b)=>lastMsg(b).ts-lastMsg(a).ts);}
+const lastMsg=c=>c.msgs[c.msgs.length-1]||{ts:0,text:''};
+function renderChats(){
+  const cs=myConvs();
+  return `<div>
+  <header class="shead" style="border-bottom:0"><h2 style="font-family:var(--disp)">Chats</h2></header>
+  ${cs.length?cs.map(c=>{
+    const other=user(c.studentId===DB.session?c.landlordId:c.studentId),l=listing(c.listingId),m=lastMsg(c);
+    const un=c.msgs.filter(x=>x.from!==DB.session&&!x.read).length;
+    return `<div class="conv" onclick="App.openC('${c.id}')">
+      <span class="av" style="background:${avCol(other?other.name:'X')}">${other?initials(other.name):'?'}</span>
+      <div class="mid">
+        <div class="top"><b>${esc(other?other.name:'User')} ${other&&other.verified?'<i data-lucide="badge-check" style="width:14px;height:14px;color:var(--green);display:inline"></i>':''}</b><span>${timeAgo(m.ts)}</span></div>
+        <div class="prev">${esc(m.text||'No messages yet')}</div>
+      </div>
+      <img class="lthumb" src="${l?l.photos[0]:''}" alt="">
+      ${un?`<span class="unread">${un}</span>`:''}
+    </div>`;}).join('')
+  :`<div class="empty" style="padding-top:70px"><div class="eic"><i data-lucide="message-circle"></i></div><h3>No chats yet</h3><p>Open any listing and hit “Chat with landlord”. Ask about water, WiFi and viewing times — that's what they're for.</p></div>`}
+  </div>`;
+}
+function renderThread(p){
+  const c=DB.convs.find(x=>x.id===p.id);if(!c)return renderChats();
+  c.msgs.forEach(m=>{if(m.from!==DB.session)m.read=true;});save();
+  const other=user(c.studentId===DB.session?c.landlordId:c.studentId),l=listing(c.listingId),meU=me();
+  let html='',day='';
+  [...c.msgs].sort((a,b)=>a.ts-b.ts).forEach(m=>{
+    const d=dayLab(m.ts);
+    if(d!==day){day=d;html+=`<div class="daysep">${d}</div>`;}
+    html+=`<div class="bub ${m.from===DB.session?'me':'them'}">${esc(m.text)}<time>${new Date(m.ts).toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'})}</time></div>`;
+  });
+  return `<div class="threadwrap">
+  <header class="shead">
+    <button class="icbtn" onclick="App.tab('chats')"><i data-lucide="arrow-left"></i></button>
+    <div class="thhead" onclick="App.openL('${l.id}')">
+      <img src="${l.photos[0]}" alt="">
+      <div style="min-width:0"><b>${esc(other?other.name:'User')}${other&&other.verified?'<i data-lucide="badge-check"></i>':''}${other&&other.role==='student'&&other.verified?' <span class="pill pill-g" style="font-size:10px">Verified Comrade</span>':''}</b><small>${esc(l.title)} · ${kes(l.rent)}/${perShort(l.period)}</small></div>
+    </div>
+    <button class="icbtn" onclick="App.chatMenu('${c.id}')"><i data-lucide="ellipsis-vertical"></i></button>
+  </header>
+  <div id="msgs" class="msgs">${html}</div>
+  ${c.blocked?`<div style="padding:16px;text-align:center;color:var(--ink2);font-size:13.5px">You blocked this user. <button class="sbtn" style="margin-left:6px" onclick="App.unblockC('${c.id}')">Unblock</button></div>`
+  :`<div class="qrow" style="border-top:1px solid var(--line)">${meU&&meU.role==='landlord'?QUICK.map(q=>`<button class="chip" onclick="App.qr('${esc(q).replace(/'/g,'&#39;')}','${c.id}')">${esc(q)}</button>`).join(''):''}</div>
+  <form class="cinput" onsubmit="App.send(event,'${c.id}')"><input id="cnl" placeholder="Message…" autocomplete="off"><button class="snd" type="submit"><i data-lucide="send"></i></button></form>`}
+  </div>`;
+}
+
+/* ---------- CREATE / EDIT WIZARD ---------- */
+let draft=null,WSTEP=1;
+function newDraft(){return {title:'',type:'',units:1,furnishing:'',floor:'Ground',area:'',customArea:'',landmark:'',lat:null,lng:null,walkGate:'',walkStage:'',road:'Tarmac',rent:'',period:'Per Month',terms:'',deposit:0,fees:'None',negotiable:'No',water:'',waterCost:'',waterSched:'',waterTank:'Yes',elec:'',elecCost:'',wifi:'',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'',kitchen:'',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'',curfewOn:'No',curfewTime:'',visitors:'',alcohol:'No',availFrom:new Date().toISOString().slice(0,10),photos:[],videoName:'',confirmed:false,contactPhone:'',waSame:'Yes',waNumber:'',preferred:'In-app chat'};}
+function renderCreate(p){
+  if(!draft)return renderHome();
+  WSTEP=p.step||WSTEP;
+  const u=me();
+  const names=['Basics','Location','Pricing','Utilities','Room & building','Security & rules','Media & availability','Contact & post'];
+  const inp=(k,label,ph2='',type='text',hint='')=>`<label class="fld"><span>${label}</span><input type="${type}" value="${esc(draft[k]??'')}" placeholder="${esc(ph2)}" oninput="App.sf('${k}',this.value)">${hint?`<em>${hint}</em>`:''}</label>`;
+  const seg=(k,label,opts,hint='')=>`<label class="fld"><span>${label}</span><div class="seg">${opts.map(o=>`<button class="${draft[k]===o?'on':''}" onclick="App.wsel(this,'${k}','${esc(o)}')">${esc(o)}</button>`).join('')}</div>${hint?`<em>${hint}</em>`:''}</label>`;
+  let body='';
+  if(WSTEP===1){body=inp('title','Listing title','e.g. Spacious Bedsitter near Chuka Uni Gate')
+    +seg('type','Property type',TYPES)+inp('units','Number of vacant units','1','number')
+    +seg('furnishing','Furnishing',FURN)+seg('floor','Floor level',FLOORS);}
+  if(WSTEP===2){
+    body=`<label class="fld"><span>Area / estate</span><select onchange="App.sf('area',this.value)">${['<option value=\"\">Choose area…</option>',...AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`),`<option ${draft.area&&!AREAS.includes(draft.area)?'selected':''} value="__other">Other (type below)</option>`].join('')}</select></label>`
+    +(draft.area==='__other'||(draft.area&&!AREAS.includes(draft.area))?inp('area','Name the area','e.g. Gitwegu'):'')
+    +inp('landmark','Nearest landmark','e.g. Opposite Ndagani Shopping Centre')
+    +`<label class="fld"><span>Drop the pin on the map</span>
+      <div class="miniMap">${mapSVG([],true)}</div>
+      <em>Drag the orange pin to the exact plot. Walking time to the Main Gate auto-fills from the pin (≈ 80 m per minute).</em></label>`
+    +`<div style="display:flex;gap:9px">
+      <label class="fld" style="flex:1"><span>Walk to Main Gate (min)</span><input id="wg" type="number" value="${esc(draft.walkGate)}" placeholder="auto" oninput="App.sf('walkGate',this.value)"></label>
+      <label class="fld" style="flex:1"><span>Walk to stage (min)</span><input type="number" value="${esc(draft.walkStage)}" placeholder="e.g. 4" oninput="App.sf('walkStage',this.value)"></label>
+    </div>`
+    +seg('road','Road access',ROADS);}
+  if(WSTEP===3){body=inp('rent','Rent amount (KES)','e.g. 5500','number')
+    +seg('period','Payment period',PERIODS)
+    +inp('terms','Payment terms, in plain words','e.g. Monthly, no deposit — or Pay 4 months upfront','text','Students read this before anything else. Be honest.')
+    +inp('deposit','Deposit (KES, 0 = none)','0','number')
+    +inp('fees','Any extra one-off fees','e.g. Agency fee KES 500 (once) — or leave “None”')
+    +seg('negotiable','Is the price negotiable?',['Yes','No']);}
+  if(WSTEP===4){
+    body=seg('water','WATER',WATER)
+    +(draft.water==='Pay separately'?inp('waterCost','Water cost','e.g. KES 300 / month'):'')
+    +(draft.water==='Rationed'?inp('waterSched','Days & times water is available','e.g. Mon & Thu, 6 – 9 am')+seg('waterTank','Is there a storage tank?',['Yes','No']):'')
+    +seg('elec','ELECTRICITY',ELEC,'Shared meter = bill split between tenants. Prepaid/token = student buys their own tokens.')
+    +(draft.elec&&draft.elec!=='Included in rent'?inp('elecCost','Approx. monthly electricity cost','e.g. KES 500 – 900 / month'):'')
+    +seg('wifi','WIFI / INTERNET',WIFI)
+    +(draft.wifi==='Available but paid separately'?inp('wifiCost','Monthly WiFi cost','e.g. KES 1,500 / month')+inp('wifiProvider','Provider','e.g. Zuku, Unlimited Net'):'')
+    +seg('garbage','GARBAGE COLLECTION',GARB)
+    +seg('backup','Backup power',BACKUP);}
+  if(WSTEP===5){body=seg('bath','Bathroom',BATH)+seg('kitchen','Kitchen',KITCH)
+    +seg('cooking','Cooking allowed in room?',['Yes','No'])+seg('balcony','Balcony',['Yes','No'])
+    +seg('tile','Floor finishing',['Tiled','Cement'])+seg('ceiling','Ceiling',['Yes','No'])
+    +seg('wardrobe','Wardrobe',['Yes','No'])+seg('bed','Bed provided',['Yes','No'])+seg('desk','Study table',['Yes','No']);}
+  if(WSTEP===6){
+    body=`<label class="fld"><span>Security (choose all that apply)</span><div class="seg">${SEC.map(s=>`<button class="chip ${(draft.security||[]).includes(s)?'on':''}" onclick="App.wsec(this,'${s}')">${s}</button>`).join('')}</div></label>`
+    +seg('gender','Gender restriction',GENDER)
+    +seg('curfewOn','Curfew?',['No','Yes'])
+    +(draft.curfewOn==='Yes'?`<label class="fld"><span>Curfew time</span><input type="time" value="${esc(draft.curfewTime)}" onchange="App.sf('curfewTime',this.value)"></label>`:'')
+    +seg('visitors','Visitors allowed?',VISIT)+seg('alcohol','Alcohol allowed?',['Yes','No']);}
+  if(WSTEP===7){
+    body=`<label class="fld"><span>Date available from</span><input type="date" value="${esc(draft.availFrom)}" onchange="App.sf('availFrom',this.value)"></label>
+    <label class="fld"><span>Photos — minimum 5 (room, bathroom, kitchen, exterior, view)</span>
+      <div class="phgrid">${draft.photos.map((s,i)=>`<div class="p"><img src="${s}" alt=""><button class="rm" onclick="App.rmP(${i})"><i data-lucide="x"></i></button></div>`).join('')}
+        <label class="phadd"><i data-lucide="image-plus"></i>Add photos<input type="file" accept="image/*" multiple hidden onchange="App.addP(this)"></label>
+      </div>
+      <button class="sbtn" type="button" onclick="App.demoP()"><i data-lucide="camera"></i>Use 5 demo photos (for testing)</button>
+      <em id="pcnt">${draft.photos.length}/5 minimum · photos are compressed before upload · students see them with a ChukaHomes watermark.</em></label>
+    <label class="chkrow"><input type="checkbox" ${draft.confirmed?'checked':''} onchange="App.confP(this.checked)"><span>I confirm these photos are <b>recent</b> and show the <b>actual unit</b> being listed.</span></label>
+    <label class="fld"><span>Video walkthrough (optional, ~30 sec)</span><label class="phadd" style="min-height:64px;flex-direction:row"><i data-lucide="video"></i>${draft.videoName?esc(draft.videoName):'Attach a video file'}<input type="file" accept="video/*" hidden onchange="App.addVid(this)"></label></label>`;}
+  if(WSTEP===8){
+    const rev=[['Type',draft.type],['Area',draft.area==='__other'?draft.customArea||draft.area:draft.area],['Rent',draft.rent?kes(draft.rent)+' '+draft.period:''],['Deposit',draft.deposit?kes(draft.deposit):'None'],['Water',draft.water],['Electricity',draft.elec],['WiFi',draft.wifi],['Bathroom',draft.bath],['Kitchen',draft.kitchen],['Gender',draft.gender],['Available',draft.availFrom],['Photos',draft.photos.length]];
+    body=`<details class="card" style="padding:14px;margin-bottom:16px"><summary style="font-weight:800;cursor:pointer;font-family:var(--disp)">Review your listing</summary><div style="margin-top:8px">${rev.map(([k,v])=>`<div class="revrow"><b>${k}</b><span>${esc(String(v??'—'))}</span></div>`).join('')}</div></details>`
+    +`<label class="fld"><span>Contact phone (verified)</span><input type="tel" value="${esc(draft.contactPhone||u.phone)}" oninput="App.sf('contactPhone',this.value)"><em>${fmtPhone(u.phone)} is your verified number — calls go straight to it.</em></label>`
+    +seg('waSame','WhatsApp number same as phone?',['Yes','No'])
+    +(draft.waSame==='No'?inp('waNumber','WhatsApp number','07xx xxx xxx','tel'):'')
+    +seg('preferred','Preferred contact method',['In-app chat','Call','WhatsApp']);}
+  return `<div>
+  <header class="shead">
+    <button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button>
+    <h2>${p.editId?'Edit listing':'New listing'}</h2>
+    <span class="tiny muted">${WSTEP}/8</span>
+  </header>
+  <div class="wsteps"><span><b>${names[WSTEP-1]}</b></span><span class="tiny muted">${p.editId?'Editing':'Free plan'}</span></div>
+  <div class="wbar"><i style="width:${WSTEP/8*100}%"></i></div>
+  <div class="fstep">${body}</div>
+  <div class="wnav">
+    ${WSTEP>1?'<button class="btn btn-o" onclick="App.wGo(-1)">Back</button>':''}
+    <button class="btn btn-p grow" onclick="App.wNext()">${WSTEP===8?(p.editId?'Save changes':'Post listing'):'Continue'}</button>
+  </div></div>`;
+}
+
+/* ---------- MY LISTINGS ---------- */
+function renderMyListings(){
+  const u=me(),mine=DB.listings.filter(l=>l.ownerId===u.id&&l.status!=='removed');
+  return `<div>
+  <header class="shead"><button class="icbtn" onclick="App.tab('profile')"><i data-lucide="arrow-left"></i></button><h2>My listings</h2>
+  <button class="btn btn-p" style="min-height:40px;font-size:13.5px" onclick="App.newL()"><i data-lucide="plus"></i>New</button></header>
+  <div class="myl">
+  ${!u.verified?`<div class="ban ban-a"><i data-lucide="triangle-alert"></i><span>Your listings show an <b>“Unverified”</b> warning to students until an admin approves your documents. <a href="#" onclick="App.go('vlandlord');return false" style="text-decoration:underline">Submit documents</a> — you can approve them from the Admin demo account.</span></div>`:''}
+  ${mine.length?mine.map(l=>{
+    const enq=DB.convs.filter(c=>c.listingId===l.id).length;
+    return `<div class="mrow">
+      <div class="t" onclick="App.openL('${l.id}')" style="cursor:pointer">
+        <img src="${l.photos[0]}" alt="">
+        <div style="min-width:0"><b style="font-size:14.5px;display:block">${esc(l.title)}</b>
+        <span class="tiny muted">${esc(l.area)} · ${kes(l.rent)}/${perShort(l.period)}</span>
+        <div style="margin-top:5px">${l.status==='taken'?'<span class="pill pill-r">Taken</span>':(user(l.ownerId).verified?'<span class="pill pill-g">Live</span>':'<span class="pill pill-a">Live · unverified</span>')} ${l.boosted?'<span class="pill pill-o">Boosted</span>':''}</div></div>
+      </div>
+      <div class="stats"><span><b>${l.views||0}</b> views</span><span><b>${enq}</b> enquiries</span><span><b>${l.walkGate} min</b> to gate</span></div>
+      <div class="acts">
+        <button class="sbtn ${l.status==='taken'?'fill':''}" onclick="App.taken('${l.id}')"><i data-lucide="${l.status==='taken'?'rotate-ccw':'check'}"></i>${l.status==='taken'?'Mark available':'Mark taken'}</button>
+        <button class="sbtn" onclick="App.editL('${l.id}')"><i data-lucide="pencil"></i>Edit</button>
+        <button class="sbtn" onclick="App.boost('${l.id}')"><i data-lucide="megaphone"></i>Boost</button>
+        <button class="sbtn danger" onclick="App.delL('${l.id}')"><i data-lucide="trash-2"></i></button>
+      </div></div>`;}).join('')
+  :`<div class="empty card"><div class="eic"><i data-lucide="building-2"></i></div><h3>No listings yet</h3><p>Post your first vacant unit — with honest water and power details, it will rent within days.</p></div>`}
+  </div></div>`;
+}
+
+/* ---------- FAVOURITES ---------- */
+function renderFavorites(){
+  const favs=(DB.favorites||[]).filter(f=>f.userId===DB.session).map(f=>listing(f.listingId)).filter(Boolean);
+  return `<div>
+  <header class="shead"><button class="icbtn" onclick="App.tab('profile')"><i data-lucide="arrow-left"></i></button><h2>Saved listings</h2></header>
+  <div class="list" style="padding-top:14px">${favs.length?favs.map(listRow).join(''):`<div class="empty card"><div class="eic"><i data-lucide="heart"></i></div><h3>Nothing saved yet</h3><p>Tap the heart on any listing to keep it here — handy when you're comparing five places on a 3G connection.</p></div>`}</div></div>`;
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfile(){
+  const u=me();
+  if(!u)return `<div><header class="shead" style="border-bottom:0"><h2 style="font-family:var(--disp)">Profile</h2></header>
+    <div class="empty" style="padding-top:60px"><div class="eic"><i data-lucide="user"></i></div><h3>You're browsing as a guest</h3><p>Sign in to save listings, chat with landlords and get notified about new units.</p>
+    <button class="btn btn-p" onclick="App.go('auth')">Sign in / Create account</button></div></div>`;
+  const favs=(DB.favorites||[]).filter(f=>f.userId===u.id).length;
+  const badge=u.role==='student'?(u.verified?'<span class="pill pill-g">Verified Comrade</span>':'<span class="pill pill-a">Not verified</span>'):u.role==='landlord'?(u.verified?'<span class="pill pill-g">Verified Landlord</span>':u.verifyStatus==='pending'?'<span class="pill pill-a">Verification in review</span>':u.verifyStatus==='rejected'?'<span class="pill pill-r">Verification rejected</span>':'<span class="pill pill-a">Unverified landlord</span>'):'<span class="pill pill-g">Platform admin</span>';
+  const prow=(ic,t,s,fn,extra='')=>`<div class="prow" onclick="${fn}"><i data-lucide="${ic}"></i><div class="mid"><b>${t}</b><small>${s}</small></div>${extra}<i data-lucide="chevron-right"></i></div>`;
+  return `<div>
+  <div class="phead">
+    <div style="display:flex;gap:14px;align-items:center">
+      <span class="av" style="background:${avCol(u.name)}">${initials(u.name)}</span>
+      <div><b style="font-family:var(--disp);font-size:20px;display:block">${esc(u.name)}</b>
+      <span style="color:#BCD8C4;font-size:13px">${fmtPhone(u.phone)}${u.email?' · '+esc(u.email):''}</span></div>
+    </div>
+    <div class="badges">${badge}${u.role==='student'&&u.regNo?`<span class="pill pill-g"><i data-lucide="graduation-cap" style="width:13px;height:13px"></i>${esc(u.regNo)}</span>`:''}</div>
+  </div>
+  ${u.role==='student'?`
+    ${prow('heart','Saved listings',favs+' saved',"App.tab2('favorites')")}
+    ${u.verified?'':prow('graduation-cap','Get the “Verified Comrade” badge','Add your admission number or student email',"App.go('vstudent')")}
+  `:''}
+  ${u.role==='landlord'?`
+    ${prow('building-2','My listings','Manage units, availability & stats',"App.tab2('mylistings')")}
+    ${prow('badge-check','Landlord verification',u.verified?'Approved — ID & ownership checked':u.verifyStatus==='pending'?'Documents in review by admins':u.verifyStatus==='rejected'?'Rejected — resubmit your documents':'Upload ID + proof of ownership to go live',"App.go('vlandlord')")}
+  `:''}
+  ${u.role==='admin'?prow('shield-check','Open admin panel','Verification queue · reports · moderation · analytics',"App.go('admin')"):''}
+  ${u.role!=='admin'?(DB.watches||[]).filter(w=>w.userId===u.id).length?prow('bell','Saved searches',(DB.watches.filter(w=>w.userId===u.id).map(w=>`<b style="color:var(--orange)">${w.newCount||0} new</b>`).join(' · ')||'watching'),"App.go('admin')&&false"):'':''}
+  <div class="seclabel" style="padding:0 18px">Settings</div>
+  <div class="card" style="margin:0 18px;border-radius:16px;overflow:hidden">
+    ${prow('globe','Language','English · Kiswahili arrives in Phase 2',"App.lang()")}
+    ${prow('bell','Notifications','In-app for now; push comes with the installable build',"App.notifT()")}
+    ${prow('shield','Privacy & trust','Your data under the Kenya Data Protection Act',"App.go('privacy')")}
+    ${prow('refresh-ccw','Reset demo data','Wipe everything and reseed the demo',"App.resetDemo()")}
+    ${prow('log-out','Sign out','','App.logout()')}
+  </div>
+  <div class="hfoot">ChukaHomes · Phase 1 demo build v0.9<br>Made for comrades at Chuka University & colleges</div>
+  </div>`;
+}
+
+/* ---------- VERIFY SCREENS ---------- */
+function renderVStudent(){
+  const u=me();
+  return `<div><header class="shead"><button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button><h2>Verified Comrade</h2></header>
+  <div class="dbody">
+    <div class="ban ban-g"><i data-lucide="graduation-cap"></i><span>Verified Comrade badges tell landlords you're a real student — you get taken seriously and replied to faster.</span></div>
+    <label class="fld"><span>University admission number</span><input id="reg" placeholder="e.g. CS22/5317/21" value="${esc(u.regNo||'')}"></label>
+    <label class="fld"><span>Student email (optional)</span><input id="semail" placeholder="yourname@student.chuka.ac.ke" value="${esc(u.email||'')}"></label>
+    <button class="btn btn-p" style="width:100%" onclick="App.vSubmitS()">Get my badge</button>
+    <p class="tiny muted" style="margin-top:12px">In production this is checked against the university registry. In this demo it approves instantly — we trust you, comrade.</p>
+  </div></div>`;
+}
+function renderVLandlord(){
+  const u=me();
+  const slot=(k,ic,label,hint)=>`<div class="card" style="padding:14px;margin-bottom:12px">
+    <b style="font-family:var(--disp);font-size:15px">${label}</b>
+    <p class="tiny muted" style="margin:4px 0 8px">${hint}</p>
+    ${u.docs&&u.docs[k]?`<span class="docchip"><i data-lucide="file-check"></i>${esc(u.docs[k])}</span>`
+    :`<label class="phadd" style="min-height:64px;flex-direction:row"><i data-lucide="${ic}"></i>Upload file<input type="file" hidden onchange="App.docUp('${k}',this)"></label>`}
+  </div>`;
+  return `<div><header class="shead"><button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button><h2>Landlord verification</h2></header>
+  <div class="dbody">
+    <div class="ban ban-g"><i data-lucide="badge-check"></i><span>Verified landlords get a badge, no warning banner on listings, and can post more units. Admins review every document manually.</span></div>
+    ${slot('id','credit-card','1. National ID / Passport','A clear photo or scan of your government ID.')}
+    ${slot('own','file-text','2. Proof of ownership','Title deed, lease agreement, or a utility bill in your name for the property.')}
+    ${u.verifyStatus==='pending'?`<div class="ban ban-a"><i data-lucide="clock"></i><span>Documents submitted — an admin is reviewing. Tip: sign in with the <b>Admin demo account</b> to approve it yourself and see both sides.</span></div>`
+    :u.verified?`<div class="ban ban-g"><i data-lucide="badge-check"></i><span>You're verified. Your listings carry the green badge.</span></div>`
+    :`<button class="btn btn-p" style="width:100%" onclick="App.vSubmitL()" ${!u.docs||!u.docs.id||!u.docs.own?'disabled style="opacity:.5;width:100%"':''}>Submit for review</button>
+    ${(!u.docs||!u.docs.id||!u.docs.own)?'<p class="tiny muted" style="margin-top:10px">Upload both documents to submit.</p>':''}`()}
+  </div></div>`;
+}
+
+/* ---------- PRIVACY ---------- */
+function renderPrivacy(){
+  return `<div><header class="shead"><button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button><h2>Privacy & trust</h2></header>
+  <div class="dbody">
+    <h3 style="font-size:17px;margin-bottom:8px">What we hold</h3>
+    <p class="muted" style="font-size:13.5px;line-height:1.65">Your name, phone number and (if you add them) student ID or ownership documents. Nothing else. We collect device and IP metadata on listings only to catch repeat scammers.</p>
+    <h3 style="font-size:17px;margin:18px 0 8px">What we never do</h3>
+    <p class="muted" style="font-size:13.5px;line-height:1.65">We never handle your rent, never ask for M-Pesa on behalf of a landlord, and never sell your number. Anyone asking for money “through ChukaHomes” today is scamming you — report them.</p>
+    <h3 style="font-size:17px;margin:18px 0 8px">Your rights (Kenya DPA, 2019)</h3>
+    <p class="muted" style="font-size:13.5px;line-height:1.65">Ask for a copy of your data or full deletion of your account at any time — the button in Settings wipes everything immediately in this demo, and within 24 hours in production.</p>
+    <div class="ban ban-g" style="margin-top:18px"><i data-lucide="wallet"></i><span>Golden rule: <b>view the unit, meet the person, then pay.</b> Not the other way round.</span></div>
+  </div></div>`;
+}
+
+/* ---------- ADMIN ---------- */
+function renderAdmin(){
+  const live=DB.listings.filter(l=>l.status!=='removed');
+  const vq=DB.users.filter(u=>u.verifyStatus==='pending');
+  const open=DB.reports.filter(r=>r.status==='open');
+  const areaData={};visibleListings().forEach(l=>areaData[l.area]=(areaData[l.area]||0)+1);
+  const maxA=Math.max(1,...Object.values(areaData));
+  const line=(k,v)=>`<div class="statline"><span>${k}</span><b>${v}</b></div>`;
+  return `<div>
+  <header class="shead"><button class="icbtn" onclick="App.tab('profile')"><i data-lucide="arrow-left"></i></button><h2>Admin panel</h2></header>
+  <div class="card" style="margin:14px 18px 0;overflow:hidden">
+    ${line('Live listings',live.filter(l=>l.status==='available').length)}
+    ${line('Registered users',DB.users.length)}
+    ${line('Landlords verified',DB.users.filter(u=>u.role==='landlord'&&u.verified).length+' / '+DB.users.filter(u=>u.role==='landlord').length)}
+    ${line('Enquiries (chats)',DB.convs.length)}
+    ${line('Total views',live.reduce((a,l)=>a+(l.views||0),0))}
+    ${line('Open reports',open.length)}
+  </div>
+  <div class="seclabel" style="padding:0 18px">Landlord verification queue ${vq.length?`<a>${vq.length} pending</a>`:''}</div>
+  <div style="padding:0 18px">${vq.length?vq.map(u=>`<div class="qcard">
+      <div style="display:flex;gap:11px;align-items:center"><span class="av" style="width:38px;height:38px;font-size:13px;background:${avCol(u.name)}">${initials(u.name)}</span>
+      <div style="flex:1"><b>${esc(u.name)}</b><div class="tiny muted">${fmtPhone(u.phone)} · ${esc(u.email||'no email')}</div></div></div>
+      <div><span class="docchip"><i data-lucide="credit-card"></i>${esc(u.docs&&u.docs.id||'ID missing')}</span><span class="docchip"><i data-lucide="file-text"></i>${esc(u.docs&&u.docs.own||'Ownership proof missing')}</span></div>
+      <div style="display:flex;gap:8px;margin-top:11px"><button class="btn btn-g grow" style="min-height:42px" onclick="App.aOk('${u.id}')"><i data-lucide="check"></i>Approve</button>
+      <button class="btn btn-danger grow" style="min-height:42px" onclick="App.aNo('${u.id}')"><i data-lucide="x"></i>Reject</button></div>
+    </div>`).join(''):`<p class="tiny muted" style="padding:4px 2px 8px">Queue is clear. Asante.</p>`}</div>
+  <div class="seclabel" style="padding:0 18px">Reported listings</div>
+  <div style="padding:0 18px">${open.length?open.map(r=>{const l=listing(r.listingId),by=user(r.by);return `<div class="qcard">
+      <div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:14px">${l?esc(l.title):'Deleted listing'}</b><span class="tiny muted">${timeAgo(r.ts)}</span></div>
+      <p class="tiny" style="margin:5px 0"><span class="pill pill-r">${esc(r.reason)}</span></p>
+      <p class="tiny muted">“${esc(r.note)}” — ${by?esc(by.name):'user'}, ${fmtPhone(by?by.phone:'')}</p>
+      <div style="display:flex;gap:8px;margin-top:11px"><button class="sbtn" onclick="App.aDismiss('${r.id}')"><i data-lucide="check"></i>Dismiss</button>
+      <button class="sbtn danger" onclick="App.aRemove('${r.listingId}')"><i data-lucide="trash-2"></i>Remove listing</button></div>
+    </div>`;}).join(''):`<p class="tiny muted" style="padding:4px 2px 8px">No open reports.</p>`}</div>
+  <div class="seclabel" style="padding:0 18px">All listings · device & IP log</div>
+  <div style="padding:0 18px">${live.map(l=>{
+    const o=user(l.ownerId);
+    return `<div class="qcard" style="padding:11px 13px">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+        <div style="min-width:0"><b style="font-size:13.5px;cursor:pointer" onclick="App.openL('${l.id}')">${esc(l.title)}</b>
+        <div class="tiny muted">${esc(o?o.name:'?')} · ${esc(l.area)} · ${kes(l.rent)}</div>
+        <div class="tiny" style="color:var(--ink3)">IP ${l.ip} · ${l.device} · posted ${timeAgo(l.listedAt)}</div></div>
+        <div style="display:flex;gap:6px;flex:none">
+          <button class="sbtn ${l.flagged?'danger':''}" onclick="App.aFlag('${l.id}')"><i data-lucide="flag"></i></button>
+          <button class="sbtn danger" onclick="App.aRemove('${l.id}')"><i data-lucide="trash-2"></i></button>
+        </div></div>
+    </div>`;}).join('')}</div>
+  <div class="seclabel" style="padding:0 18px">Listings by area</div>
+  <div class="card" style="margin:0 18px;padding:14px" class="hbars"><div class="hbars">
+    ${Object.entries(areaData).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`<div class="hbar"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a)}</span><div class="tr"><i style="width:${n/maxA*100}%"></i></div><span>${n}</span></div>`).join('')||'<p class="tiny muted">No data yet.</p>'}
+  </div></div>
+  <div class="seclabel" style="padding:0 18px">Users</div>
+  <div style="padding:0 18px 20px">${DB.users.filter(u=>u.role!=='admin').map(u=>`<div class="qcard" style="padding:11px 13px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div><b style="font-size:13.5px">${esc(u.name)}</b><div class="tiny muted">${u.role} · ${fmtPhone(u.phone)} ${u.suspended?'· <b style="color:var(--red)">SUSPENDED</b>':''}</div></div>
+      <button class="sbtn ${u.suspended?'':'danger'}" onclick="App.aSusp('${u.id}')">${u.suspended?'Unsuspend':'Suspend'}</button>
+    </div></div>`).join('')}</div>
+  </div>`;
+}
+
+/* ---------- AUTH ---------- */
+let AUTH={role:'student',step:'role',phone:'',code:'',inp:'',cd:0,sends:0};
+function renderAuth(){
+  const r=AUTH.role;
+  const roleTabs=`<div class="roletabs">
+    <button class="${r==='student'?'on':''}" onclick="App.ar('student')">Student / Comrade</button>
+    <button class="${r==='landlord'?'on':''}" onclick="App.ar('landlord')">Landlord / Caretaker</button></div>`;
+  let body='';
+  if(AUTH.step==='role'){
+    body=roleTabs+`<button class="btn btn-p" style="width:100%" onclick="App.arNext()">Continue with phone number</button>
+    <p class="tiny muted" style="text-align:center;margin-top:12px">We verify real numbers with an OTP code — it keeps fake listings out.</p>`;
+  }
+  if(AUTH.step==='phone'){
+    body=roleTabs+`<label class="fld"><span>Phone number</span><input id="aph" type="tel" inputmode="numeric" placeholder="07XX XXX XXX" value="${esc(AUTH.phone)}" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>
+    <button class="btn btn-p" style="width:100%" onclick="App.otpSend()">${AUTH.cd?`Resend in ${AUTH.cd}s`:'Send code'}</button>
+    <p class="tiny muted" style="text-align:center;margin-top:12px">Demo build — no real SMS. Your code will appear on screen.</p>`;
+  }
+  if(AUTH.step==='otp'){
+    body=`<button class="tiny muted" style="margin-bottom:10px" onclick="App.arBack()">← ${fmtPhone(AUTH.phone)}</button>
+    <div class="otpbanner">Demo mode — your code is <b>${AUTH.code}</b></div>
+    <div class="otps">${[0,1,2,3,4].map(i=>`<input maxlength="1" inputmode="numeric" id="o${i}" oninput="App.otpIn(${i},this)" onkeydown="App.otpKey(event,${i})">`).join('')}</div>
+    <button class="btn btn-p" style="width:100%" onclick="App.otpVerify()">Verify & continue</button>
+    <p class="tiny muted" style="text-align:center;margin-top:12px">${AUTH.sends>=3?'Rate limit reached — use a demo shortcut below.':'Didn\'t get it? Check the screen — demo codes never expire.'}</p>`;
+  }
+  if(AUTH.step==='name'){
+    body=`<label class="fld"><span>${AUTH.role==='landlord'?'Your name or hostel name':'Your name'}</span><input id="anm" placeholder="${AUTH.role==='landlord'?'e.g. Greenview Hostels':'e.g. Brian Kiprotich'}" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>
+    ${AUTH.role==='landlord'?`<label class="fld"><span>Email (for verification updates)</span><input id="aem" type="email" placeholder="you@example.com" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>`:''}
+    <button class="btn btn-p" style="width:100%" onclick="App.finishSignup()">${AUTH.role==='landlord'?'Create landlord account':'Join ChukaHomes'}</button>`;
+  }
+  return `<div class="auth">
+    ${MARK.replace('<svg','<svg class="mark"')}
+    <h1>Find your crib.<br>List your vacant.</h1>
+    <p class="sub">The comrades' housing market for Chuka — Ndagani, Town, Karingani & the Gate.</p>
+    <div class="acard">${body}
+      <div class="seclabel" style="margin-top:20px">Quick demo access</div>
+      <div class="demogrid">
+        <button onclick="App.demo('student')"><i data-lucide="graduation-cap"></i>Student (verified)</button>
+        <button onclick="App.demo('landlord')"><i data-lucide="building-2"></i>Landlord (verified)</button>
+        <button onclick="App.demo('landlordNew')"><i data-lucide="building-2"></i>Landlord (new)</button>
+        <button onclick="App.demo('admin')"><i data-lucide="shield-check"></i>Admin</button>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:auto;padding-top:22px"><button class="tiny" style="color:#BCD8C4;font-weight:700" onclick="App.guest()">Just browsing — continue as guest</button></div>
+  </div>`;
+}
+
+/* =====================================================================
+   APP CONTROLLER
+===================================================================== */
+let DRAFT=null;
+const App={
+  /* navigation */
+  tab(n){if(n!=='chats'&&!DB.session&&n!=='profile'&&n!=='home'&&n!=='map'){/* allow guest browsing */}tab(n);},
+  tab2(n){tab(n);},
+  go(n){go(n);},
+  back(){back();},
+  closeM(e){if(!e||e.target.classList.contains('ovl'))closeM();},
+  /* home */
+  quick(i){const presets=[{}, {types:['Bedsitter']},{types:['Single Room']},{max:4000},{amen:{wifi:true}},{amen:{ensuite:true}},{maxWalk:7}];F=Object.assign(emptyF(),presets[i],{amen:Object.assign({},presets[i].amen||{})});tab('search');},
+  areaQ(a){F=emptyF();F.areas=[a];tab('search');},
+  /* search */
+  qset(v){F.q=v;const el=$('#res');if(el){const res=applyF(visibleListings(),F);el.innerHTML=res.length?res.map(listRow).join(''):`<div class="empty card" style="margin-top:14px"><div class="eic"><i data-lucide="search"></i></div><h3>No listings match</h3><p>Try widening your price range or clearing a filter.</p><button class="btn btn-o" onclick="App.resetF()">Reset filters</button></div>`;icons();}},
+  setSort(s){F.sort=s;render();},
+  rmChip(k,v){if(k==='types'||k==='areas'||k==='gender'||k==='furn')F[k]=F[k].filter(x=>x!==v);else if(k==='maxWalk')F.maxWalk='';else if(k==='price'){F.min='';F.max='';}else if(k==='hideTaken')F.hideTaken=true;else if(k.startsWith('amen:'))F.amen[k.slice(5)]=false;render();},
+  resetF(){F=emptyF();render();},
+  openFilters(){openFilters();},
+  fmin(v){FT.min=v;fcount();},fmax(v){FT.max=v;fcount();},
+  tchip(el,k,v){const a=FT[k];const i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);el.classList.toggle('on');fcount();},
+  schip(el,k,v){[...el.parentNode.children].forEach(b=>b.classList.remove('on'));if(String(FT[k])===String(v)){FT[k]='';}else{FT[k]=v;el.classList.add('on');}fcount();},
+  achip(el,k){FT.amen[k]=!FT.amen[k];el.classList.toggle('on');fcount();},
+  ftaken(v){FT.hideTaken=!v;fcount();},
+  resetFT(){FT=emptyF();closeM();openFilters();},
+  applyF(){F=JSON.parse(JSON.stringify(FT));closeM();render();},
+  saveSearch(){const u=me();if(!u)return App.gate();const w={id:'w'+DB.nextIds.w++,userId:u.id,criteria:JSON.parse(JSON.stringify(FT)),label:summarize(FT),created:Date.now(),newCount:0};DB.watches.push(w);save();closeM();toast('Saved — we\'ll flag new matches in your profile.','bell');},
+  saveSearchF(){FT=JSON.parse(JSON.stringify(F));App.saveSearch();},
+  /* map */
+  tglAvail(){MAPAVAIL=!MAPAVAIL;render();},
+  zoom(f){const ns=Math.min(2.6,Math.max(.7,MP.s*f));MP.x=200-(200-MP.x)/MP.s*ns;MP.y=270-(270-MP.y)/MP.s*ns;MP.s=ns;$('#pan').setAttribute('transform',`translate(${MP.x},${MP.y}) scale(${MP.s})`);},
+  resetMap(){MP={s:1,x:0,y:0};MAPSEL=null;hidePrev();render();},
+  selPin(id){MAPSEL=id;$$('.pin').forEach(p=>p.classList.toggle('sel',p.dataset.id===id));const l=listing(id);l&&showPrev(l);},
+  closePrev(){MAPSEL=null;hidePrev();$$('.pin.sel').forEach(p=>p.classList.remove('sel'));},
+  viewOnMap(id){MAPSEL=id;tab('map');},
+  /* listing */
+  openL(id){const l=listing(id);if(!l)return;go('listing',{id});},
+  galScroll(el){const i=Math.round(el.scrollLeft/el.clientWidth);const d=$('#gdots');if(d)[...d.children].forEach((x,j)=>x.classList.toggle('on',j===i));$('.gal .cnt').textContent=(i+1)+' / '+el.children.length;},
+  fav(id,btn){const u=me();if(!u)return App.gate('Sign in to save listings.');DB.favorites=DB.favorites||[];const i=DB.favorites.findIndex(f=>f.userId===u.id&&f.listingId===id);if(i>-1){DB.favorites.splice(i,1);btn.querySelector('svg')&&btn.querySelector('svg').remove();btn.innerHTML='<i data-lucide="heart"></i>';toast('Removed from saved.','heart');}else{DB.favorites.push({userId:u.id,listingId:id});btn.innerHTML='<i data-lucide="heart"></i>';const s=btn.querySelector('svg');if(s){s.style.fill='var(--red)';s.style.color='var(--red)';}toast('Saved to your list.','heart');}icons();save();},
+  lMenu(id){modal(`<h2 style="font-size:18px;margin-bottom:6px">${esc(listing(id).title)}</h2>
+    <div class="prow" onclick="App.reportL('${id}')"><i data-lucide="flag"></i><div class="mid"><b>Report listing</b><small>Fake, taken, or wrong info</small></div></div>
+    <div class="prow" onclick="App.shareL('${id}')"><i data-lucide="share-2"></i><div class="mid"><b>Share</b><small>Copy link to this listing</small></div></div>
+    <div class="prow" onclick="App.fav('${id}',this)"><i data-lucide="heart"></i><div class="mid"><b>Save / unsave</b><small>Add to your list</small></div></div>`);},
+  shareL(id){closeM();toast('Link copied — chukahomes.ke/l/'+id+' (demo).','share-2');},
+  reportL(id){closeM();modal(`<h2 style="font-size:18px;margin-bottom:4px">Report this listing</h2><p class="tiny muted" style="margin-bottom:14px">Admins review every report. Serial scammers get banned.</p>
+    <label class="fld"><span>Reason</span><select id="rreason">${REPORTS.map(r=>`<option>${r}</option>`).join('')}</select></label>
+    <label class="fld"><span>Tell us more (optional)</span><textarea id="rnote" placeholder="e.g. The caretaker is asking a different price…"></textarea></label>
+    <button class="btn btn-p" style="width:100%" onclick="App.sendReport('${id}')">Send report</button>`);},
+  sendReport(id){const u=me();if(!u)return App.gate();DB.reports.push({id:'r'+DB.nextIds.r++,listingId:id,by:u.id,reason:$('#rreason').value,note:$('#rnote').value||'—',ts:Date.now(),status:'open'});save();closeM();back();toast('Report sent to admins. Asante for keeping ChukaHomes honest.','flag');},
+  chatL(id){const u=me();if(!u)return App.gate('Sign in to chat with landlords.');const l=listing(id);if(!l)return;if(l.ownerId===u.id){toast('That\'s your own listing.','info');return;}const cid='c_'+id+'_'+u.id;let c=DB.convs.find(x=>x.id===cid);if(!c){c={id:cid,listingId:id,studentId:u.id,landlordId:l.ownerId,blocked:false,autoDone:false,msgs:[]};DB.convs.push(c);save();}go('thread',{id:cid});},
+  gate(msg){toast(msg||'Sign in first — it takes 20 seconds.','lock');stack.length=0;stack.push({name:'auth'});render();},
+  call(){},wa(){},
+  /* chats */
+  openC(id){go('thread',{id});},
+  chatMenu(cid){const c=DB.convs.find(x=>x.id===cid);modal(`<div class="prow" onclick="App.reportL('${c.listingId}')"><i data-lucide="flag"></i><div class="mid"><b>Report this chat</b><small>Goes to admins with the listing attached</small></div></div>
+    <div class="prow" onclick="App.blockC('${cid}')"><i data-lucide="ban"></i><div class="mid"><b>Block user</b><small>No more messages from them</small></div></div>`);},
+  blockC(cid){const c=DB.convs.find(x=>x.id===cid);c.blocked=true;save();closeM();render();toast('User blocked.','ban');},
+  unblockC(cid){const c=DB.convs.find(x=>x.id===cid);c.blocked=false;save();render();},
+  qr(t,cid){const inp=$('#cnl');if(inp){inp.value=t;inp.focus();}},
+  send(e,cid){e.preventDefault();const inp=$('#cnl');const t=inp.value.trim();if(!t)return;const c=DB.convs.find(x=>x.id===cid);const u=me();
+    c.msgs.push({from:u.id,text:t,ts:Date.now(),read:true});save();
+    const msgs=$('#msgs');msgs.insertAdjacentHTML('beforeend',`<div class="bub me">${esc(t)}<time>now</time></div>`);msgs.scrollTop=msgs.scrollHeight;inp.value='';
+    const l=listing(c.listingId);
+    if(u.role==='student'){
+      msgs.insertAdjacentHTML('beforeend','<div class="typing" id="typing"><i></i><i></i><i></i></div>');msgs.scrollTop=msgs.scrollHeight;
+      setTimeout(()=>{const tp=$('#typing');tp&&tp.remove();c.msgs.push({from:c.landlordId,text:autoReply(t,l),ts:Date.now(),read:false});save();
+        const inThread=stack[stack.length-1].name==='thread'&&stack[stack.length-1].params.id===cid;
+        if(inThread){msgs.insertAdjacentHTML('beforeend',`<div class="bub them">${esc(c.msgs[c.msgs.length-1].text)}<time>now</time></div>`);msgs.scrollTop=msgs.scrollHeight;renderTabs('thread');}
+      },1400+Math.random()*800);
+    }else if(!c.autoDone&&[c.studentId].some(id=>user(id)&&user(id).role==='student')){
+      c.autoDone=true;
+      setTimeout(()=>{c.msgs.push({from:c.studentId,text:'Okay, asante! I\'ll come to see it tomorrow afternoon.',ts:Date.now(),read:false});save();
+        const inThread=stack[stack.length-1].name==='thread'&&stack[stack.length-1].params.id===cid;
+        if(inThread){msgs.insertAdjacentHTML('beforeend',`<div class="bub them">${esc(c.msgs[c.msgs.length-1].text)}<time>now</time></div>`);msgs.scrollTop=msgs.scrollHeight;renderTabs('thread');toast('New message from '+user(c.studentId).name,'message-circle');}
+      },2600);
+    }
+  },
+  /* auth */
+  ar(r){AUTH.role=r;AUTH.step='role';render();},
+  arNext(){AUTH.step='phone';render();},
+  arBack(){AUTH.step='phone';render();},
+  guest(){DB.session=null;save();tab('home');toast('Browsing as guest — sign in to contact landlords.','info');},
+  demo(w){const map={student:'uS1',landlord:'uL1',landlordNew:'uL5',admin:'uA'};DB.session=map[w];save();tab('home');toast('Signed in as '+me().name+'. Karibu!','check');},
+  otpSend(){const raw=($('#aph')||{}).value||AUTH.phone;const m=raw.replace(/[\s-]/g,'').match(/^(?:\+?254|0)?([17]\d{8})$/);if(!m){toast('Enter a valid Kenyan number, e.g. 0712 345 678','triangle-alert',true);return;}AUTH.phone='254'+m[1];AUTH.code=String(Math.floor(10000+Math.random()*90000));AUTH.step='otp';AUTH.sends++;AUTH.inp='';render();},
+  otpIn(i,el){AUTH.inp=(AUTH.inp.slice(0,i)+el.value+AUTH.inp.slice(i+1)).slice(0,5);if(el.value&&i<4)$('#o'+(i+1)).focus();},
+  otpKey(e,i){if(e.key==='Backspace'&&!e.target.value&&i>0)$('#o'+(i-1)).focus();},
+  otpVerify(){if(AUTH.inp!==AUTH.code){toast('Wrong code — check the orange banner.','triangle-alert',true);return;}const ex=DB.users.find(u=>u.phone===AUTH.phone&&u.role===AUTH.role);if(ex){if(ex.suspended){toast('This account is suspended. Contact support.','ban',true);return;}DB.session=ex.id;save();tab('home');toast('Welcome back, '+ex.name.split(' ')[0]+'.','check');}else{AUTH.step='name';render();}},
+  finishSignup(){const nm=($('#anm')||{}).value||'';if(nm.trim().length<3){toast('Tell us your name — landlords reply better to real names.','info');return;}const id='u'+DB.nextIds.u++;DB.users.push({id,role:AUTH.role,name:nm.trim(),phone:AUTH.phone,verified:false,verifyStatus:'none',docs:null,email:AUTH.role==='landlord'?(($('#aem')||{}).value||null):null,regNo:null,suspended:false,joined:Date.now()});DB.session=id;save();tab('home');toast('Account created. Karibu ChukaHomes!','check');},
+  logout(){DB.session=null;save();stack.length=0;stack.push({name:'auth'});render();},
+  /* wizard */
+  newL(){DRAFT=newDraft();DRAFT.security=[];go('create',{step:1});draft=DRAFT;WSTEP=1;},
+  editL(id){DRAFT=JSON.parse(JSON.stringify(listing(id)));draft=DRAFT;WSTEP=1;stack.push({name:'create',params:{step:1,editId:id}});render();},
+  wGo(d){WSTEP=Math.max(1,WSTEP+d);stack[stack.length-1].params.step=WSTEP;render();},
+  wNext(){
+    const d=draft,eid=stack[stack.length-1].params.editId;
+    if(WSTEP===1){if(!d.title||d.title.trim().length<8)return toast('Give it a clear title (at least 8 characters).','info');if(!d.type)return toast('Choose the property type.','info');if(!d.furnishing)return toast('Choose furnishing.','info');}
+    if(WSTEP===2){if(!d.area)return toast('Choose the area / estate.','info');if(d.lat==null)return toast('Drag the pin onto the map to set the location.','info');if(!d.walkGate)d.walkGate=autoWalk(d);if(!d.walkStage)d.walkStage=4;}
+    if(WSTEP===3){if(!d.rent||+d.rent<=0)return toast('Enter the rent amount.','info');if(!d.terms.trim())d.terms='Agree terms with the landlord directly.';}
+    if(WSTEP===4){if(!d.water||!d.elec||!d.wifi)return toast('Students rely on this — pick water, electricity and WiFi options.','info');}
+    if(WSTEP===5){if(!d.bath||!d.kitchen)return toast('Pick bathroom and kitchen options.','info');}
+    if(WSTEP===6){if(!d.gender||!d.visitors)return toast('Pick gender restriction and visitor rules.','info');}
+    if(WSTEP===7){if(d.photos.length<5)return toast('At least 5 photos required — room, bathroom, kitchen, exterior, view.','info');if(!d.confirmed)return toast('Please confirm the photos are recent and of the actual unit.','info');}
+    if(WSTEP===8){d.contactPhone=d.contactPhone||me().phone;
+      if(eid){Object.assign(listing(eid),d,{updatedAt:Date.now()});save();toast('Listing updated.','check');back();return;}
+      const u=me();
+      const limit=u.verified?5:2;
+      if(DB.listings.filter(l=>l.ownerId===u.id&&l.status!=='removed'&&l.status!=='taken').length>=limit){toast(u.verified?`Listing limit reached (${limit}).`:'Free unverified accounts can post 2 live listings. Get verified to post more.','triangle-alert',true);return;}
+      const id='l'+DB.nextIds.l++;
+      DB.listings.push(Object.assign({},d,{id,ownerId:u.id,video:!!d.videoName,status:'available',boosted:false,flagged:false,views:0,listedAt:Date.now(),updatedAt:Date.now(),ip:'41.90.'+(10+Math.floor(Math.random()*80))+'.'+(2+Math.floor(Math.random()*250)),device:/iPhone/.test(navigator.userAgent)?'Safari · iPhone':'Chrome · Android',availFrom:d.availFrom?new Date(d.availFrom).getTime():Date.now()}));
+      checkWatches(DB.listings[DB.listings.length-1]);
+      save();toast(u.verified?'Listing is live. Comrades can see it now.':'Listing posted — it goes live once your landlord verification is approved.','check');
+      DRAFT=null;draft=null;stack.length=0;stack.push({name:'mylistings'});render();return;}
+    App.wGo(1);
+  },
+  sf(k,v){draft[k]=v;},
+  wsel(el,k,v){draft[k]=v;const cond=['water','elec','wifi','curfewOn'].includes(k);if(cond){render();}else{[...el.parentNode.children].forEach(b=>b.classList.remove('on'));el.classList.add('on');}},
+  wsec(el,v){draft.security=draft.security||[];const i=draft.security.indexOf(v);i>-1?draft.security.splice(i,1):draft.security.push(v);el.classList.toggle('on');},
+  /* photos */
+  addP(input){const fs=[...input.files].slice(0,8-draft.photos.length);if(!fs.length)return;Promise.all(fs.map(compress)).then(urls=>{draft.photos.push(...urls);render();toast(urls.length+' photo(s) added & compressed.','image');});},
+  demoP(){draft.photos=ph('chknew'+Date.now()%97,5);render();toast('5 demo photos added. Replace with real ones before going live.','camera');},
+  rmP(i){draft.photos.splice(i,1);render();},
+  confP(v){draft.confirmed=v;},
+  addVid(input){if(input.files[0]){draft.videoName=input.files[0].name;render();}},
+  /* my listings */
+  taken(id){const l=listing(id);l.status=l.status==='taken'?'available':'taken';l.updatedAt=Date.now();save();render();toast(l.status==='taken'?'Marked as taken — students will see the grey badge.':'Marked as available again.','check');},
+  delL(id){const l=listing(id);modal(`<h2 style="font-size:18px">Delete “${esc(l.title)}”?</h2><p class="tiny muted" style="margin:8px 0 16px">This cannot be undone. If it's rented, marking it <b>Taken</b> keeps your record and stats.</p>
+    <div style="display:flex;gap:9px"><button class="btn btn-o grow" onclick="App.closeM()">Keep it</button><button class="btn btn-danger grow" onclick="App.delGo('${id}')">Delete</button></div>`);},
+  delGo(id){DB.listings=DB.listings.filter(l=>l.id!==id);DB.convs=DB.convs.filter(c=>c.listingId!==id);save();closeM();render();toast('Listing deleted.','trash-2');},
+  boost(id){const l=listing(id);modal(`<h2 style="font-size:18px">Boost “${esc(l.title)}”?</h2><p class="tiny muted" style="margin:8px 0 14px">Boosts put your unit at the top of the Home feed for 7 days. In production this is <b>KES 200 via M-Pesa STK Push</b> — in this demo it's free.</p>
+    <button class="btn btn-p" style="width:100%" onclick="App.boostGo('${id}')"><i data-lucide="megaphone"></i>${l.boosted?'Remove boost':'Boost for 7 days (free demo)'}</button>`);},
+  boostGo(id){const l=listing(id);l.boosted=!l.boosted;save();closeM();render();toast(l.boosted?'Boosted — you\'re at the top of Home for 7 days.':'Boost removed.','megaphone');},
+  /* verification */
+  vSubmitS(){const u=me();u.regNo=$('#reg').value.trim();u.email=$('#semail').value.trim()||u.email;if(!u.regNo&&!u.email){toast('Add your admission number or student email.','info');return;}u.verified=true;u.verifyStatus='approved';save();back();toast('Verified Comrade badge earned. Landlords will take you seriously now.','graduation-cap');},
+  docUp(k,input){const u=me();u.docs=u.docs||{};u.docs[k]=input.files[0]?input.files[0].name:'document-'+k;u.verifyStatus='pending';save();render();toast('Document attached. Submit when both are in.','file-check');},
+  vSubmitL(){const u=me();if(!u.docs||!u.docs.id||!u.docs.own)return;u.verifyStatus='pending';save();render();toast('Submitted. An admin reviews ID + ownership proof manually.','clock');},
+  /* admin */
+  aOk(uid){const u=user(uid);u.verified=true;u.verifyStatus='approved';DB.listings.filter(l=>l.ownerId===uid&&l.status==='pending').forEach(l=>{l.status='available';l.updatedAt=Date.now();});save();render();toast(u.name+' is now a Verified Landlord. Their listings went live.','badge-check');},
+  aNo(uid){const u=user(uid);u.verifyStatus='rejected';save();render();toast(u.name+' rejected — they can resubmit better documents.','x',true);},
+  aDismiss(rid){const r=DB.reports.find(x=>x.id===rid);r.status='dismissed';save();render();toast('Report dismissed.','check');},
+  aRemove(lid){const l=listing(lid);if(!l)return;l.status='removed';save();render();toast('Listing removed from the platform.','trash-2');},
+  aFlag(lid){const l=listing(lid);l.flagged=!l.flagged;save();render();toast(l.flagged?'Listing flagged for follow-up.':'Flag removed.','flag');},
+  aSusp(uid){const u=user(uid);u.suspended=!u.suspended;save();render();toast(u.suspended?u.name+' suspended — their listings are hidden.':u.name+' reinstated.',u.suspended?'ban':'check');},
+  /* misc */
+  lang(){toast('Kiswahili translation lands in Phase 2 — karibu tena hapo!','globe');},
+  notifT(){toast('Notifications are in-app for now. Push arrives with the installable build.','bell');},
+  resetDemo(){modal(`<h2 style="font-size:18px">Reset all demo data?</h2><p class="tiny muted" style="margin:8px 0 16px">Everything you created is wiped and the original seed data returns.</p><div style="display:flex;gap:9px"><button class="btn btn-o grow" onclick="App.closeM()">Cancel</button><button class="btn btn-danger grow" onclick="localStorage.removeItem('${KEY}');location.reload()">Reset</button></div>`);},
+  /* wizard mini-map drag */
+};
+function fcount(){const el=$('#fc');el&&(el.textContent=applyF(visibleListings(),FT).length);}
+function summarize(f){const b=[];f.types.length&&b.push(f.types.join(', '));(f.min||f.max)&&b.push(kes(f.min||0)+'–'+kes(f.max||0));f.maxWalk&&b.push('≤'+f.maxWalk+' min');f.areas.length&&b.push(f.areas.join(', '));return b.join(' · ')||'All listings';}
+function checkWatches(l){(DB.watches||[]).forEach(w=>{if(match(l,Object.assign(emptyF(),w.criteria,{hideTaken:true})))w.newCount=(w.newCount||0)+1;});}
+function autoWalk(d){if(d.lat==null)return '';const m=distM(GATE,{lat:d.lat,lng:d.lng});return Math.max(1,Math.round(m/80));}
+function compress(file){return new Promise(res=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{const w=Math.min(560,img.width),h=Math.round(img.height*w/img.width);const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(cv.toDataURL('image/jpeg',.7));};img.onerror=()=>res(url);img.src=url;});}
+
+/* ---------- mini-map drag binding (delegated, survives re-renders) ---------- */
+function mmBind(){
+  const svg=$('#mmSvg');if(!svg||svg._bound)return;svg._bound=true;
+  const pin=()=>svg.querySelector('#mmPin');
+  const move=e=>{const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse());const g=pin();if(g)g.setAttribute('transform',`translate(${pt.x},${pt.y})`);return pt;};
+  let down=false;
+  svg.addEventListener('pointerdown',e=>{down=true;svg.setPointerCapture(e.pointerId);move(e);});
+  svg.addEventListener('pointermove',e=>{if(down)move(e);});
+  svg.addEventListener('pointerup',e=>{if(!down)return;down=false;const pt=move(e);const g=unpj(pt.x,pt.y);draft.lat=+g.lat.toFixed(5);draft.lng=+g.lng.toFixed(5);const w=autoWalk(draft);draft.walkGate=w;const wg=$('#wg');if(wg)wg.value=w;});
+}
+
+/* ---------- boot ---------- */
+ $('#sMark').innerHTML=MARK;
+setTimeout(()=>$('#splash').classList.add('off'),1150);
+stack.push({name:DB.session?'home':'auth'});
+render();
+</script>
+</body>
+</html>
