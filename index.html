@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ChukaHomes — Student Housing & Hostel Finder, Chuka</title>
-<meta name="description" content="Find bedsitters, hostels and houses near Chuka University. Verified landlords, honest prices, no door-to-door.">
 <meta name="theme-color" content="#0E5A33">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href='data:application/manifest+json,{"name":"ChukaHomes","short_name":"ChukaHomes","start_url":".","display":"standalone","background_color":"%23F6F3EA","theme_color":"%230E5A33"}'>
@@ -21,7 +20,6 @@
   --orange:#E0620F; --orange-d:#C25208; --orange-soft:#FBEADB;
   --amber:#9A5B0B; --amber-soft:#FBF0D8;
   --red:#B3372B; --red-soft:#F8E6E2;
-  --blue:#4E86AE;
   --r:16px; --sh:0 1px 2px rgba(23,37,29,.06),0 6px 18px -8px rgba(23,37,29,.14);
   --disp:"Bricolage Grotesque",Georgia,serif; --ui:"Instrument Sans",system-ui,sans-serif;
 }
@@ -119,7 +117,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .trustrow svg{width:16px;height:16px;flex:none;color:#8FD1A4}
 .chiprow{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none}
 .chiprow::-webkit-scrollbar{display:none}
-.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none}
+.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none;touch-action:pan-x}
 .rail::-webkit-scrollbar{display:none}
 .fcard{flex:none;width:225px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);cursor:pointer}
 .fcard .ph{position:relative;height:120px}
@@ -199,22 +197,23 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 #mPrev img{width:86px;height:86px;border-radius:14px;object-fit:cover}
 
 .gal{position:relative;background:#DDD8C8}
-.galrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.galrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x}
 .galrow::-webkit-scrollbar{display:none}
 .galrow>div{flex:none;width:100%;scroll-snap-align:start;position:relative}
-.galrow img{width:100%;height:300px;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.galrow img{width:100%;height:300px;object-fit:cover;user-select:none;-webkit-user-drag:none}
 .wm::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='170'%20height='130'%3E%3Ctext%20x='12'%20y='96'%20font-family='Arial,sans-serif'%20font-size='14'%20font-weight='700'%20fill='rgba(255,255,255,0.32)'%20transform='rotate(-18%2085%2065)'%3ECHUKAHOMES%3C/text%3E%3C/svg%3E");background-size:170px 130px}
-.gal .fl{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:7}
+.gal .fl{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:7;pointer-events:none}
+.gal .fl>*{pointer-events:auto}
 .gal .fl .icbtn{background:rgba(255,255,255,.94);box-shadow:var(--sh)}
-.gal .cnt{position:absolute;bottom:12px;right:14px;background:rgba(13,26,19,.6);color:#fff;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;z-index:5}
-.galnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:var(--sh);display:grid;place-items:center;z-index:6;opacity:.85;transition:opacity .15s}
+.gal .cnt{position:absolute;bottom:12px;right:14px;background:rgba(13,26,19,.6);color:#fff;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;z-index:5;pointer-events:none}
+.galnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:var(--sh);display:grid;place-items:center;z-index:6;opacity:.85;transition:opacity .15s;cursor:pointer}
 .galnav:hover{opacity:1}
 .galnav-prev{left:10px}
 .galnav-next{right:10px}
 .galnav svg{width:20px;height:20px;color:var(--ink)}
-.gdots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:5}
-.gdots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.55);transition:all .2s;cursor:pointer}
-.gdots i.on{width:18px;background:#fff}
+.gdots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:5}
+.gdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);transition:all .2s;cursor:pointer;border:1px solid rgba(0,0,0,.1)}
+.gdots i.on{width:22px;border-radius:4px;background:#fff}
 .dbody{padding:16px 18px 8px}
 .dprice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .dprice b{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--green);letter-spacing:-.02em}
@@ -370,9 +369,10 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 
 <script>
 /* =====================================================================
-   ChukaHomes — Phase 1 prototype. Single file, runs fully offline.
-   Realistic Kenyan bedsitter/single-room prices across Ndagani,
-   Marine, Slaughter, Mungoni + Chuka Town & University Gate Area.
+   ChukaHomes — Phase 1 prototype.
+   Areas: Ndagani · Marine · Slaughter · Mungoni (ONLY these four)
+   Prices: Kenyan-realistic — singles 2k/mo, bedsitters 4.5–6k/mo,
+   some per-semester at 26k / 30k.
 ===================================================================== */
 'use strict';
 
@@ -401,9 +401,9 @@ const AVC=['#0E5A33','#B4531B','#4E86AE','#7A4BA8','#A83B6A'];
 const avCol=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
 const fmtPhone=p=>{const l=String(p||'').replace(/^254/,'0');return l.slice(0,4)+' '+l.slice(4,7)+' '+l.slice(7);};
 
-/* ---------- modest room photos (Unsplash) ---------- */
+/* ---------- photos (Unsplash — modest rooms) ---------- */
 const UNS={
-  room:['1522771739844-6a9f6d5f14af','1540518614846-7eded433c457','1505691938895-1758d7feb511','1522708323590-d24dbb6b0267','1595526114035-0d45ed16cfbf','1560185007-cde436f6a4d0'],
+  room:['1522771739844-6a9f6d5f14af','1540518614846-7eded433c457','1505691938895-1758d7feb511','1585129775128-d8c31c202b6e','1595526114035-0d45ed16cfbf','1560185007-cde436f6a4d0'],
   kitchen:['1556912173-3bb406ef7e77','1565538810643-b5bdb714032a','1484154218962-a197022b5858'],
   bath:['1552321554-5fefe8c9ef14','1584622650111-993a426fbf0a','1620626011761-996317b8d101'],
   ext:['1568605114967-8130f3a36994','1570129477492-45c003edd2be','1523217582562-09d0def993a6','1600596542815-ffad4c1539a9']
@@ -429,7 +429,8 @@ function ph(seed,n,type){
 
 /* ---------- constants ---------- */
 const TYPES=['Bedsitter','Single Room','1 Bedroom','2 Bedroom','Shared Hostel Room','Double Room'];
-const AREAS=['Ndagani','Marine','Slaughter','Mungoni','Chuka Town','University Gate Area'];
+/* ONLY THE FOUR AREAS THE USER GAVE US. No Karingani, no Magumoni, no guesswork. */
+const AREAS=['Ndagani','Marine','Slaughter','Mungoni'];
 const FURN=['Furnished','Semi-furnished','Unfurnished'];
 const PERIODS=['Per Month','Per Semester (4 months)','Per Year'];
 const WATER=['Included in rent','Pay separately','Rationed'];
@@ -456,46 +457,48 @@ const unpj=(x,y)=>({lat:GATE.lat-(y-PR.y0)/PR.k, lng:GATE.lng+(x-PR.x0)/PR.k});
 function distM(a,b){const R=6371e3,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180,s=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
 
 /* ---------- seed ---------- */
-const KEY='chukahomes_v6'; let DB=null;
+const KEY='chukahomes_v7'; let DB=null;
 function seed(){
   const now=Date.now(),H=36e5,D=864e5;
   const U=(id,role,name,phone,o={})=>Object.assign({id,role,name,phone,verified:false,verifyStatus:'none',docs:null,email:null,regNo:null,suspended:false,joined:now-90*D},o);
-  const mk=(o)=>Object.assign({units:1,furnishing:'Semi-furnished',floor:'Ground',road:'Murram',period:'Per Month',deposit:0,fees:'None',negotiable:'Yes',waterCost:'',waterSched:'',waterTank:'Yes',elecCost:'',wifiCost:'',wifiProvider:'',backup:'None',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',curfewOn:'No',curfewTime:'',alcohol:'No',video:false,boosted:false,flagged:false,status:'available'},o);
-  DB={v:6,session:null,nextIds:{l:16,c:1,u:9,r:2,w:1},
+  const mk=o=>Object.assign({units:1,furnishing:'Semi-furnished',floor:'Ground',road:'Murram',period:'Per Month',deposit:0,fees:'None',negotiable:'Yes',waterCost:'',waterSched:'',waterTank:'Yes',elecCost:'',wifiCost:'',wifiProvider:'',backup:'None',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',curfewOn:'No',curfewTime:'',alcohol:'No',video:false,boosted:false,flagged:false,status:'available',availFrom:now},o);
+  DB={v:7,session:null,nextIds:{l:16,c:1,u:9,r:2,w:1},
     users:[
       U('uA','admin','ChukaHomes Admin','254700000001',{verified:true,verifyStatus:'approved'}),
       U('uS1','student','Brian Kiprotich','254712345678',{verified:true,verifyStatus:'approved',regNo:'CS22/5317/21',email:'b.kiprotich@student.chuka.ac.ke'}),
       U('uS2','student','Faith Achieng','254733111222'),
       U('uL1','landlord','Grace Njeri','254722000111',{verified:true,verifyStatus:'approved',docs:{id:'national-id-grace.jpg',own:'title-deed-ndagani.pdf'},email:'gracenjeri@gmail.com'}),
-      U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-greenview.pdf'},email:'stay@greenviewhostels.ke'}),
+      U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-ndagani.pdf'},email:'stay@greenviewhostels.ke'}),
       U('uL3','landlord','Peter Mwangi','254701444555',{verifyStatus:'pending',docs:{id:'mwangi-id.jpg',own:'ndagani-plot-agreement.pdf'}}),
-      U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-kaimuri.pdf'}}),
+      U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-ndagani.pdf'}}),
       U('uL5','landlord','Joseph Mutua','254745666777'),
       U('uL6','landlord','Marine Comfort Homes','254733555444',{verified:true,verifyStatus:'approved',docs:{id:'marine-id.pdf',own:'marine-lease.pdf'},email:'info@marinecomfort.ke'}),
       U('uL7','landlord','Slaughter Gate Hostels','254722777888',{verified:true,verifyStatus:'approved',docs:{id:'slaughter-id.jpg',own:'slaughter-title.pdf'},email:'stay@slaughtergate.ke'}),
       U('uL8','landlord','Mungoni Bedsitters','254711999000',{verifyStatus:'pending',docs:{id:'mungoni-id.jpg',own:'mungoni-lease.pdf'}})
     ],
     listings:[
-      /* ------- NDAGANI ------- */
-      mk({id:'l1',ownerId:'uL1',title:'Bedsitter near Ndagani Stage',type:'Bedsitter',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3365,lng:37.6408,walkGate:7,walkStage:3,furnishing:'Semi-furnished',floor:'1st',road:'Tarmac',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Unlimited Net',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('n1',5,'Bedsitter'),views:72,listedAt:now-2*D,updatedAt:now-3*H,ip:'41.90.34.12',device:'Chrome · Android'}),
-      mk({id:'l2',ownerId:'uL3',title:'Single Room – Ndagani',type:'Single Room',area:'Ndagani',landmark:'Behind Ndagani Market',lat:-0.3370,lng:37.6420,walkGate:8,walkStage:2,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon & Thu, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('n2',5,'Single Room'),views:55,listedAt:now-9*D,updatedAt:now-5*D,ip:'41.90.78.40',device:'Chrome · Android'}),
-      mk({id:'l3',ownerId:'uL2',title:'Shared Hostel Room (2 pax) – Ndagani',type:'Shared Hostel Room',units:3,furnishing:'Furnished',floor:'1st',rent:13000,period:'Per Semester (4 months)',terms:'KES 13,000 per semester (4 months). No deposit.',deposit:0,water:'Included in rent',elec:'Included in rent',wifi:'Included in rent',wifiProvider:'Campus-link WiFi',garbage:'Included',bath:'Communal',kitchen:'Shared',cooking:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'23:00',visitors:'Daytime only',photos:ph('n3',5,'Shared Hostel Room'),views:98,listedAt:now-1*D,updatedAt:now-6*H,ip:'41.90.10.77',device:'Chrome · Windows',area:'Ndagani',landmark:'Greenview Hostels, 200 m from Ndagani stage',lat:-0.3352,lng:37.6398,walkGate:10,walkStage:3,road:'Murram'}),
-      mk({id:'l4',ownerId:'uL1',title:'Clean Bedsitter – Ndagani',type:'Bedsitter',area:'Ndagani',landmark:'Near Ndagani Primary',lat:-0.3375,lng:37.6395,walkGate:9,walkStage:4,furnishing:'Furnished',rent:4500,terms:'Monthly. Deposit = 1 month.',deposit:4500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Included in rent',wifiProvider:'Building fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',visitors:'Daytime only',photos:ph('n4',5,'Bedsitter'),boosted:true,views:141,listedAt:now-3*D,updatedAt:now-4*H,ip:'41.90.34.12',device:'Chrome · Android'}),
-      /* ------- MARINE ------- */
-      mk({id:'l5',ownerId:'uL6',title:'Single Room – Marine',type:'Single Room',area:'Marine',landmark:'Marine Trading Centre',lat:-0.3320,lng:37.6380,walkGate:14,walkStage:5,furnishing:'Unfurnished',rent:2500,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('m1',5,'Single Room'),views:39,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.50.20',device:'Chrome · Android'}),
-      mk({id:'l6',ownerId:'uL6',title:'Marine Bedsitter – Quiet Plot',type:'Bedsitter',area:'Marine',landmark:'Marine Primary School area',lat:-0.3315,lng:37.6370,walkGate:15,walkStage:6,furnishing:'Semi-furnished',floor:'1st',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,200/mo',wifiProvider:'Marine Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('m2',5,'Bedsitter'),views:61,listedAt:now-6*D,updatedAt:now-3*D,ip:'41.90.50.21',device:'Chrome · Windows'}),
-      mk({id:'l7',ownerId:'uL6',title:'Marine Bedsitter – Per Semester',type:'Bedsitter',area:'Marine',landmark:'Near Marine Water Kiosk',lat:-0.3325,lng:37.6390,walkGate:13,walkStage:5,furnishing:'Furnished',rent:26000,period:'Per Semester (4 months)',terms:'KES 26,000 per semester (4 months). Deposit = 1 month (KES 6,500).',deposit:6500,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Included in rent',wifiProvider:'Marine WiFi',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('m3',5,'Bedsitter'),boosted:true,views:112,listedAt:now-2*D,updatedAt:now-7*H,ip:'41.90.50.22',device:'Safari · iPhone'}),
-      /* ------- SLAUGHTER ------- */
-      mk({id:'l8',ownerId:'uL7',title:'Single Room – Slaughter',type:'Single Room',area:'Slaughter',landmark:'Slaughter Stage, near the market',lat:-0.3350,lng:37.6330,walkGate:16,walkStage:7,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon, Wed, Fri – 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Guard','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:00',visitors:'Daytime only',photos:ph('s1',5,'Single Room'),views:31,listedAt:now-5*D,updatedAt:now-3*D,ip:'41.90.60.30',device:'Chrome · Android'}),
-      mk({id:'l9',ownerId:'uL7',title:'Slaughter Bedsitter',type:'Bedsitter',area:'Slaughter',landmark:'Near the abattoir road',lat:-0.3345,lng:37.6320,walkGate:17,walkStage:8,furnishing:'Semi-furnished',rent:4000,terms:'Monthly. Deposit = 1 month.',deposit:4000,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('s2',5,'Bedsitter'),views:27,listedAt:now-7*D,updatedAt:now-5*D,ip:'41.90.60.31',device:'Chrome · Android'}),
-      mk({id:'l10',ownerId:'uL7',title:'Slaughter Double Room – Comrade Special',type:'Double Room',area:'Slaughter',landmark:'Slaughter stage, opposite the butchery',lat:-0.3355,lng:37.6340,walkGate:15,walkStage:7,furnishing:'Semi-furnished',rent:3500,terms:'Monthly. Pay 2 months upfront.',deposit:3500,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('s3',5,'Double Room'),views:24,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.60.32',device:'Chrome · Android'}),
-      /* ------- MUNGONI ------- */
-      mk({id:'l11',ownerId:'uL8',title:'Single Room – Mungoni',type:'Single Room',area:'Mungoni',landmark:'Mungoni Shopping Centre',lat:-0.3290,lng:37.6350,walkGate:20,walkStage:10,furnishing:'Unfurnished',rent:2200,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Tue & Sat, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 200/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Male only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('g1',5,'Single Room'),views:19,listedAt:now-10*D,updatedAt:now-8*D,ip:'41.90.70.40',device:'Chrome · Android'}),
-      mk({id:'l12',ownerId:'uL8',title:'Mungoni Bedsitter – Quiet & Green',type:'Bedsitter',area:'Mungoni',landmark:'Mungoni Primary, behind the shops',lat:-0.3285,lng:37.6340,walkGate:21,walkStage:11,furnishing:'Semi-furnished',rent:5500,terms:'Monthly. Deposit = 1 month.',deposit:5500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 350/mo',wifi:'Not available',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('g2',5,'Bedsitter'),views:44,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.70.41',device:'Chrome · Android'}),
-      mk({id:'l13',ownerId:'uL8',title:'Mungoni Bedsitter – Per Semester',type:'Bedsitter',area:'Mungoni',landmark:'Off the Mungoni tarmac',lat:-0.3295,lng:37.6360,walkGate:19,walkStage:9,furnishing:'Semi-furnished',rent:30000,period:'Per Semester (4 months)',terms:'KES 30,000 per semester (4 months). Deposit = 1 month (KES 7,500).',deposit:7500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Mungoni Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('g3',5,'Bedsitter'),views:67,listedAt:now-3*D,updatedAt:now-1*D,ip:'41.90.70.42',device:'Chrome · Android'}),
-      /* ------- TOWN + GATE ------- */
-      mk({id:'l14',ownerId:'uL4',title:'Modern 1-Bedroom – Chuka Town',type:'1 Bedroom',area:'Chuka Town',landmark:'Above Co-op Bank, Kenyatta Rd',lat:-0.3335,lng:37.6465,walkGate:18,walkStage:2,furnishing:'Furnished',floor:'2nd',road:'Tarmac',rent:8000,terms:'Monthly. Deposit = 1 month + refundable gate card.',deposit:8000,fees:'KES 500 refundable gate card',negotiable:'No',water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 800 – 1,200/mo',wifi:'Included in rent',wifiProvider:'Zuku Fibre 10 Mbps',garbage:'Included',backup:'Solar (lights)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',visitors:'Yes',alcohol:'Yes',photos:ph('t1',6,'1 Bedroom'),video:true,views:186,listedAt:now-5*D,updatedAt:now-1*D,ip:'197.232.60.11',device:'Safari · iPhone'}),
-      mk({id:'l15',ownerId:'uL1',title:"Comrade's Bedsitter at the Gate",type:'Bedsitter',area:'University Gate Area',landmark:'Past the boda stage, 2nd plot from gate',lat:-0.3404,lng:37.6445,walkGate:4,walkStage:3,furnishing:'Furnished',floor:'Ground',road:'Tarmac',rent:6000,terms:'Monthly or per semester. Deposit = 1 month.',deposit:6000,fees:'Agency fee KES 500 (once)',water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 600/mo',wifi:'Included in rent',wifiProvider:'Building fibre',garbage:'Included',backup:'Generator (evenings)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',tile:'Tiled',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',visitors:'Daytime only',photos:ph('t2',6,'Bedsitter'),boosted:true,views:298,listedAt:now-2*D,updatedAt:now-4*H,ip:'41.90.34.12',device:'Chrome · Android'})
+      /* ============ NDAGANI (4 listings) ============ */
+      mk({id:'l1',ownerId:'uL1',title:'Bedsitter near Ndagani Stage',type:'Bedsitter',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3357,lng:37.6405,walkGate:8,walkStage:3,furnishing:'Semi-furnished',floor:'1st',road:'Tarmac',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Unlimited Net',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg1',5,'Bedsitter'),boosted:true,views:126,listedAt:now-2*D,updatedAt:now-3*H,ip:'41.90.34.12',device:'Chrome · Android'}),
+      mk({id:'l2',ownerId:'uL3',title:'Single Room – Ndagani',type:'Single Room',area:'Ndagani',landmark:'Behind Ndagani Market',lat:-0.3360,lng:37.6410,walkGate:9,walkStage:2,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon & Thu, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('ndg2',5,'Single Room'),views:64,listedAt:now-9*D,updatedAt:now-5*D,ip:'41.90.78.40',device:'Chrome · Android'}),
+      mk({id:'l3',ownerId:'uL2',title:'Shared Hostel Room (2 pax) – Ndagani',type:'Shared Hostel Room',units:3,furnishing:'Furnished',floor:'1st',rent:13000,period:'Per Semester (4 months)',terms:'KES 13,000 per semester (4 months). No deposit.',deposit:0,water:'Included in rent',elec:'Included in rent',wifi:'Included in rent',wifiProvider:'Campus-link WiFi',garbage:'Included',bath:'Communal',kitchen:'Shared',cooking:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'23:00',visitors:'Daytime only',photos:ph('ndg3',5,'Shared Hostel Room'),views:108,listedAt:now-1*D,updatedAt:now-6*H,ip:'41.90.10.77',device:'Chrome · Windows',area:'Ndagani',landmark:'Greenview Hostels, 200 m from Ndagani stage',lat:-0.3355,lng:37.6400,walkGate:10,walkStage:3}),
+      mk({id:'l4',ownerId:'uL1',title:'Clean Bedsitter – Ndagani',type:'Bedsitter',area:'Ndagani',landmark:'Near Ndagani Primary',lat:-0.3362,lng:37.6408,walkGate:9,walkStage:4,furnishing:'Furnished',rent:4500,terms:'Monthly. Deposit = 1 month.',deposit:4500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Included in rent',wifiProvider:'Building fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg4',5,'Bedsitter'),boosted:true,views:152,listedAt:now-3*D,updatedAt:now-4*H,ip:'41.90.34.12',device:'Chrome · Android'}),
+
+      /* ============ MARINE (4 listings) ============ */
+      mk({id:'l5',ownerId:'uL6',title:'Single Room – Marine',type:'Single Room',area:'Marine',landmark:'Marine Trading Centre',lat:-0.3346,lng:37.6380,walkGate:11,walkStage:5,furnishing:'Unfurnished',rent:2500,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('mar1',5,'Single Room'),views:43,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.50.20',device:'Chrome · Android'}),
+      mk({id:'l6',ownerId:'uL6',title:'Marine Bedsitter – Quiet Plot',type:'Bedsitter',area:'Marine',landmark:'Marine Primary School area',lat:-0.3344,lng:37.6375,walkGate:12,walkStage:6,furnishing:'Semi-furnished',floor:'1st',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Marine Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar2',5,'Bedsitter'),views:72,listedAt:now-6*D,updatedAt:now-3*D,ip:'41.90.50.21',device:'Chrome · Windows'}),
+      mk({id:'l7',ownerId:'uL6',title:'Marine Bedsitter – Per Semester',type:'Bedsitter',area:'Marine',landmark:'Near Marine Water Kiosk',lat:-0.3348,lng:37.6385,walkGate:11,walkStage:5,furnishing:'Furnished',rent:26000,period:'Per Semester (4 months)',terms:'KES 26,000 per semester (4 months). Deposit = 1 month (KES 6,500).',deposit:6500,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Included in rent',wifiProvider:'Marine WiFi',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar3',5,'Bedsitter'),boosted:true,views:134,listedAt:now-2*D,updatedAt:now-7*H,ip:'41.90.50.22',device:'Safari · iPhone'}),
+      mk({id:'l8',ownerId:'uL5',title:'Double Room – Marine',type:'Double Room',area:'Marine',landmark:'Off Marine Road',lat:-0.3342,lng:37.6378,walkGate:13,walkStage:6,furnishing:'Semi-furnished',rent:3500,terms:'Monthly. Pay 2 months upfront.',deposit:3500,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('mar4',5,'Double Room'),views:38,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.50.23',device:'Chrome · Android'}),
+
+      /* ============ SLAUGHTER (4 listings) ============ */
+      mk({id:'l9',ownerId:'uL7',title:'Single Room – Slaughter',type:'Single Room',area:'Slaughter',landmark:'Slaughter Stage, near the market',lat:-0.3369,lng:37.6353,walkGate:14,walkStage:7,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon, Wed, Fri – 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Guard','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:00',visitors:'Daytime only',photos:ph('sla1',5,'Single Room'),views:35,listedAt:now-5*D,updatedAt:now-3*D,ip:'41.90.60.30',device:'Chrome · Android'}),
+      mk({id:'l10',ownerId:'uL7',title:'Slaughter Bedsitter',type:'Bedsitter',area:'Slaughter',landmark:'Near the abattoir road',lat:-0.3370,lng:37.6350,walkGate:15,walkStage:8,furnishing:'Semi-furnished',rent:4000,terms:'Monthly. Deposit = 1 month.',deposit:4000,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('sla2',5,'Bedsitter'),views:31,listedAt:now-7*D,updatedAt:now-5*D,ip:'41.90.60.31',device:'Chrome · Android'}),
+      mk({id:'l11',ownerId:'uL7',title:'Slaughter Double Room – Comrade Special',type:'Double Room',area:'Slaughter',landmark:'Slaughter stage, opposite the butchery',lat:-0.3372,lng:37.6345,walkGate:14,walkStage:7,furnishing:'Semi-furnished',rent:3500,terms:'Monthly. Pay 2 months upfront.',deposit:3500,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('sla3',5,'Double Room'),views:28,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.60.32',device:'Chrome · Android'}),
+      mk({id:'l12',ownerId:'uL3',title:'Budget Single – Slaughter',type:'Single Room',area:'Slaughter',landmark:'Slaughter area, near the shops',lat:-0.3367,lng:37.6355,walkGate:15,walkStage:7,furnishing:'Unfurnished',rent:2200,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Tue & Sat, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Not included',bath:'Communal',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Daytime only',photos:ph('sla4',5,'Single Room'),views:22,listedAt:now-9*D,updatedAt:now-7*D,ip:'41.90.60.33',device:'Chrome · Android'}),
+
+      /* ============ MUNGONI (3 listings) ============ */
+      mk({id:'l13',ownerId:'uL8',title:'Single Room – Mungoni',type:'Single Room',area:'Mungoni',landmark:'Mungoni Shopping Centre',lat:-0.3332,lng:37.6346,walkGate:16,walkStage:10,furnishing:'Unfurnished',rent:2200,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Tue & Sat, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 200/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Male only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('mun1',5,'Single Room'),views:26,listedAt:now-10*D,updatedAt:now-8*D,ip:'41.90.70.40',device:'Chrome · Android'}),
+      mk({id:'l14',ownerId:'uL8',title:'Mungoni Bedsitter – Quiet & Green',type:'Bedsitter',area:'Mungoni',landmark:'Mungoni Primary, behind the shops',lat:-0.3330,lng:37.6350,walkGate:17,walkStage:11,furnishing:'Semi-furnished',rent:5500,terms:'Monthly. Deposit = 1 month.',deposit:5500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 350/mo',wifi:'Not available',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun2',5,'Bedsitter'),boosted:true,views:69,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.70.41',device:'Chrome · Android'}),
+      mk({id:'l15',ownerId:'uL8',title:'Mungoni Bedsitter – Per Semester',type:'Bedsitter',area:'Mungoni',landmark:'Off the Mungoni tarmac',lat:-0.3334,lng:37.6342,walkGate:16,walkStage:10,furnishing:'Semi-furnished',rent:30000,period:'Per Semester (4 months)',terms:'KES 30,000 per semester (4 months). Deposit = 1 month (KES 7,500).',deposit:7500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Mungoni Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun3',5,'Bedsitter'),views:78,listedAt:now-3*D,updatedAt:now-1*D,ip:'41.90.70.42',device:'Chrome · Android'})
     ],
     convs:[
       {id:'c_l3_uS1',listingId:'l3',studentId:'uS1',landlordId:'uL2',blocked:false,autoDone:false,msgs:[
@@ -506,14 +509,14 @@ function seed(){
         {from:'uS2',text:'Hi, is the bedsitter on the 1st floor still vacant?',ts:now-6*H,read:false},
         {from:'uS2',text:'Can I pass by tomorrow morning to view it?',ts:now-6*H+9e5,read:false}]}
     ],
-    reports:[{id:'r1',listingId:'l9',by:'uS2',reason:'Wrong price or info',note:'The caretaker is asking KES 4,500, not 4,000 as listed.',ts:now-1*D,status:'open'}],
+    reports:[{id:'r1',listingId:'l10',by:'uS2',reason:'Wrong price or info',note:'The caretaker is asking KES 4,500, not 4,000 as listed.',ts:now-1*D,status:'open'}],
     favorites:[{userId:'uS1',listingId:'l4'},{userId:'uS1',listingId:'l7'}],
     watches:[]
   };
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===6){DB=d;return;}}}catch(e){}seed();}
+function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===7){DB=d;return;}}}catch(e){}seed();}
 loadDB();
 const user=id=>DB.users.find(u=>u.id===id)||null;
 const listing=id=>DB.listings.find(l=>l.id===id)||null;
@@ -523,12 +526,10 @@ const visibleListings=()=>DB.listings.filter(l=>isLive(l)&&!(user(l.ownerId)||{}
 const hasWifi=l=>l.wifi==='Included in rent', hasWater=l=>l.water==='Included in rent', hasElec=l=>l.elec==='Included in rent';
 const ensuite=l=>l.bath==='Ensuite (own)', ownKit=l=>l.kitchen==='Own', guardOK=l=>(l.security||[]).includes('Guard'), backupOK=l=>l.backup&&l.backup!=='None';
 
-/* ---------- toast / modal ---------- */
 function toast(msg,icon='check',warn){const t=document.createElement('div');t.className='toast'+(warn?' warn':'');t.innerHTML=`<i data-lucide="${icon}"></i><span>${msg}</span>`;$('#toasts').appendChild(t);icons();setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3200);}
 function modal(html){$('#sheetRoot').innerHTML=`<div class="ovl" onclick="App.closeM(event)"><div class="sheet" onclick="event.stopPropagation()"><div class="grab"></div>${html}</div></div>`;icons();requestAnimationFrame(()=>$('.ovl').classList.add('show'));}
 function closeM(){$('.ovl')&&$('.ovl').classList.remove('show');setTimeout(()=>$('#sheetRoot').innerHTML='',240);}
 
-/* ---------- filters ---------- */
 let F=emptyF(),FT=null,MAPSEL=null,MAPAVAIL=false;
 function emptyF(){return {q:'',types:[],areas:[],min:'',max:'',maxWalk:'',gender:[],furn:[],amen:{},hideTaken:true,sort:'new'};}
 function match(l,f){
@@ -549,7 +550,6 @@ function match(l,f){
 const applyF=(ls,f)=>ls.filter(l=>match(l,f)).sort((a,b)=>f.sort==='priceAsc'?a.rent-b.rent:f.sort==='priceDesc'?b.rent-a.rent:f.sort==='walk'?a.walkGate-b.walkGate:b.listedAt-a.listedAt);
 const activeChips=f=>{const c=[];f.types.forEach(t=>c.push({k:'types',v:t,label:t}));f.areas.forEach(a=>c.push({k:'areas',v:a,label:a}));f.gender.forEach(g=>c.push({k:'gender',v:g,label:g}));f.furn.forEach(x=>c.push({k:'furn',v:x,label:x}));if(f.min||f.max)c.push({k:'price',label:kes(f.min||0)+(f.max?' – '+kes(f.max):'+')});if(f.maxWalk)c.push({k:'maxWalk',label:'≤ '+f.maxWalk+' min to gate'});Object.entries(f.amen||{}).filter(([,v])=>v).forEach(([k])=>c.push({k:'amen:'+k,label:{wifi:'WiFi included',water:'Water included',elec:'Electricity incl.',ensuite:'Ensuite',kitchen:'Own kitchen',guard:'Security guard',backup:'Backup power'}[k]}));if(!f.hideTaken)c.push({k:'hideTaken',label:'Includes taken'});return c;};
 
-/* ---------- auto-reply ---------- */
 function autoReply(text,l){
   const t=text.toLowerCase();
   if(/avail|vacant|free|still/.test(t))return `Yes, it is still available. You can come view it any day between 9 am and 5 pm.`;
@@ -589,7 +589,6 @@ function renderTabs(active){
   $('#tabbar').innerHTML=T.map(([id,ic,lb])=>`<button class="tbtn ${active===id?'on':''}" onclick="App.tab('${id}')"><i data-lucide="${ic}"></i><span>${lb}</span>${id==='chats'&&n?`<b class="nbadge">${n}</b>`:''}</button>`).join('');
 }
 
-/* ---------- components ---------- */
 function amIcons(l){const a=[];hasWifi(l)&&a.push('wifi');hasWater(l)&&a.push('droplets');hasElec(l)&&a.push('zap');ensuite(l)&&a.push('bath');ownKit(l)&&a.push('chef-hat');guardOK(l)&&a.push('shield-check');return a.slice(0,4).map(i=>`<i data-lucide="${i}"></i>`).join('');}
 function listRow(l){
   const o=user(l.ownerId);
@@ -604,7 +603,6 @@ function listRow(l){
     </div></article>`;
 }
 
-/* ---------- HOME ---------- */
 function renderHome(){
   if(!HOMESEEN){return `<div style="padding:18px">
     <div class="hhero" style="height:180px"></div>
@@ -641,7 +639,6 @@ function renderHome(){
   </div>`;
 }
 
-/* ---------- SEARCH ---------- */
 function renderSearch(){
   const res=applyF(visibleListings(),F);
   const ch=activeChips(F);
@@ -687,7 +684,6 @@ function filterSheetHTML(){
   </div>`;
 }
 
-/* ---------- MAP ---------- */
 function baseLayers(){
   return `
   <rect x="-200" y="-200" width="800" height="960" fill="#EFEAD9"/>
@@ -703,19 +699,16 @@ function baseLayers(){
   <path d="M246,96 C190,112 130,150 92,190 C80,204 68,222 60,242" stroke="#C9AC74" stroke-width="1.6" stroke-dasharray="7 7" fill="none"/>
   <path d="M252,330 C300,360 340,378 386,392" stroke="#E6D4AC" stroke-width="7" fill="none"/>
   <path d="M252,330 C300,360 340,378 386,392" stroke="#C9AC74" stroke-width="1.6" stroke-dasharray="7 7" fill="none"/>
-  <path d="M340,380 C332,396 326,406 320,414" stroke="#E6D4AC" stroke-width="6" fill="none"/>
-  <path d="M262,88 C290,84 312,88 332,98" stroke="#E6D4AC" stroke-width="6" fill="none"/>
   <path d="M108,214 C140,248 176,272 208,290" stroke="#CFC7B2" stroke-width="2.6" stroke-dasharray="2.5 5" fill="none"/>
   ${[90,170,250].map(r=>`<circle class="ring" cx="250" cy="292" r="${r}"/>`).join('')}
   <text class="ringlab" x="160" y="283" text-anchor="middle">5 MIN</text>
   <text class="ringlab" x="84" y="286" text-anchor="middle">10 MIN</text>
   <text class="ringlab" x="8" y="286">15 MIN WALK</text>
   <circle cx="258" cy="100" r="4.5" fill="#E0620F"/><text class="mlab2" x="266" y="104">MATATU STAGE</text>
-  <text class="mlab" x="244" y="60" text-anchor="middle">CHUKA TOWN</text>
-  <text class="mlab" x="198" y="146" text-anchor="middle">NDAGANI</text>
-  <text class="mlab" x="88" y="192" text-anchor="middle">MARINE</text>
-  <text class="mlab" x="344" y="428" text-anchor="middle">SLAUGHTER</text>
-  <text class="mlab" x="60" y="440" text-anchor="middle">MUNGONI</text>
+  <text class="mlab" x="210" y="130" text-anchor="middle">NDAGANI</text>
+  <text class="mlab" x="129" y="100" text-anchor="middle">MARINE</text>
+  <text class="mlab" x="69" y="205" text-anchor="middle">SLAUGHTER</text>
+  <text class="mlab" x="50" y="66" text-anchor="middle">MUNGONI</text>
   <text class="mlab2" x="272" y="128" transform="rotate(80 272 128)">B6 · MERU–EMBU RD</text>
   <g transform="translate(374,30)"><line x1="0" y1="8" x2="0" y2="-6" stroke="#7C7660" stroke-width="1.6"/><path d="M0,-8 L3.4,-1.4 L0,-3.6 L-3.4,-1.4 Z" fill="#7C7660"/><text x="0" y="19" text-anchor="middle" font-size="9" font-weight="800" fill="#7C7660" font-family="var(--ui)">N</text></g>
   <g transform="translate(20,542)"><line x1="0" y1="0" x2="25" y2="0" stroke="#7C7660" stroke-width="2"/><line x1="0" y1="-3" x2="0" y2="3" stroke="#7C7660" stroke-width="2"/><line x1="25" y1="-3" x2="25" y2="3" stroke="#7C7660" stroke-width="2"/><text x="31" y="4" font-size="8.5" font-weight="700" fill="#7C7660" font-family="var(--ui)">100 m</text></g>
@@ -773,7 +766,7 @@ function renderMap(){
     <span><i style="background:#A79F8B"></i>Taken</span>
     <span><i style="background:#fff;border:2px dashed var(--orange)"></i>Boosted</span>
   </div>
-  <p class="tiny muted" style="padding:4px 20px 10px">Dashed rings = walking time from the Main Gate (≈ 80 m per minute). Tap a pin to preview a unit. Map is an illustrated sketch — production build swaps in Google Maps.</p>
+  <p class="tiny muted" style="padding:4px 20px 10px">Dashed rings = walking time from the Main Gate (≈ 80 m per minute). Tap a pin to preview a unit.</p>
   <div id="mPrev"></div>
   </div>`;
 }
@@ -795,7 +788,49 @@ function showPrev(l){
 }
 function hidePrev(){const el=$('#mPrev');el&&el.classList.remove('show');}
 
-/* ---------- LISTING DETAIL ---------- */
+/* ---------- gallery binding — FIXED (mousedown + native touch scroll) ---------- */
+function galBind(){
+  const row=$('#galrow');
+  if(!row||row._bound)return;
+  row._bound=true;
+
+  // Scroll listener — updates dots + counter on native OR programmatic scroll
+  row.addEventListener('scroll',()=>{
+    if(!row.clientWidth)return;
+    const i=Math.round(row.scrollLeft/row.clientWidth);
+    const dots=$('#gdots');
+    if(dots)[...dots.children].forEach((x,j)=>x.classList.toggle('on',j===i));
+    const cnt=$('#galcnt');
+    if(cnt)cnt.textContent=(Math.min(i+1,row.children.length))+' / '+row.children.length;
+  },{passive:true});
+
+  // Desktop drag via mouse events only (touch uses native scroll)
+  row.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    if(e.target.closest('button, a'))return;
+    const ac=new AbortController();
+    const startX=e.clientX, startL=row.scrollLeft;
+    let dragging=false;
+    row.style.scrollSnapType='none';
+    e.preventDefault();
+    const mv=ev=>{
+      const dx=ev.clientX-startX;
+      if(Math.abs(dx)>4)dragging=true;
+      if(dragging)row.scrollLeft=startL-dx;
+    };
+    const up=()=>{
+      row.style.scrollSnapType='';
+      if(dragging){
+        const i=Math.max(0,Math.min(row.children.length-1,Math.round(row.scrollLeft/row.clientWidth)));
+        row.scrollTo({left:i*row.clientWidth,behavior:'smooth'});
+      }
+      ac.abort();
+    };
+    window.addEventListener('mousemove',mv,{signal:ac.signal});
+    window.addEventListener('mouseup',up,{signal:ac.signal});
+  });
+}
+
 function renderListing(p){
   const l=listing(p.id);if(!l)return renderHome();
   const o=user(l.ownerId),meU=me();
@@ -814,7 +849,7 @@ function renderListing(p){
         <button class="icbtn" onclick="App.lMenu('${l.id}')"><i data-lucide="ellipsis-vertical"></i></button>
       </div>
     </div>
-    <div class="galrow" id="galrow" onscroll="App.galScroll(this)">${l.photos.map((s,i)=>`<div class="wm"><img loading="lazy" src="${s}" alt="photo ${i+1}" onerror="imgErr(this)"></div>`).join('')}</div>
+    <div class="galrow" id="galrow" onscroll="App.galScroll(this)">${l.photos.map((s,i)=>`<div class="wm"><img loading="lazy" src="${s}" alt="photo ${i+1}" onerror="imgErr(this)" draggable="false"></div>`).join('')}</div>
     ${l.photos.length>1?`<button class="galnav galnav-prev" onclick="event.stopPropagation();App.galStep(-1)" aria-label="Previous"><i data-lucide="chevron-left"></i></button>
     <button class="galnav galnav-next" onclick="event.stopPropagation();App.galStep(1)" aria-label="Next"><i data-lucide="chevron-right"></i></button>`:''}
     <div class="gdots" id="gdots">${l.photos.map((_,i)=>`<i class="${i?'':'on'}" onclick="App.galGo(${i})"></i>`).join('')}</div>
@@ -881,33 +916,6 @@ function renderListing(p){
 }
 function uRow(ic,label,val,sub){return `<div class="urow"><i data-lucide="${ic}"></i><div><b>${label}</b><span>${esc(val)}${sub?` · ${esc(sub)}`:''}</span></div></div>`;}
 
-/* ---------- gallery drag ---------- */
-function galBind(){
-  const row=$('#galrow');if(!row||row._bound)return;row._bound=true;
-  let down=false,startX=0,startL=0,moved=false;
-  row.addEventListener('pointerdown',e=>{
-    if(e.target.closest('button'))return;
-    down=true;moved=false;startX=e.clientX;startL=row.scrollLeft;
-    row.style.scrollSnapType='none';
-  });
-  row.addEventListener('pointermove',e=>{
-    if(!down)return;const dx=e.clientX-startX;
-    if(Math.abs(dx)>5)moved=true;
-    if(moved){row.scrollLeft=startL-dx;e.preventDefault();}
-  });
-  const end=()=>{
-    if(!down)return;down=false;
-    row.style.scrollSnapType='';
-    if(moved){
-      const i=Math.max(0,Math.min(row.children.length-1,Math.round(row.scrollLeft/row.clientWidth)));
-      row.scrollTo({left:i*row.clientWidth,behavior:'smooth'});
-    }
-  };
-  row.addEventListener('pointerup',end);
-  row.addEventListener('pointercancel',end);
-}
-
-/* ---------- CHATS ---------- */
 function myConvs(){return DB.convs.filter(c=>c.studentId===DB.session||c.landlordId===DB.session).sort((a,b)=>lastMsg(b).ts-lastMsg(a).ts);}
 const lastMsg=c=>c.msgs[c.msgs.length-1]||{ts:0,text:''};
 function renderChats(){
@@ -955,7 +963,6 @@ function renderThread(p){
   </div>`;
 }
 
-/* ---------- WIZARD ---------- */
 let draft=null,WSTEP=1;
 function newDraft(){return {title:'',type:'',units:1,furnishing:'',floor:'Ground',area:'',customArea:'',landmark:'',lat:null,lng:null,walkGate:'',walkStage:'',road:'Tarmac',rent:'',period:'Per Month',terms:'',deposit:0,fees:'None',negotiable:'No',water:'',waterCost:'',waterSched:'',waterTank:'Yes',elec:'',elecCost:'',wifi:'',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'',kitchen:'',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'',curfewOn:'No',curfewTime:'',visitors:'',alcohol:'No',availFrom:new Date().toISOString().slice(0,10),photos:[],videoName:'',confirmed:false,contactPhone:'',waSame:'Yes',waNumber:'',preferred:'In-app chat'};}
 function renderCreate(p){
@@ -966,16 +973,15 @@ function renderCreate(p){
   const inp=(k,label,ph2='',type='text',hint='')=>`<label class="fld"><span>${label}</span><input type="${type}" value="${esc(draft[k]??'')}" placeholder="${esc(ph2)}" oninput="App.sf('${k}',this.value)">${hint?`<em>${hint}</em>`:''}</label>`;
   const seg=(k,label,opts,hint='')=>`<label class="fld"><span>${label}</span><div class="seg">${opts.map(o=>`<button class="${draft[k]===o?'on':''}" onclick="App.wsel(this,'${k}','${esc(o)}')">${esc(o)}</button>`).join('')}</div>${hint?`<em>${hint}</em>`:''}</label>`;
   let body='';
-  if(WSTEP===1){body=inp('title','Listing title','e.g. Spacious Bedsitter near Chuka Uni Gate')
+  if(WSTEP===1){body=inp('title','Listing title','e.g. Bedsitter near Ndagani Stage')
     +seg('type','Property type',TYPES)+inp('units','Number of vacant units','1','number')
     +seg('furnishing','Furnishing',FURN)+seg('floor','Floor level',FLOORS);}
   if(WSTEP===2){
-    body=`<label class="fld"><span>Area / estate</span><select onchange="App.sf('area',this.value)">${['<option value="">Choose area…</option>',...AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`),`<option ${draft.area&&!AREAS.includes(draft.area)?'selected':''} value="__other">Other (type below)</option>`].join('')}</select></label>`
-    +(draft.area==='__other'||(draft.area&&!AREAS.includes(draft.area))?inp('area','Name the area','e.g. Gitwegu'):'')
+    body=`<label class="fld"><span>Area / estate</span><select onchange="App.sf('area',this.value)">${['<option value="">Choose area…</option>',...AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`)].join('')}</select></label>`
     +inp('landmark','Nearest landmark','e.g. Opposite Ndagani Shopping Centre')
     +`<label class="fld"><span>Drop the pin on the map</span>
       <div class="miniMap">${mapSVG([],true)}</div>
-      <em>Drag the orange pin to the exact plot. Walking time to the Main Gate auto-fills from the pin (≈ 80 m per minute).</em></label>`
+      <em>Drag the orange pin to the exact plot. Walking time to the Main Gate auto-fills.</em></label>`
     +`<div style="display:flex;gap:9px">
       <label class="fld" style="flex:1"><span>Walk to Main Gate (min)</span><input id="wg" type="number" value="${esc(draft.walkGate)}" placeholder="auto" oninput="App.sf('walkGate',this.value)"></label>
       <label class="fld" style="flex:1"><span>Walk to stage (min)</span><input type="number" value="${esc(draft.walkStage)}" placeholder="e.g. 4" oninput="App.sf('walkStage',this.value)"></label>
@@ -1018,7 +1024,7 @@ function renderCreate(p){
     <label class="chkrow"><input type="checkbox" ${draft.confirmed?'checked':''} onchange="App.confP(this.checked)"><span>I confirm these photos are <b>recent</b> and show the <b>actual unit</b> being listed.</span></label>
     <label class="fld"><span>Video walkthrough (optional, ~30 sec)</span><label class="phadd" style="min-height:64px;flex-direction:row"><i data-lucide="video"></i>${draft.videoName?esc(draft.videoName):'Attach a video file'}<input type="file" accept="video/*" hidden onchange="App.addVid(this)"></label></label>`;}
   if(WSTEP===8){
-    const rev=[['Type',draft.type],['Area',draft.area==='__other'?draft.customArea||draft.area:draft.area],['Rent',draft.rent?kes(draft.rent)+' '+draft.period:''],['Deposit',draft.deposit?kes(draft.deposit):'None'],['Water',draft.water],['Electricity',draft.elec],['WiFi',draft.wifi],['Bathroom',draft.bath],['Kitchen',draft.kitchen],['Gender',draft.gender],['Available',draft.availFrom],['Photos',draft.photos.length]];
+    const rev=[['Type',draft.type],['Area',draft.area],['Rent',draft.rent?kes(draft.rent)+' '+draft.period:''],['Deposit',draft.deposit?kes(draft.deposit):'None'],['Water',draft.water],['Electricity',draft.elec],['WiFi',draft.wifi],['Bathroom',draft.bath],['Kitchen',draft.kitchen],['Gender',draft.gender],['Available',draft.availFrom],['Photos',draft.photos.length]];
     body=`<details class="card" style="padding:14px;margin-bottom:16px"><summary style="font-weight:800;cursor:pointer;font-family:var(--disp)">Review your listing</summary><div style="margin-top:8px">${rev.map(([k,v])=>`<div class="revrow"><b>${k}</b><span>${esc(String(v??'—'))}</span></div>`).join('')}</div></details>`
     +`<label class="fld"><span>Contact phone (verified)</span><input type="tel" value="${esc(draft.contactPhone||u.phone||'')}" oninput="App.sf('contactPhone',this.value)"><em>${fmtPhone(u.phone||'')} is your verified number — calls go straight to it.</em></label>`
     +seg('waSame','WhatsApp number same as phone?',['Yes','No'])
