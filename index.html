@@ -556,7 +556,7 @@ function match(l,f){
 const applyF=(ls,f)=>ls.filter(l=>match(l,f)).sort((a,b)=>f.sort==='priceAsc'?a.rent-b.rent:f.sort==='priceDesc'?b.rent-a.rent:f.sort==='walk'?a.walkGate-b.walkGate:b.listedAt-a.listedAt);
 const activeChips=f=>{const c=[];f.types.forEach(t=>c.push({k:'types',v:t,label:t}));f.areas.forEach(a=>c.push({k:'areas',v:a,label:a}));f.gender.forEach(g=>c.push({k:'gender',v:g,label:g}));f.furn.forEach(x=>c.push({k:'furn',v:x,label:x}));if(f.min||f.max)c.push({k:'price',label:kes(f.min||0)+(f.max?' – '+kes(f.max):'+')});if(f.maxWalk)c.push({k:'maxWalk',label:'≤ '+f.maxWalk+' min to gate'});Object.entries(f.amen||{}).filter(([,v])=>v).forEach(([k])=>c.push({k:'amen:'+k,label:{wifi:'WiFi included',water:'Water included',elec:'Electricity incl.',ensuite:'Ensuite',kitchen:'Own kitchen',guard:'Security guard',backup:'Backup power'}[k]}));if(!f.hideTaken)c.push({k:'hideTaken',label:'Includes taken'});return c;};
 
-/* ---------- replies (simulated landlord) ---------- */
+
 function autoReply(text,l){
   const t=text.toLowerCase();
   if(/avail|vacant|free|still/.test(t))return `Yes, it is still available. You can come view it any day between 9 am and 5 pm.`;
@@ -569,9 +569,6 @@ function autoReply(text,l){
 }
 const QUICK=['Yes, it is available — come view between 9 am and 5 pm.','The rent is fixed, sorry.','Water is included and there is a storage tank.','Deposit is one month, refundable when you leave.'];
 
-/* =====================================================================
-   RENDERERS
-===================================================================== */
 const stack=[];
 function go(n,p={}){stack.push({name:n,params:p});render();}
 function tab(n){stack.length=0;stack.push({name:n,params:{}});render();}
