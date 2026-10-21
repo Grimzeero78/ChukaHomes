@@ -386,7 +386,8 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 /* =====================================================================
    ChukaHomes — Phase 1 prototype. Single file, runs fully offline.
    OTP, chat replies, document review and maps are simulated locally.
-   Property photos are served from Unsplash (real houses & rooms).
+   Property photos are real house/room images from Unsplash.
+   Areas include Marine, Slaughter, Mungoni (plus Ndagani, Town, Karingani…).
 ===================================================================== */
 'use strict';
 
@@ -416,7 +417,7 @@ const AVC=['#0E5A33','#B4531B','#4E86AE','#7A4BA8','#A83B6A'];
 const avCol=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
 const fmtPhone=p=>{const l=String(p||'').replace(/^254/,'0');return l.slice(0,4)+' '+l.slice(4,7)+' '+l.slice(7);};
 
-/* ---------- real house / room photos ---------- */
+/* ---------- real house / room photos (Unsplash) ---------- */
 const UNS={
   room:['1522708323590-d24dbb6b0267','1502672260266-1c1ef2d93688','1560448204-e02f11c3d0e2','1567767292278-a4f21aa2d36e','1522771739844-6a9f6d5f14af','1540518614846-7eded433c457','1616486338812-3dadae4b4ace','1595526114035-0d45ed16cfbf'],
   living:['1493809842364-78817add7ffb','1586023492125-27b2c045efd7','1598928506311-c55ded91a20c','1513694203232-719a280e022f','1600210492486-724fe5c67fb0','1600585154340-be6161a56a0c'],
@@ -445,7 +446,8 @@ function ph(seed,n,type){
 
 /* ---------- constants ---------- */
 const TYPES=['Bedsitter','Single Room','1 Bedroom','2 Bedroom','Shared Hostel Room','Double Room'];
-const AREAS=['Chuka Town','Ndagani','Karingani','Magumoni Road','University Gate Area'];
+/* CHANGED: added Marine, Slaughter, Mungoni */
+const AREAS=['Chuka Town','Ndagani','Karingani','Magumoni Road','University Gate Area','Marine','Slaughter','Mungoni'];
 const FURN=['Furnished','Semi-furnished','Unfurnished'];
 const PERIODS=['Per Month','Per Semester (4 months)','Per Year'];
 const WATER=['Included in rent','Pay separately','Rationed'];
@@ -472,11 +474,11 @@ const unpj=(x,y)=>({lat:GATE.lat-(y-PR.y0)/PR.k, lng:GATE.lng+(x-PR.x0)/PR.k});
 function distM(a,b){const R=6371e3,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180,s=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
 
 /* ---------- seed data ---------- */
-const KEY='chukahomes_v4'; let DB=null;
+const KEY='chukahomes_v5'; let DB=null;
 function seed(){
   const now=Date.now(),H=36e5,D=864e5;
   const U=(id,role,name,phone,o={})=>Object.assign({id,role,name,phone,verified:false,verifyStatus:'none',docs:null,email:null,regNo:null,suspended:false,joined:now-90*D},o);
-  DB={v:4,session:null,nextIds:{l:13,c:1,u:6,r:2,w:1},
+  DB={v:5,session:null,nextIds:{l:15,c:1,u:6,r:2,w:1},
     users:[
       U('uA','admin','ChukaHomes Admin','254700000001',{verified:true,verifyStatus:'approved'}),
       U('uS1','student','Brian Kiprotich','254712345678',{verified:true,verifyStatus:'approved',regNo:'CS22/5317/21',email:'b.kiprotich@student.chuka.ac.ke'}),
@@ -485,9 +487,13 @@ function seed(){
       U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-greenview.pdf'},email:'stay@greenviewhostels.ke'}),
       U('uL3','landlord','Peter Mwangi','254701444555',{verifyStatus:'pending',docs:{id:'mwangi-id.jpg',own:'karingani-plot-agreement.pdf'}}),
       U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-kaimuri.pdf'}}),
-      U('uL5','landlord','Joseph Mutua','254745666777')
+      U('uL5','landlord','Joseph Mutua','254745666777'),
+      U('uL6','landlord','Marine Comfort Homes','254733555444',{verified:true,verifyStatus:'approved',docs:{id:'marine-id.pdf',own:'marine-lease.pdf'},email:'info@marinecomfort.ke'}),
+      U('uL7','landlord','Slaughter Gate Hostels','254722777888',{verified:true,verifyStatus:'approved',docs:{id:'slaughter-id.jpg',own:'slaughter-title.pdf'},email:'stay@slaughtergate.ke'}),
+      U('uL8','landlord','Mungoni Bedsitters','254711999000',{verifyStatus:'pending',docs:{id:'mungoni-id.jpg',own:'mungoni-lease.pdf'}})
     ],
     listings:[
+      /* ---- Original Ndagani / Town listings ---- */
       {id:'l1',ownerId:'uL1',title:'Sunlit Bedsitter near Main Gate',type:'Bedsitter',units:2,furnishing:'Semi-furnished',floor:'1st',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3362,lng:37.6408,walkGate:7,walkStage:4,road:'Tarmac',rent:5500,period:'Per Month',terms:'Monthly. Deposit = 1 month, refundable on exit.',deposit:5500,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 500 – 900 / month',wifi:'Available but paid separately',wifiCost:'KES 1,500 / month',wifiProvider:'Unlimited Net (shared fibre)',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Guard','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk1',6,'Bedsitter'),video:false,status:'available',boosted:false,flagged:false,views:132,listedAt:now-3*D,updatedAt:now-2*H,ip:'41.90.34.12',device:'Chrome · Android'},
       {id:'l2',ownerId:'uL3',title:'Affordable Single Room – Karingani',type:'Single Room',units:3,furnishing:'Unfurnished',floor:'Ground',area:'Karingani',landmark:'Behind Karingani Academy',lat:-0.3378,lng:37.6355,walkGate:12,walkStage:6,road:'Murram',rent:2800,period:'Per Month',terms:'Monthly, no deposit. Rent due by the 5th.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Mon & Thu, 6:00 – 9:00 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 300 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Paid separately (KES 100 / month)',backup:'None',bath:'Shared',kitchen:'Shared',cooking:'Yes',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',alcohol:'No',photos:ph('chk2',5,'Single Room'),video:false,status:'available',boosted:false,flagged:false,views:64,listedAt:now-14*D,updatedAt:now-9*D,ip:'41.90.78.40',device:'Chrome · Android'},
       {id:'l3',ownerId:'uL4',title:'Modern 1-Bedroom in Chuka Town',type:'1 Bedroom',units:1,furnishing:'Furnished',floor:'2nd',area:'Chuka Town',landmark:'Above Co-op Bank, Kenyatta Rd',lat:-0.3335,lng:37.6465,walkGate:18,walkStage:2,road:'Tarmac',rent:9500,period:'Per Month',terms:'Monthly. Deposit = 1 month + refundable gate card.',deposit:9500,fees:'KES 500 refundable gate card',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 800 – 1,200 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Zuku Fibre 10 Mbps',garbage:'Included',backup:'Solar (lights & router)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'Yes',photos:ph('chk3',6,'1 Bedroom'),video:true,status:'available',boosted:false,flagged:false,views:208,listedAt:now-6*D,updatedAt:now-1*D,ip:'197.232.60.11',device:'Safari · iPhone'},
@@ -499,7 +505,16 @@ function seed(){
       {id:'l9',ownerId:'uL3',title:'Single Room near Ndagani Stage',type:'Single Room',units:2,furnishing:'Unfurnished',floor:'Ground',area:'Ndagani',landmark:'50 m from Ndagani matatu stage',lat:-0.3368,lng:37.6420,walkGate:9,walkStage:1,road:'Tarmac',rent:2500,period:'Per Month',terms:'Monthly, no deposit.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Tue & Fri, 7 – 10 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 250 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Paid separately (KES 80 / month)',backup:'None',bath:'Shared',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk9',5,'Single Room'),video:false,status:'available',boosted:false,flagged:false,views:88,listedAt:now-4*D,updatedAt:now-30*H,ip:'41.90.78.40',device:'Chrome · Android'},
       {id:'l10',ownerId:'uL2',title:'New Bedsitters – University Gate Area',type:'Bedsitter',units:3,furnishing:'Furnished',floor:'Ground',area:'University Gate Area',landmark:'Greenview Annex, next to Main Gate',lat:-0.3404,lng:37.6445,walkGate:5,walkStage:4,road:'Tarmac',rent:6200,period:'Per Month',terms:'Semester (4 months) = KES 24,800, or monthly. Deposit = 1 month.',deposit:6200,fees:'None',negotiable:'No',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 500 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Greenview Fibre',garbage:'Included',backup:'Solar (lights)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk10',6,'Bedsitter'),video:true,status:'available',boosted:true,flagged:false,views:276,listedAt:now-1*D,updatedAt:now-7*H,ip:'41.90.10.77',device:'Chrome · Windows'},
       {id:'l11',ownerId:'uL1',title:'Cozy 1-Bedroom – Ndagani',type:'1 Bedroom',units:1,furnishing:'Semi-furnished',floor:'1st',area:'Ndagani',landmark:'Above Ndagani Pharmacy',lat:-0.3372,lng:37.6390,walkGate:8,walkStage:5,road:'Murram',rent:8000,period:'Per Month',terms:'Monthly. Deposit = 1 month.',deposit:8000,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 700 / month',wifi:'Available but paid separately',wifiCost:'KES 1,500 / month',wifiProvider:'Unlimited Net',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'No',photos:ph('chk11',5,'1 Bedroom'),video:false,status:'available',boosted:false,flagged:false,views:74,listedAt:now-7*D,updatedAt:now-4*D,ip:'41.90.34.12',device:'Chrome · Android'},
-      {id:'l12',ownerId:'uL3',title:'Budget Single – Magumoni',type:'Single Room',units:1,furnishing:'Unfurnished',floor:'Ground',area:'Magumoni Road',landmark:'Magumoni market, past the stage',lat:-0.3455,lng:37.6445,walkGate:17,walkStage:7,road:'Footpath only',rent:2200,period:'Per Month',terms:'Monthly, no deposit.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 6 – 8 am',waterTank:'No',elec:'Shared meter',elecCost:'Approx. KES 200 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Communal',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'No',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk12',5,'Single Room'),video:false,status:'taken',boosted:false,flagged:false,views:120,listedAt:now-25*D,updatedAt:now-16*D,ip:'41.90.78.40',device:'Chrome · Android'}
+      {id:'l12',ownerId:'uL3',title:'Budget Single – Magumoni',type:'Single Room',units:1,furnishing:'Unfurnished',floor:'Ground',area:'Magumoni Road',landmark:'Magumoni market, past the stage',lat:-0.3455,lng:37.6445,walkGate:17,walkStage:7,road:'Footpath only',rent:2200,period:'Per Month',terms:'Monthly, no deposit.',deposit:0,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 6 – 8 am',waterTank:'No',elec:'Shared meter',elecCost:'Approx. KES 200 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Communal',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'No',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk12',5,'Single Room'),video:false,status:'taken',boosted:false,flagged:false,views:120,listedAt:now-25*D,updatedAt:now-16*D,ip:'41.90.78.40',device:'Chrome · Android'},
+      /* ---- Marine listings ---- */
+      {id:'l13',ownerId:'uL6',title:'Marine Bedsitter – Marine Estate',type:'Bedsitter',units:2,furnishing:'Semi-furnished',floor:'1st',area:'Marine',landmark:'Marine Trading Centre, near the water kiosk',lat:-0.3320,lng:37.6380,walkGate:14,walkStage:5,road:'Murram',rent:4800,period:'Per Month',terms:'Monthly. Deposit = 1 month.',deposit:4800,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 400 / month',wifi:'Available but paid separately',wifiCost:'KES 1,200 / month',wifiProvider:'Marine Fibre',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Guard','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'No',photos:ph('chk13',6,'Bedsitter'),video:false,status:'available',boosted:false,flagged:false,views:45,listedAt:now-2*D,updatedAt:now-1*D,ip:'41.90.50.20',device:'Chrome · Android'},
+      {id:'l14',ownerId:'uL6',title:'Marine 1-Bedroom – Quiet Plot',type:'1 Bedroom',units:1,furnishing:'Furnished',floor:'Ground',area:'Marine',landmark:'Marine Primary School area',lat:-0.3315,lng:37.6370,walkGate:15,walkStage:6,road:'Murram',rent:7500,period:'Per Month',terms:'Monthly. Deposit negotiable.',deposit:7500,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 7 – 9 am',waterTank:'Yes',elec:'Own token meter',elecCost:'Approx. KES 600 / month',wifi:'Included in rent',wifiCost:'',wifiProvider:'Marine WiFi',garbage:'Included',backup:'Solar (lights)',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'Yes',desk:'Yes',security:['CCTV','Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Daytime only',alcohol:'No',photos:ph('chk14',6,'1 Bedroom'),video:true,status:'available',boosted:true,flagged:false,views:78,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.50.21',device:'Chrome · Windows'},
+      /* ---- Slaughter listings ---- */
+      {id:'l15',ownerId:'uL7',title:'Slaughter Gate Hostel – Single Room',type:'Single Room',units:4,furnishing:'Unfurnished',floor:'Ground',area:'Slaughter',landmark:'Slaughter area, near the abattoir road',lat:-0.3350,lng:37.6330,walkGate:16,walkStage:7,road:'Murram',rent:3000,period:'Per Month',terms:'Monthly. No deposit for students.',deposit:0,fees:'None',negotiable:'No',water:'Rationed',waterCost:'',waterSched:'Mon, Wed, Fri – 6 am to 8 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 250 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Paid separately (KES 100 / month)',backup:'None',bath:'Shared',kitchen:'Shared',cooking:'Yes',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Guard','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:00',visitors:'Daytime only',alcohol:'No',photos:ph('chk15',5,'Single Room'),video:false,status:'available',boosted:false,flagged:false,views:33,listedAt:now-5*D,updatedAt:now-3*D,ip:'41.90.60.30',device:'Chrome · Android'},
+      {id:'l16',ownerId:'uL7',title:'Slaughter Double Room – Comrade Special',type:'Double Room',units:2,furnishing:'Semi-furnished',floor:'1st',area:'Slaughter',landmark:'Slaughter stage, opposite the butchery',lat:-0.3345,lng:37.6320,walkGate:17,walkStage:8,road:'Murram',rent:3800,period:'Per Month',terms:'Monthly. Pay 2 months upfront.',deposit:3800,fees:'None',negotiable:'Yes',water:'Rationed',waterCost:'',waterSched:'Daily 6 – 8 am',waterTank:'No',elec:'Shared meter',elecCost:'Approx. KES 300 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Shared',kitchen:'None — meals only',cooking:'No',balcony:'No',tile:'Cement',ceiling:'No',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Male only',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'Yes',photos:ph('chk16',5,'Double Room'),video:false,status:'available',boosted:false,flagged:false,views:29,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.60.31',device:'Chrome · Android'},
+      /* ---- Mungoni listings ---- */
+      {id:'l17',ownerId:'uL8',title:'Mungoni Bedsitter – Quiet & Green',type:'Bedsitter',units:2,furnishing:'Semi-furnished',floor:'Ground',area:'Mungoni',landmark:'Mungoni shopping centre, off the tarmac',lat:-0.3290,lng:37.6350,walkGate:20,walkStage:10,road:'Murram',rent:4200,period:'Per Month',terms:'Monthly. Deposit = 1 month.',deposit:4200,fees:'None',negotiable:'Yes',water:'Included in rent',waterCost:'',waterSched:'',waterTank:'Yes',elec:'Prepaid',elecCost:'Approx. KES 350 / month',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',tile:'Tiled',ceiling:'Yes',wardrobe:'Yes',bed:'No',desk:'No',security:['Gate lock'],gender:'Mixed',curfewOn:'No',curfewTime:'',visitors:'Yes',alcohol:'No',photos:ph('chk17',6,'Bedsitter'),video:false,status:'available',boosted:false,flagged:false,views:51,listedAt:now-6*D,updatedAt:now-4*D,ip:'41.90.70.40',device:'Chrome · Android'},
+      {id:'l18',ownerId:'uL8',title:'Mungoni Single Room – Budget Friendly',type:'Single Room',units:3,furnishing:'Unfurnished',floor:'Ground',area:'Mungoni',landmark:'Mungoni Primary, behind the shops',lat:-0.3285,lng:37.6340,walkGate:21,walkStage:11,road:'Murram',rent:2400,period:'Per Month',terms:'Monthly. No deposit.',deposit:0,fees:'None',negotiable:'No',water:'Rationed',waterCost:'',waterSched:'Tue & Sat, 6 – 9 am',waterTank:'Yes',elec:'Shared meter',elecCost:'Approx. KES 200 / month each',wifi:'Not available',wifiCost:'',wifiProvider:'',garbage:'Not included',backup:'None',bath:'Shared',kitchen:'Shared',cooking:'Yes',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:['Gate lock'],gender:'Male only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',alcohol:'No',photos:ph('chk18',5,'Single Room'),video:false,status:'available',boosted:false,flagged:false,views:22,listedAt:now-9*D,updatedAt:now-7*D,ip:'41.90.70.41',device:'Chrome · Android'}
     ],
     convs:[
       {id:'c_l5_uS1',listingId:'l5',studentId:'uS1',landlordId:'uL2',blocked:false,autoDone:false,msgs:[
@@ -520,7 +535,7 @@ function seed(){
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===4){DB=d;return;}}}catch(e){}seed();}
+function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===5){DB=d;return;}}}catch(e){}seed();}
 loadDB();
 const user=id=>DB.users.find(u=>u.id===id)||null;
 const listing=id=>DB.listings.find(l=>l.id===id)||null;
@@ -556,7 +571,7 @@ function match(l,f){
 const applyF=(ls,f)=>ls.filter(l=>match(l,f)).sort((a,b)=>f.sort==='priceAsc'?a.rent-b.rent:f.sort==='priceDesc'?b.rent-a.rent:f.sort==='walk'?a.walkGate-b.walkGate:b.listedAt-a.listedAt);
 const activeChips=f=>{const c=[];f.types.forEach(t=>c.push({k:'types',v:t,label:t}));f.areas.forEach(a=>c.push({k:'areas',v:a,label:a}));f.gender.forEach(g=>c.push({k:'gender',v:g,label:g}));f.furn.forEach(x=>c.push({k:'furn',v:x,label:x}));if(f.min||f.max)c.push({k:'price',label:kes(f.min||0)+(f.max?' – '+kes(f.max):'+')});if(f.maxWalk)c.push({k:'maxWalk',label:'≤ '+f.maxWalk+' min to gate'});Object.entries(f.amen||{}).filter(([,v])=>v).forEach(([k])=>c.push({k:'amen:'+k,label:{wifi:'WiFi included',water:'Water included',elec:'Electricity incl.',ensuite:'Ensuite',kitchen:'Own kitchen',guard:'Security guard',backup:'Backup power'}[k]}));if(!f.hideTaken)c.push({k:'hideTaken',label:'Includes taken'});return c;};
 
-
+/* ---------- replies (simulated landlord) ---------- */
 function autoReply(text,l){
   const t=text.toLowerCase();
   if(/avail|vacant|free|still/.test(t))return `Yes, it is still available. You can come view it any day between 9 am and 5 pm.`;
@@ -569,6 +584,9 @@ function autoReply(text,l){
 }
 const QUICK=['Yes, it is available — come view between 9 am and 5 pm.','The rent is fixed, sorry.','Water is included and there is a storage tank.','Deposit is one month, refundable when you leave.'];
 
+/* =====================================================================
+   RENDERERS
+===================================================================== */
 const stack=[];
 function go(n,p={}){stack.push({name:n,params:p});render();}
 function tab(n){stack.length=0;stack.push({name:n,params:{}});render();}
@@ -626,7 +644,7 @@ function renderHome(){
   return `<div>
   <div class="hhero">
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <div class="brand">${MARK}<div><b>ChukaHomes</b><small>NDAGANI · TOWN · GATE · CHUKA</small></div></div>
+      <div class="brand">${MARK}<div><b>ChukaHomes</b><small>NDAGANI · MARINE · SLAUGHTER · MUNGONI</small></div></div>
       <button class="icbtn" onclick="App.tab('chats')"><i data-lucide="message-circle"></i></button>
     </div>
     <p class="htag">Skip the door-to-door.<br>Find your crib from your phone.</p>
@@ -1234,7 +1252,7 @@ function renderAuth(){
   return `<div class="auth">
     ${MARK.replace('<svg','<svg class="mark"')}
     <h1>Find your crib.<br>List your vacant.</h1>
-    <p class="sub">The comrades' housing market for Chuka — Ndagani, Town, Karingani & the Gate.</p>
+    <p class="sub">The comrades' housing market for Chuka — Ndagani, Marine, Slaughter & Mungoni.</p>
     <div class="acard">${body}
       <div class="seclabel" style="margin-top:20px">Quick demo access</div>
       <div class="demogrid">
