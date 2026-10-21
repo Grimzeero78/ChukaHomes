@@ -280,6 +280,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .fld input[type=text],.fld input[type=tel],.fld input[type=number],.fld input[type=date],.fld input[type=email],.fld input[type=time],.fld textarea,.fld select{width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px;background:var(--card);outline:0}
 .fld textarea{height:auto;min-height:76px;padding:12px 14px}
 .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--green)}
+.req{color:var(--red);font-weight:700;margin-left:2px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{padding:11px 15px;border:1.5px solid var(--line2);border-radius:12px;font-weight:600;font-size:13.5px;background:var(--card)}
 .seg button.on{background:var(--green);border-color:var(--green);color:#fff}
@@ -300,8 +301,14 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .chkrow{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line2);border-radius:14px;padding:13px;margin:12px 0;font-size:13.5px;font-weight:600;cursor:pointer}
 .chkrow input{width:20px;height:20px;accent-color:var(--green);margin-top:1px;flex:none}
 .revrow{display:flex;justify-content:space-between;gap:14px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:13px}
-.revrow b{color:var(--ink2);font-weight:600;flex:none}
-.revrow span{text-align:right}
+.revrow b{color:var(--ink2);font-weight:600;flex:none;min-width:110px}
+.revrow span{text-align:right;word-break:break-word}
+.docslot{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.docslot .mi{flex:1;min-width:0}
+.docslot b{font-size:13.5px;display:block}
+.docslot .tiny{margin-top:2px}
+.docslot .di{width:36px;height:36px;border-radius:10px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;flex:none}
+.docslot .di svg{width:18px;height:18px}
 
 .myl{padding:14px 18px}
 .mrow{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:12px}
@@ -350,6 +357,13 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .demogrid button{padding:11px 8px;border:1.5px solid var(--line2);border-radius:12px;font-weight:700;font-size:12.5px;background:var(--card);display:flex;gap:7px;align-items:center;justify-content:center}
 .demogrid svg{width:15px;height:15px;color:var(--green)}
 .otpbanner{background:var(--orange-soft);border:1.5px dashed var(--orange);color:var(--orange-d);border-radius:13px;padding:11px 14px;font-size:13px;font-weight:700;text-align:center;margin-bottom:4px}
+.myacct{width:100%;display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line2);border-radius:12px;background:var(--card);text-align:left;margin-bottom:8px}
+.myacct:hover{background:var(--green-soft);border-color:var(--green)}
+.myacct .av{width:34px;height:34px;font-size:12px}
+.myacct .mi{flex:1;min-width:0}
+.myacct b{font-size:13.5px;display:block;color:var(--ink)}
+.myacct small{font-size:11.5px;color:var(--ink3);display:block;margin-top:1px}
+.myacct svg{width:16px;height:16px;color:var(--ink3);flex:none}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -370,9 +384,10 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 <script>
 /* =====================================================================
    ChukaHomes — Phase 1 prototype.
-   Areas: Ndagani · Marine · Slaughter · Mungoni (ONLY these four)
-   Prices: Kenyan-realistic — singles 2k/mo, bedsitters 4.5–6k/mo,
-   some per-semester at 26k / 30k.
+   Areas: Ndagani · Marine · Slaughter · Mungoni (ONLY)
+   Landlord verification: ID + ownership + selfie + address + properties
+   Admin can view full application and approve/reject.
+   New landlord accounts are remembered on the device for quick re-login.
 ===================================================================== */
 'use strict';
 
@@ -401,7 +416,7 @@ const AVC=['#0E5A33','#B4531B','#4E86AE','#7A4BA8','#A83B6A'];
 const avCol=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
 const fmtPhone=p=>{const l=String(p||'').replace(/^254/,'0');return l.slice(0,4)+' '+l.slice(4,7)+' '+l.slice(7);};
 
-/* ---------- photos (Unsplash — modest rooms) ---------- */
+/* ---------- photos ---------- */
 const UNS={
   room:['1522771739844-6a9f6d5f14af','1540518614846-7eded433c457','1505691938895-1758d7feb511','1585129775128-d8c31c202b6e','1595526114035-0d45ed16cfbf','1560185007-cde436f6a4d0'],
   kitchen:['1556912173-3bb406ef7e77','1565538810643-b5bdb714032a','1484154218962-a197022b5858'],
@@ -409,7 +424,7 @@ const UNS={
   ext:['1568605114967-8130f3a36994','1570129477492-45c003edd2be','1523217582562-09d0def993a6','1600596542815-ffad4c1539a9']
 };
 const uimg=(id,w=800)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
-const PLACEHOLDER='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E5EFE2"/><stop offset="1" stop-color="#FBEADB"/></linearGradient></defs><rect width="800" height="520" fill="url(#g)"/><g fill="#0E5A33" opacity="0.18"><path d="M320 330 L400 250 L480 330 V400 H320 Z"/><rect x="380" y="350" width="40" height="50" rx="4"/></g><text x="400" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#0E5A33" opacity="0.55">ChukaHomes</text></svg>');
+const PLACEHOLDER='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E5EFE2"/><stop offset="1" stop-color="#FBEADB"/></linearGradient></defs><rect width="800" height="520" fill="url(#g)"/><text x="400" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#0E5A33" opacity="0.55">ChukaHomes</text></svg>');
 window.imgErr=function(img){img.onerror=null;img.src=PLACEHOLDER;};
 function ph(seed,n,type){
   const h=[...String(seed)].reduce((a,c)=>a+c.charCodeAt(0),0);
@@ -429,7 +444,6 @@ function ph(seed,n,type){
 
 /* ---------- constants ---------- */
 const TYPES=['Bedsitter','Single Room','1 Bedroom','2 Bedroom','Shared Hostel Room','Double Room'];
-/* ONLY THE FOUR AREAS THE USER GAVE US. No Karingani, no Magumoni, no guesswork. */
 const AREAS=['Ndagani','Marine','Slaughter','Mungoni'];
 const FURN=['Furnished','Semi-furnished','Unfurnished'];
 const PERIODS=['Per Month','Per Semester (4 months)','Per Year'];
@@ -444,7 +458,8 @@ const GENDER=['Male only','Female only','Mixed'];
 const VISIT=['Yes','Daytime only','No'];
 const ROADS=['Tarmac','Murram','Footpath only'];
 const SEC=['Guard','Gate lock','CCTV','None'];
-const FLOORS=['Ground','1st','2nd','3rd','4th'];
+/* Floors — extended to 7th for taller hostels */
+const FLOORS=['Ground','1st','2nd','3rd','4th','5th','6th','7th'];
 const perShort=p=>p.startsWith('Per Month')?'mo':p.startsWith('Per Semester')?'sem':'yr';
 const REPORTS=['Fake or scam listing','Unit is already taken','Wrong price or info','Poster is not the landlord','Misleading photos','Other'];
 const MARK=`<svg viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="13" fill="#0E5A33"/><path d="M11 26 L24 13.5 L37 26" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="16.6" y="24" width="14.8" height="12.5" rx="2.4" stroke="#fff" stroke-width="3"/><rect x="21.4" y="28.2" width="5.2" height="8.3" rx="1" fill="#E0620F"/></svg>`;
@@ -457,48 +472,48 @@ const unpj=(x,y)=>({lat:GATE.lat-(y-PR.y0)/PR.k, lng:GATE.lng+(x-PR.x0)/PR.k});
 function distM(a,b){const R=6371e3,dLa=(b.lat-a.lat)*Math.PI/180,dLo=(b.lng-a.lng)*Math.PI/180,s=Math.sin(dLa/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
 
 /* ---------- seed ---------- */
-const KEY='chukahomes_v7'; let DB=null;
+const KEY='chukahomes_v8'; let DB=null;
 function seed(){
   const now=Date.now(),H=36e5,D=864e5;
-  const U=(id,role,name,phone,o={})=>Object.assign({id,role,name,phone,verified:false,verifyStatus:'none',docs:null,email:null,regNo:null,suspended:false,joined:now-90*D},o);
+  const U=(id,role,name,phone,o={})=>Object.assign({id,role,name,phone,verified:false,verifyStatus:'none',docs:null,verifyDetails:null,email:null,regNo:null,suspended:false,joined:now-90*D},o);
   const mk=o=>Object.assign({units:1,furnishing:'Semi-furnished',floor:'Ground',road:'Murram',period:'Per Month',deposit:0,fees:'None',negotiable:'Yes',waterCost:'',waterSched:'',waterTank:'Yes',elecCost:'',wifiCost:'',wifiProvider:'',backup:'None',balcony:'No',tile:'Cement',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',curfewOn:'No',curfewTime:'',alcohol:'No',video:false,boosted:false,flagged:false,status:'available',availFrom:now},o);
-  DB={v:7,session:null,nextIds:{l:16,c:1,u:9,r:2,w:1},
+  DB={v:8,session:null,nextIds:{l:16,c:1,u:9,r:2,w:1},
     users:[
       U('uA','admin','ChukaHomes Admin','254700000001',{verified:true,verifyStatus:'approved'}),
       U('uS1','student','Brian Kiprotich','254712345678',{verified:true,verifyStatus:'approved',regNo:'CS22/5317/21',email:'b.kiprotich@student.chuka.ac.ke'}),
       U('uS2','student','Faith Achieng','254733111222'),
-      U('uL1','landlord','Grace Njeri','254722000111',{verified:true,verifyStatus:'approved',docs:{id:'national-id-grace.jpg',own:'title-deed-ndagani.pdf'},email:'gracenjeri@gmail.com'}),
-      U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-ndagani.pdf'},email:'stay@greenviewhostels.ke'}),
-      U('uL3','landlord','Peter Mwangi','254701444555',{verifyStatus:'pending',docs:{id:'mwangi-id.jpg',own:'ndagani-plot-agreement.pdf'}}),
-      U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-ndagani.pdf'}}),
+      U('uL1','landlord','Grace Njeri','254722000111',{verified:true,verifyStatus:'approved',docs:{id:'national-id-grace.jpg',own:'title-deed-ndagani.pdf',selfie:'grace-selfie.jpg'},verifyDetails:{physicalAddress:'Ndagani, plot 45, opposite the shopping centre',propertiesOwned:'2 bedsitters + 1 single room',altPhone:'0722000111',agreed:true},email:'gracenjeri@gmail.com'}),
+      U('uL2','landlord','Greenview Hostels','254711222333',{verified:true,verifyStatus:'approved',docs:{id:'cert-of-incorporation.pdf',own:'lease-ndagani.pdf',selfie:'director-selfie.jpg'},verifyDetails:{physicalAddress:'Ndagani, Greenview Hostels, 200 m from stage',propertiesOwned:'Hostel block with 40 beds',altPhone:'0711222333',agreed:true},email:'stay@greenviewhostels.ke'}),
+      U('uL3','landlord','Peter Mwangi','254701444555',{verifyStatus:'pending',docs:{id:'mwangi-id.jpg',own:'ndagani-plot-agreement.pdf',selfie:'mwangi-selfie.jpg'},verifyDetails:{physicalAddress:'Ndagani, Plot 22, opposite the stage',propertiesOwned:'1 bedsitter + 2 single rooms',altPhone:'0701444555',agreed:true}}),
+      U('uL4','landlord','Mary Kaimuri','254720888999',{verified:true,verifyStatus:'approved',docs:{id:'kaimuri-id.jpg',own:'utility-bill-ndagani.pdf',selfie:'kaimuri-selfie.jpg'},verifyDetails:{physicalAddress:'Ndagani, near the primary school',propertiesOwned:'1 one-bedroom apartment',altPhone:'0720888999',agreed:true}}),
       U('uL5','landlord','Joseph Mutua','254745666777'),
-      U('uL6','landlord','Marine Comfort Homes','254733555444',{verified:true,verifyStatus:'approved',docs:{id:'marine-id.pdf',own:'marine-lease.pdf'},email:'info@marinecomfort.ke'}),
-      U('uL7','landlord','Slaughter Gate Hostels','254722777888',{verified:true,verifyStatus:'approved',docs:{id:'slaughter-id.jpg',own:'slaughter-title.pdf'},email:'stay@slaughtergate.ke'}),
-      U('uL8','landlord','Mungoni Bedsitters','254711999000',{verifyStatus:'pending',docs:{id:'mungoni-id.jpg',own:'mungoni-lease.pdf'}})
+      U('uL6','landlord','Marine Comfort Homes','254733555444',{verified:true,verifyStatus:'approved',docs:{id:'marine-id.pdf',own:'marine-lease.pdf',selfie:'marine-selfie.jpg'},verifyDetails:{physicalAddress:'Marine, Trading Centre, plot 8',propertiesOwned:'4 bedsitters on plot 8',altPhone:'0733555444',agreed:true},email:'info@marinecomfort.ke'}),
+      U('uL7','landlord','Slaughter Gate Hostels','254722777888',{verified:true,verifyStatus:'approved',docs:{id:'slaughter-id.jpg',own:'slaughter-title.pdf',selfie:'slaughter-selfie.jpg'},verifyDetails:{physicalAddress:'Slaughter stage, near the market',propertiesOwned:'Hostel block, 24 singles',altPhone:'0722777888',agreed:true},email:'stay@slaughtergate.ke'}),
+      U('uL8','landlord','Mungoni Bedsitters','254711999000',{verifyStatus:'pending',docs:{id:'mungoni-id.jpg',own:'mungoni-lease.pdf'},verifyDetails:{physicalAddress:'Mungoni, plot 12',propertiesOwned:'2 bedsitters'}})
     ],
     listings:[
-      /* ============ NDAGANI (4 listings) ============ */
-      mk({id:'l1',ownerId:'uL1',title:'Bedsitter near Ndagani Stage',type:'Bedsitter',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3357,lng:37.6405,walkGate:8,walkStage:3,furnishing:'Semi-furnished',floor:'1st',road:'Tarmac',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Unlimited Net',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg1',5,'Bedsitter'),boosted:true,views:126,listedAt:now-2*D,updatedAt:now-3*H,ip:'41.90.34.12',device:'Chrome · Android'}),
+      /* ============ NDAGANI ============ */
+      mk({id:'l1',ownerId:'uL1',title:'Bedsitter near Ndagani Stage',type:'Bedsitter',area:'Ndagani',landmark:'Opposite Ndagani Shopping Centre',lat:-0.3357,lng:37.6405,walkGate:8,walkStage:3,furnishing:'Semi-furnished',floor:'1st',road:'Tarmac',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Own token meter',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Unlimited Net',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg1',5,'Bedsitter'),boosted:true,views:126,listedAt:now-2*D,updatedAt:now-3*H,ip:'41.90.34.12',device:'Chrome · Android'}),
       mk({id:'l2',ownerId:'uL3',title:'Single Room – Ndagani',type:'Single Room',area:'Ndagani',landmark:'Behind Ndagani Market',lat:-0.3360,lng:37.6410,walkGate:9,walkStage:2,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon & Thu, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('ndg2',5,'Single Room'),views:64,listedAt:now-9*D,updatedAt:now-5*D,ip:'41.90.78.40',device:'Chrome · Android'}),
       mk({id:'l3',ownerId:'uL2',title:'Shared Hostel Room (2 pax) – Ndagani',type:'Shared Hostel Room',units:3,furnishing:'Furnished',floor:'1st',rent:13000,period:'Per Semester (4 months)',terms:'KES 13,000 per semester (4 months). No deposit.',deposit:0,water:'Included in rent',elec:'Included in rent',wifi:'Included in rent',wifiProvider:'Campus-link WiFi',garbage:'Included',bath:'Communal',kitchen:'Shared',cooking:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'23:00',visitors:'Daytime only',photos:ph('ndg3',5,'Shared Hostel Room'),views:108,listedAt:now-1*D,updatedAt:now-6*H,ip:'41.90.10.77',device:'Chrome · Windows',area:'Ndagani',landmark:'Greenview Hostels, 200 m from Ndagani stage',lat:-0.3355,lng:37.6400,walkGate:10,walkStage:3}),
-      mk({id:'l4',ownerId:'uL1',title:'Clean Bedsitter – Ndagani',type:'Bedsitter',area:'Ndagani',landmark:'Near Ndagani Primary',lat:-0.3362,lng:37.6408,walkGate:9,walkStage:4,furnishing:'Furnished',rent:4500,terms:'Monthly. Deposit = 1 month.',deposit:4500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Included in rent',wifiProvider:'Building fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg4',5,'Bedsitter'),boosted:true,views:152,listedAt:now-3*D,updatedAt:now-4*H,ip:'41.90.34.12',device:'Chrome · Android'}),
+      mk({id:'l4',ownerId:'uL1',title:'Clean Bedsitter – Ndagani',type:'Bedsitter',area:'Ndagani',landmark:'Near Ndagani Primary',lat:-0.3362,lng:37.6408,walkGate:9,walkStage:4,furnishing:'Furnished',rent:4500,terms:'Monthly. Deposit = 1 month.',deposit:4500,water:'Included in rent',elec:'Prepaid',wifi:'Included in rent',wifiProvider:'Building fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV'],gender:'Mixed',visitors:'Daytime only',photos:ph('ndg4',5,'Bedsitter'),boosted:true,views:152,listedAt:now-3*D,updatedAt:now-4*H,ip:'41.90.34.12',device:'Chrome · Android'}),
 
-      /* ============ MARINE (4 listings) ============ */
+      /* ============ MARINE ============ */
       mk({id:'l5',ownerId:'uL6',title:'Single Room – Marine',type:'Single Room',area:'Marine',landmark:'Marine Trading Centre',lat:-0.3346,lng:37.6380,walkGate:11,walkStage:5,furnishing:'Unfurnished',rent:2500,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Daytime only',photos:ph('mar1',5,'Single Room'),views:43,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.50.20',device:'Chrome · Android'}),
-      mk({id:'l6',ownerId:'uL6',title:'Marine Bedsitter – Quiet Plot',type:'Bedsitter',area:'Marine',landmark:'Marine Primary School area',lat:-0.3344,lng:37.6375,walkGate:12,walkStage:6,furnishing:'Semi-furnished',floor:'1st',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 500/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Marine Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar2',5,'Bedsitter'),views:72,listedAt:now-6*D,updatedAt:now-3*D,ip:'41.90.50.21',device:'Chrome · Windows'}),
-      mk({id:'l7',ownerId:'uL6',title:'Marine Bedsitter – Per Semester',type:'Bedsitter',area:'Marine',landmark:'Near Marine Water Kiosk',lat:-0.3348,lng:37.6385,walkGate:11,walkStage:5,furnishing:'Furnished',rent:26000,period:'Per Semester (4 months)',terms:'KES 26,000 per semester (4 months). Deposit = 1 month (KES 6,500).',deposit:6500,water:'Included in rent',elec:'Own token meter',elecCost:'Approx. KES 500/mo',wifi:'Included in rent',wifiProvider:'Marine WiFi',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar3',5,'Bedsitter'),boosted:true,views:134,listedAt:now-2*D,updatedAt:now-7*H,ip:'41.90.50.22',device:'Safari · iPhone'}),
+      mk({id:'l6',ownerId:'uL6',title:'Marine Bedsitter – Quiet Plot',type:'Bedsitter',area:'Marine',landmark:'Marine Primary School area',lat:-0.3344,lng:37.6375,walkGate:12,walkStage:6,furnishing:'Semi-furnished',floor:'1st',rent:5000,terms:'Monthly. Deposit = 1 month.',deposit:5000,water:'Included in rent',elec:'Prepaid',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Marine Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar2',5,'Bedsitter'),views:72,listedAt:now-6*D,updatedAt:now-3*D,ip:'41.90.50.21',device:'Chrome · Windows'}),
+      mk({id:'l7',ownerId:'uL6',title:'Marine Bedsitter – Per Semester',type:'Bedsitter',area:'Marine',landmark:'Near Marine Water Kiosk',lat:-0.3348,lng:37.6385,walkGate:11,walkStage:5,furnishing:'Furnished',rent:26000,period:'Per Semester (4 months)',terms:'KES 26,000 per semester (4 months). Deposit = 1 month (KES 6,500).',deposit:6500,water:'Included in rent',elec:'Own token meter',wifi:'Included in rent',wifiProvider:'Marine WiFi',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',bed:'Yes',desk:'Yes',security:['Guard','CCTV','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mar3',5,'Bedsitter'),boosted:true,views:134,listedAt:now-2*D,updatedAt:now-7*H,ip:'41.90.50.22',device:'Safari · iPhone'}),
       mk({id:'l8',ownerId:'uL5',title:'Double Room – Marine',type:'Double Room',area:'Marine',landmark:'Off Marine Road',lat:-0.3342,lng:37.6378,walkGate:13,walkStage:6,furnishing:'Semi-furnished',rent:3500,terms:'Monthly. Pay 2 months upfront.',deposit:3500,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('mar4',5,'Double Room'),views:38,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.50.23',device:'Chrome · Android'}),
 
-      /* ============ SLAUGHTER (4 listings) ============ */
+      /* ============ SLAUGHTER ============ */
       mk({id:'l9',ownerId:'uL7',title:'Single Room – Slaughter',type:'Single Room',area:'Slaughter',landmark:'Slaughter Stage, near the market',lat:-0.3369,lng:37.6353,walkGate:14,walkStage:7,furnishing:'Unfurnished',rent:2000,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Mon, Wed, Fri – 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Paid separately (KES 100/mo)',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Guard','Gate lock'],gender:'Female only',curfewOn:'Yes',curfewTime:'22:00',visitors:'Daytime only',photos:ph('sla1',5,'Single Room'),views:35,listedAt:now-5*D,updatedAt:now-3*D,ip:'41.90.60.30',device:'Chrome · Android'}),
       mk({id:'l10',ownerId:'uL7',title:'Slaughter Bedsitter',type:'Bedsitter',area:'Slaughter',landmark:'Near the abattoir road',lat:-0.3370,lng:37.6350,walkGate:15,walkStage:8,furnishing:'Semi-furnished',rent:4000,terms:'Monthly. Deposit = 1 month.',deposit:4000,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('sla2',5,'Bedsitter'),views:31,listedAt:now-7*D,updatedAt:now-5*D,ip:'41.90.60.31',device:'Chrome · Android'}),
       mk({id:'l11',ownerId:'uL7',title:'Slaughter Double Room – Comrade Special',type:'Double Room',area:'Slaughter',landmark:'Slaughter stage, opposite the butchery',lat:-0.3372,lng:37.6345,walkGate:14,walkStage:7,furnishing:'Semi-furnished',rent:3500,terms:'Monthly. Pay 2 months upfront.',deposit:3500,water:'Rationed',waterSched:'Daily 6 – 8 am',elec:'Shared meter',elecCost:'Approx. KES 300/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Yes',photos:ph('sla3',5,'Double Room'),views:28,listedAt:now-8*D,updatedAt:now-6*D,ip:'41.90.60.32',device:'Chrome · Android'}),
       mk({id:'l12',ownerId:'uL3',title:'Budget Single – Slaughter',type:'Single Room',area:'Slaughter',landmark:'Slaughter area, near the shops',lat:-0.3367,lng:37.6355,walkGate:15,walkStage:7,furnishing:'Unfurnished',rent:2200,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Tue & Sat, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 250/mo each',wifi:'Not available',garbage:'Not included',bath:'Communal',kitchen:'None — meals only',cooking:'No',security:['Gate lock'],gender:'Male only',visitors:'Daytime only',photos:ph('sla4',5,'Single Room'),views:22,listedAt:now-9*D,updatedAt:now-7*D,ip:'41.90.60.33',device:'Chrome · Android'}),
 
-      /* ============ MUNGONI (3 listings) ============ */
+      /* ============ MUNGONI ============ */
       mk({id:'l13',ownerId:'uL8',title:'Single Room – Mungoni',type:'Single Room',area:'Mungoni',landmark:'Mungoni Shopping Centre',lat:-0.3332,lng:37.6346,walkGate:16,walkStage:10,furnishing:'Unfurnished',rent:2200,terms:'Monthly. No deposit.',deposit:0,water:'Rationed',waterSched:'Tue & Sat, 6 – 9 am',elec:'Shared meter',elecCost:'Approx. KES 200/mo each',wifi:'Not available',garbage:'Not included',bath:'Shared',kitchen:'Shared',cooking:'Yes',security:['Gate lock'],gender:'Male only',curfewOn:'Yes',curfewTime:'22:30',visitors:'Daytime only',photos:ph('mun1',5,'Single Room'),views:26,listedAt:now-10*D,updatedAt:now-8*D,ip:'41.90.70.40',device:'Chrome · Android'}),
-      mk({id:'l14',ownerId:'uL8',title:'Mungoni Bedsitter – Quiet & Green',type:'Bedsitter',area:'Mungoni',landmark:'Mungoni Primary, behind the shops',lat:-0.3330,lng:37.6350,walkGate:17,walkStage:11,furnishing:'Semi-furnished',rent:5500,terms:'Monthly. Deposit = 1 month.',deposit:5500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 350/mo',wifi:'Not available',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun2',5,'Bedsitter'),boosted:true,views:69,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.70.41',device:'Chrome · Android'}),
-      mk({id:'l15',ownerId:'uL8',title:'Mungoni Bedsitter – Per Semester',type:'Bedsitter',area:'Mungoni',landmark:'Off the Mungoni tarmac',lat:-0.3334,lng:37.6342,walkGate:16,walkStage:10,furnishing:'Semi-furnished',rent:30000,period:'Per Semester (4 months)',terms:'KES 30,000 per semester (4 months). Deposit = 1 month (KES 7,500).',deposit:7500,water:'Included in rent',elec:'Prepaid',elecCost:'Approx. KES 400/mo',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Mungoni Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun3',5,'Bedsitter'),views:78,listedAt:now-3*D,updatedAt:now-1*D,ip:'41.90.70.42',device:'Chrome · Android'})
+      mk({id:'l14',ownerId:'uL8',title:'Mungoni Bedsitter – Quiet & Green',type:'Bedsitter',area:'Mungoni',landmark:'Mungoni Primary, behind the shops',lat:-0.3330,lng:37.6350,walkGate:17,walkStage:11,furnishing:'Semi-furnished',rent:5500,terms:'Monthly. Deposit = 1 month.',deposit:5500,water:'Included in rent',elec:'Prepaid',wifi:'Not available',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',balcony:'Yes',security:['Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun2',5,'Bedsitter'),boosted:true,views:69,listedAt:now-4*D,updatedAt:now-2*D,ip:'41.90.70.41',device:'Chrome · Android'}),
+      mk({id:'l15',ownerId:'uL8',title:'Mungoni Bedsitter – Per Semester',type:'Bedsitter',area:'Mungoni',landmark:'Off the Mungoni tarmac',lat:-0.3334,lng:37.6342,walkGate:16,walkStage:10,furnishing:'Semi-furnished',rent:30000,period:'Per Semester (4 months)',terms:'KES 30,000 per semester (4 months). Deposit = 1 month (KES 7,500).',deposit:7500,water:'Included in rent',elec:'Prepaid',wifi:'Available but paid separately',wifiCost:'KES 1,000/mo',wifiProvider:'Mungoni Fibre',garbage:'Included',bath:'Ensuite (own)',kitchen:'Own',cooking:'Yes',security:['Guard','Gate lock'],gender:'Mixed',visitors:'Yes',photos:ph('mun3',5,'Bedsitter'),views:78,listedAt:now-3*D,updatedAt:now-1*D,ip:'41.90.70.42',device:'Chrome · Android'})
     ],
     convs:[
       {id:'c_l3_uS1',listingId:'l3',studentId:'uS1',landlordId:'uL2',blocked:false,autoDone:false,msgs:[
@@ -516,7 +531,7 @@ function seed(){
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
-function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===7){DB=d;return;}}}catch(e){}seed();}
+function loadDB(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.v===8){DB=d;return;}}}catch(e){}seed();}
 loadDB();
 const user=id=>DB.users.find(u=>u.id===id)||null;
 const listing=id=>DB.listings.find(l=>l.id===id)||null;
@@ -525,8 +540,9 @@ const isLive=l=>l.status==='available'||l.status==='taken';
 const visibleListings=()=>DB.listings.filter(l=>isLive(l)&&!(user(l.ownerId)||{}).suspended);
 const hasWifi=l=>l.wifi==='Included in rent', hasWater=l=>l.water==='Included in rent', hasElec=l=>l.elec==='Included in rent';
 const ensuite=l=>l.bath==='Ensuite (own)', ownKit=l=>l.kitchen==='Own', guardOK=l=>(l.security||[]).includes('Guard'), backupOK=l=>l.backup&&l.backup!=='None';
+const myCreated=()=>DB.users.filter(u=>u.demoCreated&&!u.suspended);
 
-function toast(msg,icon='check',warn){const t=document.createElement('div');t.className='toast'+(warn?' warn':'');t.innerHTML=`<i data-lucide="${icon}"></i><span>${msg}</span>`;$('#toasts').appendChild(t);icons();setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3200);}
+function toast(msg,icon='check',warn){const t=document.createElement('div');t.className='toast'+(warn?' warn':'');t.innerHTML=`<i data-lucide="${icon}"></i><span>${msg}</span>`;$('#toasts').appendChild(t);icons();setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3800);}
 function modal(html){$('#sheetRoot').innerHTML=`<div class="ovl" onclick="App.closeM(event)"><div class="sheet" onclick="event.stopPropagation()"><div class="grab"></div>${html}</div></div>`;icons();requestAnimationFrame(()=>$('.ovl').classList.add('show'));}
 function closeM(){$('.ovl')&&$('.ovl').classList.remove('show');setTimeout(()=>$('#sheetRoot').innerHTML='',240);}
 
@@ -788,13 +804,10 @@ function showPrev(l){
 }
 function hidePrev(){const el=$('#mPrev');el&&el.classList.remove('show');}
 
-/* ---------- gallery binding — FIXED (mousedown + native touch scroll) ---------- */
 function galBind(){
   const row=$('#galrow');
   if(!row||row._bound)return;
   row._bound=true;
-
-  // Scroll listener — updates dots + counter on native OR programmatic scroll
   row.addEventListener('scroll',()=>{
     if(!row.clientWidth)return;
     const i=Math.round(row.scrollLeft/row.clientWidth);
@@ -803,8 +816,6 @@ function galBind(){
     const cnt=$('#galcnt');
     if(cnt)cnt.textContent=(Math.min(i+1,row.children.length))+' / '+row.children.length;
   },{passive:true});
-
-  // Desktop drag via mouse events only (touch uses native scroll)
   row.addEventListener('mousedown',e=>{
     if(e.button!==0)return;
     if(e.target.closest('button, a'))return;
@@ -840,6 +851,7 @@ function renderListing(p){
   const facts=[['footprints',l.walkGate+' min','Walk to Main Gate'],['bus',l.walkStage+' min','To matatu stage'],['navigation',l.road,'Road access'],['layers',l.floor==='Ground'?'Ground':l.floor+' floor','Floor level'],['door-open',(l.units||1)+' vacant','Units available'],['calendar',availNow?'Now':fdate(l.availFrom),'Available from']];
   const feat=[['bath',l.bath],['chef-hat',l.kitchen],['utensils','Cooking in room: '+l.cooking],['sun',l.balcony==='Yes'?'Balcony':'No balcony'],['ruler','Floor: '+l.tile],['panel-top','Ceiling: '+l.ceiling],['lamp-desk','Study table: '+l.desk],['bed-double','Bed provided: '+l.bed],['shirt','Wardrobe: '+l.wardrobe]];
   const saved=(DB.favorites||[]).some(f=>f.userId===DB.session&&f.listingId===l.id);
+  const showElecCost = l.elec==='Shared meter' && l.elecCost;
   return `<div>
   <div class="gal">
     <div class="fl">
@@ -870,7 +882,7 @@ function renderListing(p){
     <div class="seclabel" style="margin-top:6px">Utilities — the honest details</div>
     <div class="card" style="padding:6px 14px">
       ${uRow('droplets','Water',l.water==='Rationed'?`Rationed — ${l.waterSched}`:l.water+(l.waterCost?` · ${l.waterCost}`:''),l.waterTank==='Yes'?'storage tank on compound':'no storage tank')}
-      ${uRow('zap','Electricity',l.elec+(l.elecCost?` · ${l.elecCost}`:''))}
+      ${uRow('zap','Electricity',l.elec+(showElecCost?` · ${l.elecCost}`:''))}
       ${uRow('wifi','Internet',l.wifi+(l.wifiCost?` · ${l.wifiCost}`:'')+(l.wifiProvider?` · ${l.wifiProvider}`:''))}
       ${uRow('trash-2','Garbage',l.garbage)}
       ${uRow('plug-zap','Backup power',l.backup)}
@@ -964,7 +976,7 @@ function renderThread(p){
 }
 
 let draft=null,WSTEP=1;
-function newDraft(){return {title:'',type:'',units:1,furnishing:'',floor:'Ground',area:'',customArea:'',landmark:'',lat:null,lng:null,walkGate:'',walkStage:'',road:'Tarmac',rent:'',period:'Per Month',terms:'',deposit:0,fees:'None',negotiable:'No',water:'',waterCost:'',waterSched:'',waterTank:'Yes',elec:'',elecCost:'',wifi:'',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'',kitchen:'',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'',curfewOn:'No',curfewTime:'',visitors:'',alcohol:'No',availFrom:new Date().toISOString().slice(0,10),photos:[],videoName:'',confirmed:false,contactPhone:'',waSame:'Yes',waNumber:'',preferred:'In-app chat'};}
+function newDraft(){return {title:'',type:'',units:1,furnishing:'',floor:'Ground',area:'',landmark:'',lat:null,lng:null,walkGate:'',walkStage:'',road:'Tarmac',rent:'',period:'Per Month',terms:'',deposit:0,fees:'None',negotiable:'No',water:'',waterCost:'',waterSched:'',waterTank:'Yes',elec:'',elecCost:'',wifi:'',wifiCost:'',wifiProvider:'',garbage:'Included',backup:'None',bath:'',kitchen:'',cooking:'Yes',balcony:'No',tile:'Tiled',ceiling:'Yes',wardrobe:'No',bed:'No',desk:'No',security:[],gender:'',curfewOn:'No',curfewTime:'',visitors:'',alcohol:'No',availFrom:new Date().toISOString().slice(0,10),photos:[],videoName:'',confirmed:false,contactPhone:'',waSame:'Yes',waNumber:'',preferred:'In-app chat'};}
 function renderCreate(p){
   if(!draft||!me())return renderHome();
   WSTEP=p.step||WSTEP;
@@ -997,8 +1009,8 @@ function renderCreate(p){
     body=seg('water','WATER',WATER)
     +(draft.water==='Pay separately'?inp('waterCost','Water cost','e.g. KES 300 / month'):'')
     +(draft.water==='Rationed'?inp('waterSched','Days & times water is available','e.g. Mon & Thu, 6 – 9 am')+seg('waterTank','Is there a storage tank?',['Yes','No']):'')
-    +seg('elec','ELECTRICITY',ELEC,'Shared meter = bill split between tenants. Prepaid/token = student buys their own tokens.')
-    +(draft.elec&&draft.elec!=='Included in rent'?inp('elecCost','Approx. monthly electricity cost','e.g. KES 500 – 900 / month'):'')
+    +seg('elec','ELECTRICITY',ELEC,'Shared meter = bill split between tenants. Prepaid/token = student buys their own tokens, so no monthly estimate is needed.')
+    +(draft.elec==='Shared meter'?inp('elecCost','Your share of the shared meter (KES / month)','e.g. KES 300 – 500 / month','text','Only the shared-meter case needs an estimate — each tenant pays their portion of the bill.'):'')
     +seg('wifi','WIFI / INTERNET',WIFI)
     +(draft.wifi==='Available but paid separately'?inp('wifiCost','Monthly WiFi cost','e.g. KES 1,000 / month')+inp('wifiProvider','Provider','e.g. Zuku, Unlimited Net'):'')
     +seg('garbage','GARBAGE COLLECTION',GARB)
@@ -1024,7 +1036,7 @@ function renderCreate(p){
     <label class="chkrow"><input type="checkbox" ${draft.confirmed?'checked':''} onchange="App.confP(this.checked)"><span>I confirm these photos are <b>recent</b> and show the <b>actual unit</b> being listed.</span></label>
     <label class="fld"><span>Video walkthrough (optional, ~30 sec)</span><label class="phadd" style="min-height:64px;flex-direction:row"><i data-lucide="video"></i>${draft.videoName?esc(draft.videoName):'Attach a video file'}<input type="file" accept="video/*" hidden onchange="App.addVid(this)"></label></label>`;}
   if(WSTEP===8){
-    const rev=[['Type',draft.type],['Area',draft.area],['Rent',draft.rent?kes(draft.rent)+' '+draft.period:''],['Deposit',draft.deposit?kes(draft.deposit):'None'],['Water',draft.water],['Electricity',draft.elec],['WiFi',draft.wifi],['Bathroom',draft.bath],['Kitchen',draft.kitchen],['Gender',draft.gender],['Available',draft.availFrom],['Photos',draft.photos.length]];
+    const rev=[['Type',draft.type],['Area',draft.area],['Rent',draft.rent?kes(draft.rent)+' '+draft.period:''],['Deposit',draft.deposit?kes(draft.deposit):'None'],['Water',draft.water],['Electricity',draft.elec+(draft.elec==='Shared meter'&&draft.elecCost?` — ${draft.elecCost}`:'')],['WiFi',draft.wifi],['Bathroom',draft.bath],['Kitchen',draft.kitchen],['Gender',draft.gender],['Available',draft.availFrom],['Photos',draft.photos.length]];
     body=`<details class="card" style="padding:14px;margin-bottom:16px"><summary style="font-weight:800;cursor:pointer;font-family:var(--disp)">Review your listing</summary><div style="margin-top:8px">${rev.map(([k,v])=>`<div class="revrow"><b>${k}</b><span>${esc(String(v??'—'))}</span></div>`).join('')}</div></details>`
     +`<label class="fld"><span>Contact phone (verified)</span><input type="tel" value="${esc(draft.contactPhone||u.phone||'')}" oninput="App.sf('contactPhone',this.value)"><em>${fmtPhone(u.phone||'')} is your verified number — calls go straight to it.</em></label>`
     +seg('waSame','WhatsApp number same as phone?',['Yes','No'])
@@ -1104,7 +1116,7 @@ function renderProfile(){
   `:''}
   ${u.role==='landlord'?`
     ${prow('building-2','My listings','Manage units, availability & stats',"App.tab2('mylistings')")}
-    ${prow('badge-check','Landlord verification',u.verified?'Approved — ID & ownership checked':u.verifyStatus==='pending'?'Documents in review by admins':u.verifyStatus==='rejected'?'Rejected — resubmit your documents':'Upload ID + proof of ownership to go live',"App.go('vlandlord')")}
+    ${prow('badge-check','Landlord verification',u.verified?'Approved — ID, ownership & selfie checked':u.verifyStatus==='pending'?'Documents in review by admins':u.verifyStatus==='rejected'?'Rejected — resubmit your documents':'Upload ID, ownership proof, selfie + property details',"App.go('vlandlord')")}
   `:''}
   ${u.role==='admin'?prow('shield-check','Open admin panel','Verification queue · reports · moderation · analytics',"App.go('admin')"):''}
   <div class="seclabel" style="padding:0 18px">Settings</div>
@@ -1130,24 +1142,77 @@ function renderVStudent(){
     <p class="tiny muted" style="margin-top:12px">In production this is checked against the university registry. In this demo it approves instantly — we trust you, comrade.</p>
   </div></div>`;
 }
+
+/* ---------- Landlord verification (expanded) ---------- */
 function renderVLandlord(){
   const u=me();if(!u)return renderProfile();
-  const slot=(k,ic,label,hint)=>`<div class="card" style="padding:14px;margin-bottom:12px">
-    <b style="font-family:var(--disp);font-size:15px">${label}</b>
-    <p class="tiny muted" style="margin:4px 0 8px">${hint}</p>
-    ${u.docs&&u.docs[k]?`<span class="docchip"><i data-lucide="file-check"></i>${esc(u.docs[k])}</span>`
-    :`<label class="phadd" style="min-height:64px;flex-direction:row"><i data-lucide="${ic}"></i>Upload file<input type="file" hidden onchange="App.docUp('${k}',this)"></label>`}
+  const d=u.verifyDetails||{};
+  const docs=u.docs||{};
+
+  const docSlot=(k,ic,label,hint)=>`<div class="docslot">
+    <div class="di"><i data-lucide="${ic}"></i></div>
+    <div class="mi">
+      <b>${label} <span class="req">*</span></b>
+      <div class="tiny muted">${docs[k]?esc(docs[k]):hint}</div>
+    </div>
+    <label class="sbtn" style="cursor:pointer">
+      ${docs[k]?'Replace':'Upload'}
+      <input type="file" hidden onchange="App.docUp('${k}',this)">
+    </label>
   </div>`;
-  const canSubmit=!!(u.docs&&u.docs.id&&u.docs.own);
+
+  const inp=(key,label,placeholder,type='text')=>`<label class="fld"><span>${label} <span class="req">*</span></span>
+    <input type="${type}" placeholder="${esc(placeholder)}" value="${esc(d[key]||'')}" oninput="App.vf('${key}',this.value)">
+  </label>`;
+
+  const textarea=(key,label,placeholder)=>`<label class="fld"><span>${label} <span class="req">*</span></span>
+    <textarea placeholder="${esc(placeholder)}" oninput="App.vf('${key}',this.value)" style="min-height:80px">${esc(d[key]||'')}</textarea>
+  </label>`;
+
+  if(u.verified){
+    return `<div><header class="shead"><button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button><h2>Landlord verification</h2></header>
+    <div class="dbody">
+      <div class="ban ban-g"><i data-lucide="badge-check"></i><span><b>You are verified.</b> Your listings carry the green “Verified landlord” badge and students trust you faster.</span></div>
+      <div class="card" style="padding:14px;margin-bottom:14px">
+        <b style="display:block;font-family:var(--disp);font-size:16px;margin-bottom:8px">Your verified details</b>
+        <div class="revrow"><b>Name</b><span>${esc(u.name)}</span></div>
+        <div class="revrow"><b>Phone (OTP-verified)</b><span>${fmtPhone(u.phone)} ✓</span></div>
+        <div class="revrow"><b>Email</b><span>${esc(u.email||'—')}</span></div>
+        <div class="revrow"><b>Physical address</b><span>${esc(d.physicalAddress||'—')}</span></div>
+        <div class="revrow"><b>Properties owned</b><span>${esc(d.propertiesOwned||'—')}</span></div>
+        <div class="revrow"><b>Alternate phone</b><span>${esc(d.altPhone||'—')}</span></div>
+      </div>
+      <div class="seclabel">Documents on file</div>
+      ${docs.id?`<div class="docslot"><div class="di"><i data-lucide="credit-card"></i></div><div class="mi"><b>National ID</b><div class="tiny muted">${esc(docs.id)}</div></div><span class="pill pill-g">✓</span></div>`:''}
+      ${docs.own?`<div class="docslot"><div class="di"><i data-lucide="file-text"></i></div><div class="mi"><b>Ownership proof</b><div class="tiny muted">${esc(docs.own)}</div></div><span class="pill pill-g">✓</span></div>`:''}
+      ${docs.selfie?`<div class="docslot"><div class="di"><i data-lucide="camera"></i></div><div class="mi"><b>Selfie with ID</b><div class="tiny muted">${esc(docs.selfie)}</div></div><span class="pill pill-g">✓</span></div>`:''}
+    </div></div>`;
+  }
+
   return `<div><header class="shead"><button class="icbtn" onclick="App.back()"><i data-lucide="arrow-left"></i></button><h2>Landlord verification</h2></header>
   <div class="dbody">
-    <div class="ban ban-g"><i data-lucide="badge-check"></i><span>Verified landlords get a badge, no warning banner on listings, and can post more units.</span></div>
-    ${slot('id','credit-card','1. National ID / Passport','A clear photo or scan of your government ID.')}
-    ${slot('own','file-text','2. Proof of ownership','Title deed, lease agreement, or a utility bill in your name.')}
-    ${u.verifyStatus==='pending'?`<div class="ban ban-a"><i data-lucide="clock"></i><span>Documents submitted — an admin is reviewing.</span></div>`
-    :u.verified?`<div class="ban ban-g"><i data-lucide="badge-check"></i><span>You're verified. Your listings carry the green badge.</span></div>`
-    :`<button class="btn btn-p" style="width:100%${canSubmit?'':';;opacity:.5'}" ${canSubmit?'':'disabled'} onclick="App.vSubmitL()">Submit for review</button>
-    ${canSubmit?'':'<p class="tiny muted" style="margin-top:10px">Upload both documents to submit.</p>'}`}
+    ${u.verifyStatus==='pending'?`<div class="ban ban-a"><i data-lucide="clock"></i><span><b>Submitted — an admin is reviewing.</b> You can still edit the fields below and resubmit if something changes.</span></div>`
+    :u.verifyStatus==='rejected'?`<div class="ban ban-r"><i data-lucide="x"></i><span><b>Last submission was rejected.</b> Fix the issues below and resubmit.</span></div>`
+    :`<div class="ban ban-g"><i data-lucide="badge-check"></i><span>Verified landlords get a green badge, no warning banner, and can post more units. <b>Fields marked * are required.</b></span></div>`}
+
+    <div class="seclabel">1. Identity</div>
+    ${docSlot('id','credit-card','National ID / Passport','Clear photo of your government-issued ID')}
+    ${docSlot('selfie','camera','Selfie holding your ID','Face and ID visible together, like the bank asks')}
+
+    <div class="seclabel">2. Proof of ownership</div>
+    ${docSlot('own','file-text','Title deed / lease / utility bill','Any document showing the property is yours or you have authority to rent it')}
+
+    <div class="seclabel">3. Contact & property details</div>
+    ${inp('physicalAddress','Where can we find you?','e.g. Ndagani, plot 45, opposite the shopping centre')}
+    ${textarea('propertiesOwned','What properties do you own or manage?','e.g. 2 bedsitters + 1 single room on plot 45, Ndagani. Utilities metered separately.')}
+    ${inp('altPhone','Alternate phone (next of kin / caretaker)','07XX XXX XXX — optional','tel')}
+
+    <label class="chkrow"><input type="checkbox" ${d.agreed?'checked':''} onchange="App.vf('agreed',this.checked)"><span>I confirm the information above is true and the documents are genuine. I understand false documents get my account permanently banned.</span></label>
+
+    <button class="btn btn-p" style="width:100%" onclick="App.vSubmitL()">
+      <i data-lucide="send"></i>${u.verifyStatus==='rejected'?'Resubmit for review':'Submit for review'}
+    </button>
+    <p class="tiny muted" style="margin-top:10px;text-align:center">An admin manually checks every document before approving. Usually within 24 hours.</p>
   </div></div>`;
 }
 
@@ -1164,6 +1229,7 @@ function renderPrivacy(){
   </div></div>`;
 }
 
+/* ---------- Admin ---------- */
 function renderAdmin(){
   const au=me();if(!au||au.role!=='admin')return renderProfile();
   const live=DB.listings.filter(l=>l.status!=='removed');
@@ -1183,13 +1249,38 @@ function renderAdmin(){
     ${line('Open reports',open.length)}
   </div>
   <div class="seclabel" style="padding:0 18px">Landlord verification queue ${vq.length?`<a>${vq.length} pending</a>`:''}</div>
-  <div style="padding:0 18px">${vq.length?vq.map(u=>`<div class="qcard">
-      <div style="display:flex;gap:11px;align-items:center"><span class="av" style="width:38px;height:38px;font-size:13px;background:${avCol(u.name)}">${initials(u.name)}</span>
-      <div style="flex:1"><b>${esc(u.name)}</b><div class="tiny muted">${fmtPhone(u.phone)} · ${esc(u.email||'no email')}</div></div></div>
-      <div><span class="docchip"><i data-lucide="credit-card"></i>${esc(u.docs&&u.docs.id||'ID missing')}</span><span class="docchip"><i data-lucide="file-text"></i>${esc(u.docs&&u.docs.own||'Ownership proof missing')}</span></div>
-      <div style="display:flex;gap:8px;margin-top:11px"><button class="btn btn-g grow" style="min-height:42px" onclick="App.aOk('${u.id}')"><i data-lucide="check"></i>Approve</button>
-      <button class="btn btn-danger grow" style="min-height:42px" onclick="App.aNo('${u.id}')"><i data-lucide="x"></i>Reject</button></div>
-    </div>`).join(''):`<p class="tiny muted" style="padding:4px 2px 8px">Queue is clear. Asante.</p>`}</div>
+  <div style="padding:0 18px">${vq.length?vq.map(u=>{
+    const d=u.verifyDetails||{};
+    const docs=u.docs||{};
+    const missing=[];
+    if(!docs.id) missing.push('ID');
+    if(!docs.own) missing.push('Ownership');
+    if(!docs.selfie) missing.push('Selfie');
+    if(!d.physicalAddress) missing.push('Address');
+    if(!d.propertiesOwned) missing.push('Properties');
+    if(!d.agreed) missing.push('Terms');
+    const complete = missing.length===0;
+    return `<div class="qcard">
+      <div style="display:flex;gap:11px;align-items:center;margin-bottom:8px">
+        <span class="av" style="width:40px;height:40px;font-size:13px;background:${avCol(u.name)}">${initials(u.name)}</span>
+        <div style="flex:1;min-width:0">
+          <b style="font-size:14.5px">${esc(u.name)}</b>
+          <div class="tiny muted">${fmtPhone(u.phone)}${u.email?' · '+esc(u.email):''}</div>
+        </div>
+        ${complete?'<span class="pill pill-g">✓ Complete</span>':'<span class="pill pill-r">⚠ Incomplete</span>'}
+      </div>
+      ${missing.length?`<div class="tiny" style="color:var(--red);margin-bottom:8px">Missing: ${missing.join(', ')}</div>`:''}
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+        <span class="docchip" style="${docs.id?'':'opacity:.5'}"><i data-lucide="credit-card"></i>${docs.id?'ID':'\u2014'}</span>
+        <span class="docchip" style="${docs.own?'':'opacity:.5'}"><i data-lucide="file-text"></i>${docs.own?'Ownership':'\u2014'}</span>
+        <span class="docchip" style="${docs.selfie?'':'opacity:.5'}"><i data-lucide="camera"></i>${docs.selfie?'Selfie':'\u2014'}</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o" style="min-height:42px;flex:1" onclick="App.viewVerif('${u.id}')"><i data-lucide="eye"></i>View details</button>
+        <button class="btn btn-g" style="min-height:42px" onclick="App.aOk('${u.id}')" title="Approve"><i data-lucide="check"></i></button>
+        <button class="btn btn-danger" style="min-height:42px" onclick="App.aNo('${u.id}')" title="Reject"><i data-lucide="x"></i></button>
+      </div>
+    </div>`;}).join(''):`<p class="tiny muted" style="padding:4px 2px 8px">Queue is clear. Asante.</p>`}</div>
   <div class="seclabel" style="padding:0 18px">Reported listings</div>
   <div style="padding:0 18px">${open.length?open.map(r=>{const l=listing(r.listingId),by=user(r.by);return `<div class="qcard">
       <div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:14px">${l?esc(l.title):'Deleted listing'}</b><span class="tiny muted">${timeAgo(r.ts)}</span></div>
@@ -1215,15 +1306,16 @@ function renderAdmin(){
   <div class="card" style="margin:0 18px;padding:14px"><div class="hbars">
     ${Object.entries(areaData).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`<div class="hbar"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a)}</span><div class="tr"><i style="width:${n/maxA*100}%"></i></div><span>${n}</span></div>`).join('')||'<p class="tiny muted">No data yet.</p>'}
   </div></div>
-  <div class="seclabel" style="padding:0 18px">Users</div>
+  <div class="seclabel" style="padding:0 18px">All users</div>
   <div style="padding:0 18px 20px">${DB.users.filter(u=>u.role!=='admin').map(u=>`<div class="qcard" style="padding:11px 13px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-      <div><b style="font-size:13.5px">${esc(u.name)}</b><div class="tiny muted">${u.role} · ${fmtPhone(u.phone)} ${u.suspended?'· <b style="color:var(--red)">SUSPENDED</b>':''}</div></div>
+      <div style="min-width:0"><b style="font-size:13.5px">${esc(u.name)}</b><div class="tiny muted">${u.role} · ${fmtPhone(u.phone)}${u.verified?' · <b style="color:var(--green)">✓</b>':''} ${u.suspended?'· <b style="color:var(--red)">SUSPENDED</b>':''}</div></div>
       <button class="sbtn ${u.suspended?'':'danger'}" onclick="App.aSusp('${u.id}')">${u.suspended?'Unsuspend':'Suspend'}</button>
     </div></div>`).join('')}</div>
   </div>`;
 }
 
+/* ---------- Auth ---------- */
 let AUTH={role:'student',step:'role',phone:'',code:'',inp:'',cd:0,sends:0};
 function renderAuth(){
   const r=AUTH.role;
@@ -1237,26 +1329,46 @@ function renderAuth(){
   }
   if(AUTH.step==='phone'){
     body=roleTabs+`<label class="fld"><span>Phone number</span><input id="aph" type="tel" inputmode="numeric" placeholder="07XX XXX XXX" value="${esc(AUTH.phone)}" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>
-    <button class="btn btn-p" style="width:100%" onclick="App.otpSend()">${AUTH.cd?`Resend in ${AUTH.cd}s`:'Send code'}</button>
-    <p class="tiny muted" style="text-align:center;margin-top:12px">Demo build — no real SMS. Your code will appear on screen.</p>`;
+    <button class="btn btn-p" style="width:100%" onclick="App.otpSend()">Send code</button>
+    <p class="tiny muted" style="text-align:center;margin-top:12px">Demo build — no real SMS. Your code appears on the next screen.</p>`;
   }
   if(AUTH.step==='otp'){
     body=`<button class="tiny muted" style="margin-bottom:10px" onclick="App.arBack()">← ${fmtPhone(AUTH.phone)}</button>
-    <div class="otpbanner">Demo mode — your code is <b>${AUTH.code}</b></div>
+    <div class="otpbanner">Demo code for <b>${fmtPhone(AUTH.phone)}</b>: <span style="font-family:var(--disp);font-size:16px;letter-spacing:.15em">${AUTH.code}</span></div>
     <div class="otps">${[0,1,2,3,4].map(i=>`<input maxlength="1" inputmode="numeric" id="o${i}" oninput="App.otpIn(${i},this)" onkeydown="App.otpKey(event,${i})">`).join('')}</div>
     <button class="btn btn-p" style="width:100%" onclick="App.otpVerify()">Verify & continue</button>
-    <p class="tiny muted" style="text-align:center;margin-top:12px">${AUTH.sends>=3?'Rate limit reached — use a demo shortcut below.':'Didn\'t get it? Check the screen — demo codes never expire.'}</p>`;
+    <p class="tiny muted" style="text-align:center;margin-top:12px">${AUTH.sends>=3?'Rate limit reached — use a demo shortcut below.':'Demo codes never expire.'}</p>`;
   }
   if(AUTH.step==='name'){
     body=`<label class="fld"><span>${AUTH.role==='landlord'?'Your name or hostel name':'Your name'}</span><input id="anm" placeholder="${AUTH.role==='landlord'?'e.g. Greenview Hostels':'e.g. Brian Kiprotich'}" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>
     ${AUTH.role==='landlord'?`<label class="fld"><span>Email (for verification updates)</span><input id="aem" type="email" placeholder="you@example.com" style="width:100%;height:50px;border:1.5px solid var(--line2);border-radius:13px;padding:0 14px"></label>`:''}
+    <p class="tiny muted" style="margin-bottom:12px">Signing up as <b>${fmtPhone(AUTH.phone)}</b>. Remember this number — you'll use it to sign back in.</p>
     <button class="btn btn-p" style="width:100%" onclick="App.finishSignup()">${AUTH.role==='landlord'?'Create landlord account':'Join ChukaHomes'}</button>`;
   }
+
+  /* Your accounts on this device */
+  const created = myCreated();
+  const accountsSection = created.length ? `
+    <div class="seclabel" style="margin-top:20px">Your accounts on this device <span class="tiny" style="text-transform:none;letter-spacing:0;color:var(--ink3);font-weight:600">tap to sign back in</span></div>
+    ${created.map(u=>{
+      const status = u.role==='admin' ? '' : (u.verified?' · <b style="color:var(--green)">✓ Approved</b>':u.verifyStatus==='pending'?' · <b style="color:var(--amber)">Pending</b>':u.verifyStatus==='rejected'?' · <b style="color:var(--red)">Rejected</b>':'');
+      return `<button class="myacct" onclick="App.quickLogin('${u.id}')">
+        <span class="av" style="background:${avCol(u.name)}">${initials(u.name)}</span>
+        <div class="mi">
+          <b>${esc(u.name)}</b>
+          <small>${u.role} · ${fmtPhone(u.phone)}${status}</small>
+        </div>
+        <i data-lucide="arrow-right"></i>
+      </button>`;
+    }).join('')}
+  ` : '';
+
   return `<div class="auth">
     ${MARK.replace('<svg','<svg class="mark"')}
     <h1>Find your crib.<br>List your vacant.</h1>
     <p class="sub">The comrades' housing market for Chuka — Ndagani, Marine, Slaughter & Mungoni.</p>
     <div class="acard">${body}
+      ${accountsSection}
       <div class="seclabel" style="margin-top:20px">Quick demo access</div>
       <div class="demogrid">
         <button onclick="App.demo('student')"><i data-lucide="graduation-cap"></i>Student (verified)</button>
@@ -1364,13 +1476,50 @@ const App={
   arNext(){AUTH.step='phone';render();},
   arBack(){AUTH.step='phone';render();},
   guest(){DB.session=null;save();tab('home');toast('Browsing as guest — sign in to contact landlords.','info');},
-  demo(w){const map={student:'uS1',landlord:'uL1',landlordNew:'uL5',admin:'uA'};DB.session=map[w];save();tab('home');toast('Signed in as '+me().name+'. Karibu!','check');},
+  demo(w){const map={student:'uS1',landlord:'uL1',landlordNew:'uL5',admin:'uA'};DB.session=map[w];AUTH.step='role';AUTH.phone='';AUTH.code='';AUTH.inp='';save();tab('home');toast('Signed in as '+me().name+'. Karibu!','check');},
+  quickLogin(id){
+    const u=user(id);if(!u){toast('Account not found.','triangle-alert',true);return;}
+    if(u.suspended){toast('This account is suspended.','ban',true);return;}
+    DB.session=id;save();AUTH.step='role';AUTH.phone='';AUTH.code='';AUTH.inp='';
+    tab('home');
+    toast('Signed in as '+u.name+'.'+(u.verified?' You are verified ✓':u.verifyStatus==='pending'?' Verification is pending.':''),'check');
+  },
   otpSend(){const raw=($('#aph')||{}).value||AUTH.phone;const m=raw.replace(/[\s-]/g,'').match(/^(?:\+?254|0)?([17]\d{8})$/);if(!m){toast('Enter a valid Kenyan number, e.g. 0712 345 678','triangle-alert',true);return;}AUTH.phone='254'+m[1];AUTH.code=String(Math.floor(10000+Math.random()*90000));AUTH.step='otp';AUTH.sends++;AUTH.inp='';render();},
   otpIn(i,el){AUTH.inp=(AUTH.inp.slice(0,i)+el.value+AUTH.inp.slice(i+1)).slice(0,5);if(el.value&&i<4)$('#o'+(i+1)).focus();},
   otpKey(e,i){if(e.key==='Backspace'&&!e.target.value&&i>0)$('#o'+(i-1)).focus();},
-  otpVerify(){if(AUTH.inp!==AUTH.code){toast('Wrong code — check the orange banner.','triangle-alert',true);return;}const ex=DB.users.find(u=>u.phone===AUTH.phone&&u.role===AUTH.role);if(ex){if(ex.suspended){toast('This account is suspended. Contact support.','ban',true);return;}DB.session=ex.id;save();tab('home');toast('Welcome back, '+ex.name.split(' ')[0]+'.','check');}else{AUTH.step='name';render();}},
-  finishSignup(){const nm=($('#anm')||{}).value||'';if(nm.trim().length<3){toast('Tell us your name — landlords reply better to real names.','info');return;}const id='u'+DB.nextIds.u++;DB.users.push({id,role:AUTH.role,name:nm.trim(),phone:AUTH.phone,verified:false,verifyStatus:'none',docs:null,email:AUTH.role==='landlord'?(($('#aem')||{}).value||null):null,regNo:null,suspended:false,joined:Date.now()});DB.session=id;save();tab('home');toast('Account created. Karibu ChukaHomes!','check');},
-  logout(){DB.session=null;save();stack.length=0;stack.push({name:'auth'});render();},
+  otpVerify(){
+    if(AUTH.inp!==AUTH.code){toast('Wrong code — check the orange banner.','triangle-alert',true);return;}
+    const same=DB.users.find(u=>u.phone===AUTH.phone&&u.role===AUTH.role);
+    if(same){
+      if(same.suspended){toast('This account is suspended. Contact support.','ban',true);return;}
+      DB.session=same.id;save();tab('home');
+      toast('Welcome back, '+same.name.split(' ')[0]+'.'+(same.verified?' ✓ Verified':''),'check');
+      return;
+    }
+    const other=DB.users.find(u=>u.phone===AUTH.phone);
+    if(other){
+      toast('This number is registered as a '+other.role+'. Switch the role at the top and try again.','info');
+      return;
+    }
+    AUTH.step='name';render();
+  },
+  finishSignup(){
+    const nm=($('#anm')||{}).value||'';
+    if(nm.trim().length<3){toast('Tell us your name — landlords reply better to real names.','info');return;}
+    const id='u'+DB.nextIds.u++;
+    const email=($('#aem')||{}).value||null;
+    DB.users.push({id,role:AUTH.role,name:nm.trim(),phone:AUTH.phone,verified:false,verifyStatus:'none',docs:null,verifyDetails:null,email:AUTH.role==='landlord'?email:null,regNo:null,suspended:false,joined:Date.now(),demoCreated:true});
+    DB.session=id;save();
+    AUTH.step='role';AUTH.phone='';AUTH.code='';AUTH.inp='';
+    if(AUTH.role==='landlord'){
+      toast('Account created. Sign in with '+fmtPhone(user(id).phone)+' anytime. Next: complete verification.','check');
+      stack.length=0;stack.push({name:'vlandlord'});render();
+    }else{
+      tab('home');
+      toast('Account created for '+fmtPhone(user(id).phone)+'. Karibu ChukaHomes!','check');
+    }
+  },
+  logout(){DB.session=null;save();AUTH.step='role';AUTH.phone='';AUTH.code='';AUTH.inp='';stack.length=0;stack.push({name:'auth'});render();},
   newL(){DRAFT=newDraft();draft=DRAFT;WSTEP=1;go('create',{step:1});},
   editL(id){const d0=JSON.parse(JSON.stringify(listing(id)));d0.availFrom=d0.availFrom?new Date(d0.availFrom).toISOString().slice(0,10):new Date().toISOString().slice(0,10);DRAFT=d0;draft=DRAFT;WSTEP=1;stack.push({name:'create',params:{step:1,editId:id}});render();},
   wGo(d){WSTEP=Math.max(1,WSTEP+d);stack[stack.length-1].params.step=WSTEP;render();},
@@ -1396,7 +1545,12 @@ const App={
     App.wGo(1);
   },
   sf(k,v){draft[k]=v;},
-  wsel(el,k,v){draft[k]=v;const cond=['water','elec','wifi','curfewOn'].includes(k);if(cond){render();}else{[...el.parentNode.children].forEach(b=>b.classList.remove('on'));el.classList.add('on');}},
+  wsel(el,k,v){
+    draft[k]=v;
+    if(k==='elec'&&v!=='Shared meter')draft.elecCost='';
+    const cond=['water','elec','wifi','curfewOn'].includes(k);
+    if(cond){render();}else{[...el.parentNode.children].forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+  },
   wsec(el,v){draft.security=draft.security||[];const i=draft.security.indexOf(v);i>-1?draft.security.splice(i,1):draft.security.push(v);el.classList.toggle('on');},
   addP(input){const fs=[...input.files].slice(0,8-draft.photos.length);if(!fs.length)return;Promise.all(fs.map(compress)).then(urls=>{draft.photos.push(...urls);render();toast(urls.length+' photo(s) added & compressed.','image');});},
   demoP(){draft.photos=ph('new'+(Date.now()%97),5,draft.type||'Bedsitter');render();toast('5 demo house photos added. Replace with real ones before going live.','camera');},
@@ -1411,9 +1565,73 @@ const App={
     <button class="btn btn-p" style="width:100%" onclick="App.boostGo('${id}')"><i data-lucide="megaphone"></i>${l.boosted?'Remove boost':'Boost for 7 days (free demo)'}</button>`);},
   boostGo(id){const l=listing(id);l.boosted=!l.boosted;save();closeM();render();toast(l.boosted?'Boosted — you\'re at the top of Home for 7 days.':'Boost removed.','megaphone');},
   vSubmitS(){const u=me();u.regNo=$('#reg').value.trim();u.email=$('#semail').value.trim()||u.email;if(!u.regNo&&!u.email){toast('Add your admission number or student email.','info');return;}u.verified=true;u.verifyStatus='approved';save();back();toast('Verified Comrade badge earned. Landlords will take you seriously now.','graduation-cap');},
-  docUp(k,input){const u=me();u.docs=u.docs||{};u.docs[k]=input.files[0]?input.files[0].name:'document-'+k;u.verifyStatus='pending';save();render();toast('Document attached. Submit when both are in.','file-check');},
-  vSubmitL(){const u=me();if(!u.docs||!u.docs.id||!u.docs.own)return;u.verifyStatus='pending';save();render();toast('Submitted. An admin reviews ID + ownership proof manually.','clock');},
-  aOk(uid){const u=user(uid);u.verified=true;u.verifyStatus='approved';DB.listings.filter(l=>l.ownerId===uid&&l.status==='pending').forEach(l=>{l.status='available';l.updatedAt=Date.now();});save();render();toast(u.name+' is now a Verified Landlord.','badge-check');},
+  docUp(k,input){const u=me();u.docs=u.docs||{};u.docs[k]=input.files[0]?input.files[0].name:'document-'+k;if(u.verifyStatus!=='approved')u.verifyStatus='none';save();render();toast('Document attached.','file-check');},
+  vf(k,v){const u=me();if(!u)return;u.verifyDetails=u.verifyDetails||{};u.verifyDetails[k]=v;save();},
+  vSubmitL(){
+    const u=me();if(!u)return;
+    const d=u.verifyDetails||{};const docs=u.docs||{};
+    const missing=[];
+    if(!docs.id)missing.push('National ID');
+    if(!docs.own)missing.push('Ownership proof');
+    if(!docs.selfie)missing.push('Selfie with ID');
+    if(!d.physicalAddress)missing.push('Physical address');
+    if(!d.propertiesOwned)missing.push('Properties owned');
+    if(!d.agreed)missing.push('Terms confirmation');
+    if(missing.length){toast('Missing: '+missing.join(' · '),'triangle-alert',true);return;}
+    u.verifyStatus='pending';save();render();
+    toast('Submitted — an admin is reviewing. You will be notified once approved.','clock');
+  },
+  /* admin: full application view */
+  viewVerif(uid){
+    const u=user(uid);if(!u)return;
+    const d=u.verifyDetails||{};
+    const docs=u.docs||{};
+    const listings=DB.listings.filter(l=>l.ownerId===uid&&l.status!=='removed');
+    const docRow=(key,label,ic,filename)=>{
+      const has=!!filename;
+      return `<div class="docslot">
+        <div class="di" style="${has?'':'background:var(--red-soft);color:var(--red)'}"><i data-lucide="${has?'file-check':'x'}"></i></div>
+        <div class="mi">
+          <b>${label}</b>
+          <div class="tiny muted">${has?esc(filename):'<span style="color:var(--red)">Not uploaded</span>'}</div>
+        </div>
+        ${has?'<span class="pill pill-g">✓</span>':'<span class="pill pill-r">Missing</span>'}
+      </div>`;
+    };
+    modal(`
+      <h2 style="font-size:20px;margin:4px 0 14px">Review: ${esc(u.name)}</h2>
+      <div class="card" style="padding:14px;margin-bottom:12px">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+          <span class="av" style="background:${avCol(u.name)};width:48px;height:48px;font-size:16px">${initials(u.name)}</span>
+          <div style="min-width:0">
+            <b style="font-size:16px">${esc(u.name)}</b>
+            <div class="tiny muted">Landlord · Joined ${fdate(u.joined)}</div>
+          </div>
+        </div>
+        <div class="revrow"><b>Phone (OTP verified)</b><span>${fmtPhone(u.phone)} <b style="color:var(--green)">✓</b></span></div>
+        <div class="revrow"><b>Email</b><span>${esc(u.email||'—')}</span></div>
+        <div class="revrow"><b>Physical address</b><span>${esc(d.physicalAddress||'—')}</span></div>
+        <div class="revrow"><b>Properties owned</b><span>${esc(d.propertiesOwned||'—')}</span></div>
+        <div class="revrow"><b>Alternate phone</b><span>${esc(d.altPhone||'—')}</span></div>
+        <div class="revrow"><b>Terms agreed</b><span>${d.agreed?'<b style="color:var(--green)">✓ Yes</b>':'<span style="color:var(--red)">No</span>'}</span></div>
+      </div>
+      <div class="seclabel">Documents</div>
+      ${docRow('id','National ID / Passport','credit-card',docs.id)}
+      ${docRow('own','Proof of ownership','file-text',docs.own)}
+      ${docRow('selfie','Selfie holding ID','camera',docs.selfie)}
+      <div class="seclabel">Listings on file (${listings.length})</div>
+      ${listings.length?listings.map(l=>`<div class="card" style="padding:9px 11px;margin-bottom:6px;display:flex;gap:10px;align-items:center;cursor:pointer" onclick="App.closeM();setTimeout(()=>App.openL('${l.id}'),260)">
+        <img src="${l.photos[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover" onerror="imgErr(this)">
+        <div style="flex:1;min-width:0"><b style="font-size:13px">${esc(l.title)}</b><div class="tiny muted">${esc(l.area)} · ${kes(l.rent)} · ${l.status}</div></div>
+      </div>`).join(''):'<p class="tiny muted" style="margin-bottom:8px">No listings from this landlord yet.</p>'}
+      <div style="display:flex;gap:9px;margin-top:16px">
+        <button class="btn btn-o grow" onclick="App.closeM()">Close</button>
+        <button class="btn btn-danger grow" onclick="App.closeM();setTimeout(()=>App.aNo('${u.id}'),260)"><i data-lucide="x"></i>Reject</button>
+        <button class="btn btn-g grow" onclick="App.closeM();setTimeout(()=>App.aOk('${u.id}'),260)"><i data-lucide="check"></i>Approve</button>
+      </div>
+    `);
+  },
+  aOk(uid){const u=user(uid);u.verified=true;u.verifyStatus='approved';DB.listings.filter(l=>l.ownerId===uid&&l.status==='pending').forEach(l=>{l.status='available';l.updatedAt=Date.now();});save();render();toast(u.name+' is now a Verified Landlord. Their listings went live.','badge-check');},
   aNo(uid){const u=user(uid);u.verifyStatus='rejected';save();render();toast(u.name+' rejected — they can resubmit better documents.','x',true);},
   aDismiss(rid){const r=DB.reports.find(x=>x.id===rid);r.status='dismissed';save();render();toast('Report dismissed.','check');},
   aRemove(lid){const l=listing(lid);if(!l)return;l.status='removed';save();render();toast('Listing removed from the platform.','trash-2');},
