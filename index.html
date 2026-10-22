@@ -100,6 +100,8 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .toast.warn{background:#5C3A10}
 .ovl{position:fixed;inset:0;background:rgba(13,26,19,.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .22s}
 .ovl.show{opacity:1}
+.ovl:not(.show){pointer-events:none}
+.dragging{user-select:none}
 .sheet{background:var(--bg);width:min(100%,640px);max-height:88dvh;overflow:auto;border-radius:22px 22px 0 0;padding:8px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(40px);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 .ovl.show .sheet{transform:none}
 .grab{width:42px;height:5px;border-radius:3px;background:var(--line2);margin:8px auto 14px}
@@ -122,7 +124,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .trustrow svg{width:16px;height:16px;flex:none;color:#8FD1A4}
 .chiprow{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none;cursor:grab}
 .chiprow::-webkit-scrollbar{display:none}
-.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none;touch-action:pan-x;cursor:grab}
+.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none;touch-action:pan-x pan-y;cursor:grab}
 .rail::-webkit-scrollbar{display:none}
 .rail.dragging,.chiprow.dragging,.areapills.dragging,.sortrow.dragging{cursor:grabbing}
 .fcard{flex:none;width:225px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);cursor:pointer}
@@ -203,7 +205,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 #mPrev img{width:86px;height:86px;border-radius:14px;object-fit:cover}
 
 .gal{position:relative;background:#DDD8C8}
-.galrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+.galrow{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
 .galrow::-webkit-scrollbar{display:none}
 .galrow>div{flex:none;width:100%;scroll-snap-align:start;position:relative}
 .galrow img{width:100%;height:300px;object-fit:cover;user-select:none;-webkit-user-drag:none}
@@ -551,42 +553,41 @@ function modal(html){
 }
 function closeM(){
   const o=$('.ovl');
-  if(o)o.classList.remove('show');
+  if(!o)return;
+  o.classList.remove('show');
   clearTimeout(_closeT);
-  _closeT=setTimeout(()=>{if(!$('.ovl'))$('#sheetRoot').innerHTML='';},240);
+  _closeT=setTimeout(()=>{
+    const x=$('.ovl');
+    if(x&&!x.classList.contains('show'))$('#sheetRoot').innerHTML='';
+  },260);
 }
 
-/* Horizontal scroll helper for rails / chips / pills — desktop wheel + mouse drag */
-function hzScroll(el){
-  if(!el||el._hz)return;
-  el._hz=true;
-  // Wheel-to-horizontal
-  el.addEventListener('wheel',e=>{
-    if(el.scrollWidth<=el.clientWidth)return;
-    if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
-    el.scrollLeft+=e.deltaY;
-    e.preventDefault();
-  },{passive:false});
-  // Mouse drag
-  let down=false,startX=0,startL=0,moved=false;
-  el.addEventListener('mousedown',e=>{
+/* Horizontal scroll helper — single delegated drag handler bound once.
+   No per-render listeners, no wheel hijack of page scroll. */
+(function(){
+  let el=null,startX=0,startL=0,moved=false;
+  const SEL='.rail,.chiprow,.areapills,.sortrow,.qrow';
+  document.addEventListener('mousedown',e=>{
     if(e.button!==0)return;
-    if(e.target.closest('input, select, textarea, a'))return;
-    down=true;moved=false;startX=e.clientX;startL=el.scrollLeft;
-    el.classList.add('dragging');
+    const t=e.target.closest&&e.target.closest(SEL);
+    if(!t||t.scrollWidth<=t.clientWidth||e.target.closest('input,select,textarea'))return;
+    el=t;startX=e.clientX;startL=t.scrollLeft;moved=false;
   });
   window.addEventListener('mousemove',e=>{
-    if(!down)return;
+    if(!el)return;
     const dx=e.clientX-startX;
-    if(Math.abs(dx)>4)moved=true;
-    if(moved){el.scrollLeft=startL-dx;}
+    if(Math.abs(dx)>5){moved=true;el.classList.add('dragging');}
+    if(moved)el.scrollLeft=startL-dx;
   });
   window.addEventListener('mouseup',()=>{
-    if(!down)return;
-    down=false;
-    el.classList.remove('dragging');
+    if(el)el.classList.remove('dragging');
+    el=null;setTimeout(()=>{moved=false;},0);
   });
-}
+  document.addEventListener('click',e=>{
+    if(moved){e.stopPropagation();e.preventDefault();}
+  },true);
+})();
+function hzScroll(){}
 
 let F=emptyF(),FT=null,MAPSEL=null,MAPAVAIL=false;
 function emptyF(){return {q:'',types:[],areas:[],min:'',max:'',maxWalk:'',gender:[],furn:[],amen:{},hideTaken:true,sort:'new'};}
@@ -652,21 +653,21 @@ function showStudentCaution(){
   },500);
 }
 
+let KEEP_SCROLL=false;
 function render(){
   const r=stack[stack.length-1];
-  document.body.classList.toggle('sub',['listing','thread','create','mylistings','admin','privacy','vstudent','vlandlord'].includes(r.name));
+  const y=window.scrollY;
+  document.body.classList.toggle('sub',['auth','listing','thread','create','mylistings','admin','privacy','vstudent','vlandlord'].includes(r.name));
   const R={home:renderHome,search:renderSearch,map:renderMap,chats:renderChats,profile:renderProfile,auth:renderAuth,listing:renderListing,thread:renderThread,create:renderCreate,mylistings:renderMyListings,favorites:renderFavorites,admin:renderAdmin,privacy:renderPrivacy,vstudent:renderVStudent,vlandlord:renderVLandlord};
   $('#view').innerHTML=(R[r.name]||renderHome)(r.params);
   renderTabs(r.name);icons();
-  // Horizontal scroll bindings for all rails, chip strips, area pills, sort rows
-  document.querySelectorAll('.rail, .chiprow, .areapills, .sortrow, .qrow').forEach(hzScroll);
   if(r.name==='home'&&!HOMESEEN){HOMESEEN=true;setTimeout(()=>{if(stack[stack.length-1].name==='home')render();},750);}
   if(r.name==='map')mapInit(r.params);
   if(r.name==='listing')galBind();
   if(r.name==='thread'){const m=$('#msgs');m&&(m.scrollTop=m.scrollHeight);}
   if(r.name==='create'&&r.params.step===2)mmBind();
   if(MAPSEL&&r.name!=='map')MAPSEL=null;
-  window.scrollTo(0,0);
+  window.scrollTo(0,KEEP_SCROLL?y:0);KEEP_SCROLL=false;
 }
 
 function renderTabs(active){
@@ -1464,7 +1465,7 @@ const App={
   openFilters(){openFilters();},
   fmin(v){FT.min=v;fcount();},fmax(v){FT.max=v;fcount();},
   tchip(el,k,v){const a=FT[k];const i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);el.classList.toggle('on');fcount();},
-  schip(el,k,v){[...el.parentNode.children].forEach(b=>b.classList.remove('on'));if(String(FT[k])===String(v)){FT[k]='';}else{FT[k]=v;el.classList.add('on');}fcount();},
+  schip(el,k,v){[...el.parentNode.children].forEach(b=>b.classList.remove('on'));FT[k]=(String(FT[k])===String(v))?'':v;if(FT[k]===''&&v!=='')el.parentNode.firstElementChild.classList.add('on');else el.classList.add('on');fcount();},
   achip(el,k){FT.amen[k]=!FT.amen[k];el.classList.toggle('on');fcount();},
   ftaken(v){FT.hideTaken=!v;fcount();},
   resetFT(){FT=emptyF();const s=$('.sheet');if(s){s.innerHTML='<div class="grab"></div>'+filterSheetHTML();icons();}fcount();},
@@ -1643,7 +1644,7 @@ const App={
     if(WSTEP===6){if(!d.gender||!d.visitors)return toast('Pick gender restriction and visitor rules.','info');}
     if(WSTEP===7){if(d.photos.length<5)return toast('At least 5 photos required — room, bathroom, kitchen, exterior, view.','info');if(!d.confirmed)return toast('Please confirm the photos are recent and of the actual unit.','info');}
     if(WSTEP===8){const u=me();if(!u)return App.gate();d.contactPhone=d.contactPhone||u.phone;
-      if(eid){Object.assign(listing(eid),d,{updatedAt:Date.now()});save();tab('mylistings');toast('Listing updated.','check');return;}
+      if(eid){Object.assign(listing(eid),d,{updatedAt:Date.now(),availFrom:d.availFrom?new Date(d.availFrom).getTime():Date.now()});save();tab('mylistings');toast('Listing updated.','check');return;}
       const limit=u.verified?5:2;
       if(DB.listings.filter(l=>l.ownerId===u.id&&l.status!=='removed'&&l.status!=='taken').length>=limit){toast(u.verified?`Listing limit reached (${limit}).`:'Free unverified accounts can post 2 live listings. Get verified to post more.','triangle-alert',true);return;}
       const id='l'+DB.nextIds.l++;
@@ -1660,7 +1661,7 @@ const App={
     draft[k]=v;
     if(k==='elec'&&v!=='Shared meter')draft.elecCost='';
     const cond=['water','elec','wifi','curfewOn'].includes(k);
-    if(cond){render();}else{[...el.parentNode.children].forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+    if(cond){KEEP_SCROLL=true;render();}else{[...el.parentNode.children].forEach(b=>b.classList.remove('on'));el.classList.add('on');}
   },
   wsec(el,v){draft.security=draft.security||[];const i=draft.security.indexOf(v);i>-1?draft.security.splice(i,1):draft.security.push(v);el.classList.toggle('on');},
   addP(input){const fs=[...input.files].slice(0,8-draft.photos.length);if(!fs.length)return;Promise.all(fs.map(compress)).then(urls=>{draft.photos.push(...urls);render();toast(urls.length+' photo(s) added & compressed.','image');});},
