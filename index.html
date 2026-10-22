@@ -4,9 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ChukaHomes — Student Housing & Hostel Finder, Chuka</title>
+<meta name="description" content="Find bedsitters, hostels and houses near Chuka University. Verified landlords, honest prices, no door-to-door.">
 <meta name="theme-color" content="#0E5A33">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href='data:application/manifest+json,{"name":"ChukaHomes","short_name":"ChukaHomes","start_url":".","display":"standalone","background_color":"%23F6F3EA","theme_color":"%230E5A33"}'>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="manifest" href="./site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
@@ -115,10 +120,11 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .hsearch svg{width:19px;height:19px;color:var(--green)}
 .trustrow{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#C4DCC9;margin-top:13px;font-weight:600}
 .trustrow svg{width:16px;height:16px;flex:none;color:#8FD1A4}
-.chiprow{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none}
+.chiprow{display:flex;gap:8px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none;cursor:grab}
 .chiprow::-webkit-scrollbar{display:none}
-.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none;touch-action:pan-x}
+.rail{display:flex;gap:12px;overflow-x:auto;padding:2px 18px 8px;scrollbar-width:none;touch-action:pan-x;cursor:grab}
 .rail::-webkit-scrollbar{display:none}
+.rail.dragging,.chiprow.dragging,.areapills.dragging,.sortrow.dragging{cursor:grabbing}
 .fcard{flex:none;width:225px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);cursor:pointer}
 .fcard .ph{position:relative;height:120px}
 .fcard img{width:100%;height:100%;object-fit:cover}
@@ -139,7 +145,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .lam .walk{margin-left:auto;display:flex;gap:4px;align-items:center;font-size:12px;font-weight:700;color:var(--ink);background:var(--green-soft);padding:3px 8px;border-radius:999px}
 .lam .walk svg{width:13px;height:13px;color:var(--green)}
 .lfoot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--ink3)}
-.areapills{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 6px;scrollbar-width:none}
+.areapills{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 6px;scrollbar-width:none;cursor:grab}
 .areapills::-webkit-scrollbar{display:none}
 .apill{flex:none;display:flex;flex-direction:column;padding:10px 14px;border:1.5px solid var(--line2);border-radius:14px;background:var(--card);min-width:104px;text-align:left}
 .apill b{font-family:var(--disp);font-size:14px}
@@ -158,7 +164,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .fbtn{position:relative;width:46px;height:46px;border-radius:14px;border:1.5px solid var(--line2);background:var(--card);display:grid;place-items:center}
 .fbtn svg{width:20px;height:20px}
 .fbtn .cnt{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#fff;font-size:10.5px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center}
-.sortrow{display:flex;gap:8px;padding:12px 18px 4px;overflow-x:auto;scrollbar-width:none}
+.sortrow{display:flex;gap:8px;padding:12px 18px 4px;overflow-x:auto;scrollbar-width:none;cursor:grab}
 .sortrow::-webkit-scrollbar{display:none}
 .srchd{padding:10px 18px 0;font-size:12.5px;color:var(--ink3);font-weight:600}
 .empty{padding:44px 30px;text-align:center}
@@ -258,7 +264,7 @@ body.sub #toasts{bottom:calc(20px + env(safe-area-inset-bottom))}
 .typing i{width:6px;height:6px;border-radius:3px;background:var(--ink3);animation:tp 1s infinite}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
 @keyframes tp{40%{transform:translateY(-4px);opacity:.6}}
-.qrow{display:flex;gap:8px;overflow-x:auto;padding:10px 14px 2px;scrollbar-width:none}
+.qrow{display:flex;gap:8px;overflow-x:auto;padding:10px 14px 2px;scrollbar-width:none;cursor:grab}
 .qrow::-webkit-scrollbar{display:none}
 .qrow .chip{font-size:12.5px;padding:8px 12px}
 .cinput{display:flex;gap:9px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
@@ -524,10 +530,63 @@ const ensuite=l=>l.bath==='Ensuite (own)', ownKit=l=>l.kitchen==='Own', guardOK=
 const myCreated=()=>DB.users.filter(u=>u.demoCreated&&!u.suspended);
 
 let VERIF_CTX=null;
+let _closeT=null;
 
 function toast(msg,icon='check',warn){const t=document.createElement('div');t.className='toast'+(warn?' warn':'');t.innerHTML=`<i data-lucide="${icon}"></i><span>${msg}</span>`;$('#toasts').appendChild(t);icons();setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3800);}
-function modal(html){$('#sheetRoot').innerHTML=`<div class="ovl" onclick="App.closeM(event)"><div class="sheet" onclick="event.stopPropagation()"><div class="grab"></div>${html}</div></div>`;icons();requestAnimationFrame(()=>$('.ovl').classList.add('show'));}
-function closeM(){$('.ovl')&&$('.ovl').classList.remove('show');setTimeout(()=>$('#sheetRoot').innerHTML='',240);}
+
+/* Modal — cancels any pending close and replaces content in-place if already open */
+function modal(html){
+  clearTimeout(_closeT);
+  const existing=$('.ovl');
+  if(existing){
+    const sheet=existing.querySelector('.sheet');
+    if(sheet){sheet.innerHTML='<div class="grab"></div>'+html;sheet.scrollTop=0;}
+    existing.classList.add('show');
+    icons();
+    return;
+  }
+  $('#sheetRoot').innerHTML=`<div class="ovl" onclick="App.closeM(event)"><div class="sheet" onclick="event.stopPropagation()"><div class="grab"></div>${html}</div></div>`;
+  icons();
+  requestAnimationFrame(()=>{const o=$('.ovl');if(o)o.classList.add('show');});
+}
+function closeM(){
+  const o=$('.ovl');
+  if(o)o.classList.remove('show');
+  clearTimeout(_closeT);
+  _closeT=setTimeout(()=>{if(!$('.ovl'))$('#sheetRoot').innerHTML='';},240);
+}
+
+/* Horizontal scroll helper for rails / chips / pills — desktop wheel + mouse drag */
+function hzScroll(el){
+  if(!el||el._hz)return;
+  el._hz=true;
+  // Wheel-to-horizontal
+  el.addEventListener('wheel',e=>{
+    if(el.scrollWidth<=el.clientWidth)return;
+    if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+    el.scrollLeft+=e.deltaY;
+    e.preventDefault();
+  },{passive:false});
+  // Mouse drag
+  let down=false,startX=0,startL=0,moved=false;
+  el.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    if(e.target.closest('input, select, textarea, a'))return;
+    down=true;moved=false;startX=e.clientX;startL=el.scrollLeft;
+    el.classList.add('dragging');
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!down)return;
+    const dx=e.clientX-startX;
+    if(Math.abs(dx)>4)moved=true;
+    if(moved){el.scrollLeft=startL-dx;}
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!down)return;
+    down=false;
+    el.classList.remove('dragging');
+  });
+}
 
 let F=emptyF(),FT=null,MAPSEL=null,MAPAVAIL=false;
 function emptyF(){return {q:'',types:[],areas:[],min:'',max:'',maxWalk:'',gender:[],furn:[],amen:{},hideTaken:true,sort:'new'};}
@@ -599,6 +658,8 @@ function render(){
   const R={home:renderHome,search:renderSearch,map:renderMap,chats:renderChats,profile:renderProfile,auth:renderAuth,listing:renderListing,thread:renderThread,create:renderCreate,mylistings:renderMyListings,favorites:renderFavorites,admin:renderAdmin,privacy:renderPrivacy,vstudent:renderVStudent,vlandlord:renderVLandlord};
   $('#view').innerHTML=(R[r.name]||renderHome)(r.params);
   renderTabs(r.name);icons();
+  // Horizontal scroll bindings for all rails, chip strips, area pills, sort rows
+  document.querySelectorAll('.rail, .chiprow, .areapills, .sortrow, .qrow').forEach(hzScroll);
   if(r.name==='home'&&!HOMESEEN){HOMESEEN=true;setTimeout(()=>{if(stack[stack.length-1].name==='home')render();},750);}
   if(r.name==='map')mapInit(r.params);
   if(r.name==='listing')galBind();
@@ -651,8 +712,8 @@ function renderHome(){
     <div class="trustrow"><i data-lucide="shield-check"></i>No payments happen here — view the unit first, then pay the landlord directly.</div>
   </div>
   <div class="chiprow">${chips.map(([lb,f],i)=>`<button class="chip" onclick="App.quick(${i})">${lb}</button>`).join('')}</div>
-  ${feat.length?`<div class="seclabel" style="padding:0 18px">Boosted near you <a>Phase-2 M-Pesa boosts</a></div>
-  <div class="rail">${feat.map(l=>`<div class="fcard" onclick="App.openL('${l.id}')">
+  ${feat.length?`<div class="seclabel" style="padding:0 18px">Boosted near you <a onclick="App.showBoosted()">See all →</a></div>
+  <div class="rail" id="boostRail">${feat.map(l=>`<div class="fcard" onclick="App.openL('${l.id}')">
     <div class="ph wm"><img loading="lazy" src="${l.photos[0]}" alt="" onerror="imgErr(this)"><span class="ribbon">BOOSTED</span></div>
     <div class="in"><div class="lprice">${kes(l.rent)}<span>/${perShort(l.period)}</span></div><h3 style="font-size:13.5px;font-family:var(--ui);font-weight:700;margin:2px 0">${esc(l.title)}</h3><p class="lmeta">${esc(l.area)} · ${l.walkGate} min to gate</p></div>
   </div>`).join('')}</div>`:''}
@@ -1417,6 +1478,26 @@ const App={
   closePrev(){MAPSEL=null;hidePrev();$$('.pin.sel').forEach(p=>p.classList.remove('sel'));},
   viewOnMap(id){MAPSEL=id;tab('map');},
   openL(id){const l=listing(id);if(!l)return;go('listing',{id});},
+
+  /* Show all boosted listings in a modal */
+  showBoosted(){
+    const boosted=visibleListings().filter(l=>l.boosted&&l.status==='available');
+    modal(`
+      <h2 style="font-size:19px;margin:4px 0 4px">Boosted hostels</h2>
+      <p class="tiny muted" style="margin-bottom:14px">Landlords pay KES 200/week to appear here. They still go through the same verification as everyone else.</p>
+      ${boosted.length?boosted.map(l=>`<div class="card" style="padding:11px;margin-bottom:9px;display:flex;gap:11px;align-items:center;cursor:pointer" onclick="App.closeM();setTimeout(()=>App.openL('${l.id}'),260)">
+        <img src="${l.photos[0]}" style="width:64px;height:64px;border-radius:10px;object-fit:cover" onerror="imgErr(this)">
+        <div style="flex:1;min-width:0">
+          <div class="lprice" style="font-size:16px">${kes(l.rent)}<span>/${perShort(l.period)}</span></div>
+          <b style="font-size:13.5px;display:block;margin-top:1px">${esc(l.title)}</b>
+          <span class="tiny muted">${esc(l.area)} · ${l.walkGate} min to gate</span>
+        </div>
+        <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--ink3);flex:none"></i>
+      </div>`).join(''):'<p class="muted" style="text-align:center;padding:20px 0">No boosted listings right now.</p>'}
+      <button class="btn btn-o" style="width:100%;margin-top:10px" onclick="App.closeM()">Close</button>
+    `);
+  },
+
   galScroll(el){
     if(!el||!el.clientWidth)return;
     const i=Math.round(el.scrollLeft/el.clientWidth);
@@ -1440,13 +1521,13 @@ const App={
     else{DB.favorites.push({userId:u.id,listingId:id});btn&&btn.classList.add('fav-on');toast('Saved to your favourites.','heart');}
     save();
   },
-  favMenu(id){closeM();App.fav(id,$('#favbtn'));},
+  favMenu(id){closeM();setTimeout(()=>App.fav(id,$('#favbtn')),30);},
   lMenu(id){modal(`<h2 style="font-size:18px;margin-bottom:6px">${esc(listing(id).title)}</h2>
     <div class="prow" onclick="App.reportL('${id}')"><i data-lucide="flag"></i><div class="mid"><b>Report listing</b><small>Fake, taken, or wrong info</small></div></div>
     <div class="prow" onclick="App.shareL('${id}')"><i data-lucide="share-2"></i><div class="mid"><b>Share</b><small>Copy link to this listing</small></div></div>
     <div class="prow" onclick="App.favMenu('${id}')"><i data-lucide="heart"></i><div class="mid"><b>Save / unsave</b><small>Add to your list</small></div></div>`);},
   shareL(id){closeM();toast('Link copied — chukahomes.ke/l/'+id+' (demo).','share-2');},
-  reportL(id){closeM();modal(`<h2 style="font-size:18px;margin-bottom:4px">Report this listing</h2><p class="tiny muted" style="margin-bottom:14px">Admins review every report. Serial scammers get banned.</p>
+  reportL(id){modal(`<h2 style="font-size:18px;margin-bottom:4px">Report this listing</h2><p class="tiny muted" style="margin-bottom:14px">Admins review every report. Serial scammers get banned.</p>
     <label class="fld"><span>Reason</span><select id="rreason">${REPORTS.map(r=>`<option>${r}</option>`).join('')}</select></label>
     <label class="fld"><span>Tell us more (optional)</span><textarea id="rnote" placeholder="e.g. The caretaker is asking a different price…"></textarea></label>
     <button class="btn btn-p" style="width:100%" onclick="App.sendReport('${id}')">Send report</button>`);},
@@ -1686,8 +1767,6 @@ const App={
       selfie:{label:'Selfie holding ID',accent:'#4E86AE',bg:'linear-gradient(135deg,#dbe8f1 0%,#bcd3e3 100%)',isPhoto:true}
     };
     const p=previews[kind]||previews.id;
-    const sheet=$('.sheet');
-    if(!sheet)return;
     let content='';
     if(p.isPhoto){
       content=`<div style="background:${p.bg};border-radius:16px;height:260px;position:relative;overflow:hidden;display:grid;place-items:center">
@@ -1706,16 +1785,15 @@ const App={
         <div style="margin-top:14px;font-size:10px;color:#8a8a80;text-align:center">Demo preview — actual scan on file with ChukaHomes admins</div>
       </div>`;
     }
-    sheet.innerHTML=`<div class="grab"></div>
+    modal(`
       <h2 style="font-size:18px;margin:4px 0 4px">${esc(p.label)}</h2>
       <p class="tiny muted" style="margin-bottom:12px">File: ${esc(filename)}</p>
       ${content}
       <div style="display:flex;gap:9px;margin-top:14px">
         <button class="btn btn-o grow" onclick="App.viewVerif('${u.id}')">← Back to application</button>
         <button class="btn btn-p grow" onclick="App.closeM()">Close</button>
-      </div>`;
-    sheet.scrollTop=0;
-    icons();
+      </div>
+    `);
   },
   aOk(uid){const u=user(uid);u.verified=true;u.verifyStatus='approved';DB.listings.filter(l=>l.ownerId===uid&&l.status==='pending').forEach(l=>{l.status='available';l.updatedAt=Date.now();});save();render();toast(u.name+' is now a Verified Landlord. Their listings went live.','badge-check');},
   aNo(uid){const u=user(uid);u.verifyStatus='rejected';save();render();toast(u.name+' rejected — they can resubmit better documents.','x',true);},
